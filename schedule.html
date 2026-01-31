@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Temple Schedule</title>
+    
+    <!-- Libraries Preserved -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CORE VARIABLES & THEME
+           ========================================= */
+        :root { 
+            --primary: #FF9933; 
+            --bg: #fcf5e5; 
+            --card: #ffffff; 
+            --text: #333;
+            --shadow: 0 5px 15px rgba(255, 153, 51, 0.3);
+            --header-bg: linear-gradient(135deg, #FF9933, #d84315);
+            --container-max-width: 700px;
+        }
+
+        [data-theme="dark"] { 
+            --primary: #FF9933; 
+            --bg: #121212; 
+            --card: #1e1e1e; 
+            --text: #e0e0e0; 
+            --header-bg: linear-gradient(135deg, #1f1f1f, #121212);
+        }
+        
+        * { box-sizing: border-box; }
+
+        body { 
+            background-color: var(--bg); 
+            font-family: 'Poppins', sans-serif; 
+            color: var(--text); 
+            padding: 0;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+            /* Flex center for large screens to look like app */
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* DEVICE AGNOSTIC WRAPPER 
+           Preserves App Look on Desktop (Prevents stretching)
+        */
+        .app-container {
+            width: 100%;
+            max-width: var(--container-max-width);
+            background: var(--bg);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================
+           HEADER SECTION (ADDED AS REQUESTED)
+           ========================================= */
+        .app-header {
+            background: var(--header-bg);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+            color: white;
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Spacer for right side balance */
+        .header-spacer { width: 38px; }
+
+        /* =========================================
+           CONTENT AREA
+           ========================================= */
+        .content-body {
+            padding: 20px;
+            flex: 1;
+        }
+        
+        /* Status Card */
+        .status-card { 
+            background: var(--header-bg); 
+            color: white; 
+            padding: 25px; 
+            border-radius: 20px; 
+            text-align: center; 
+            box-shadow: var(--shadow); 
+            margin-bottom: 30px; 
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotateBg 10s linear infinite;
+        }
+
+        @keyframes rotateBg { 100% { transform: rotate(360deg); } }
+
+        .status-text { 
+            font-size: clamp(1.4rem, 4vw, 1.8rem); 
+            font-weight: 700; 
+            font-family: 'Cinzel', serif; 
+            position: relative; 
+            z-index: 1;
+        }
+        
+        .status-sub { 
+            font-size: 1rem; 
+            opacity: 0.95; 
+            position: relative; 
+            z-index: 1; 
+            margin-top: 5px;
+        }
+
+        /* Timeline Style */
+        .timeline { 
+            position: relative; 
+            padding-left: 20px; 
+            border-left: 3px solid var(--primary); 
+            margin-left: 10px;
+        }
+
+        .event { 
+            position: relative; 
+            margin-bottom: 25px; 
+            padding-left: 25px; 
+            background: var(--card);
+            padding: 15px 20px 15px 25px;
+            border-radius: 0 12px 12px 0;
+            transition: transform 0.2s;
+        }
+
+        /* Desktop Hover Effect */
+        @media(hover: hover) {
+            .event:hover {
+                transform: translateX(5px);
+                background: rgba(255, 153, 51, 0.05);
+            }
+        }
+        
+        .event::before { 
+            content: ''; 
+            position: absolute; 
+            left: -32px; /* Adjusted for parent padding/border */
+            top: 20px; 
+            width: 16px; 
+            height: 16px; 
+            background: var(--bg); 
+            border: 4px solid var(--primary); 
+            border-radius: 50%; 
+            z-index: 2;
+        }
+        
+        .time { font-size: 0.9rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
+        .name { font-size: 1.15rem; font-weight: 600; margin: 3px 0; color: var(--text); }
+        .desc { font-size: 0.85rem; opacity: 0.7; }
+
+        /* Active Event Highlight */
+        .event.active .name { color: var(--primary); }
+        .event.active { 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+            border-left: 4px solid var(--primary);
+        }
+        .event.active::before { 
+            background: var(--primary); 
+            box-shadow: 0 0 15px var(--primary); 
+            transform: scale(1.2);
+        }
+
+        .section-title {
+            font-family:'Cinzel',serif; 
+            color:var(--primary); 
+            margin-bottom:25px;
+            font-size: 1.5rem;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary);
+            line-height: 1;
+        }
+
+        .note { 
+            font-size: 0.85rem; 
+            text-align: center; 
+            margin-top: 40px; 
+            padding: 15px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 10px;
+            opacity: 0.7; 
+            margin-bottom: 20px;
+        }
+
+        /* Dark Mode overrides specific to bootstrap reset */
+        [data-theme="dark"] .event { background: #252525; }
+        [data-theme="dark"] .note { background: rgba(255,255,255,0.05); color: #bbb; }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- App-like Header with Back Button (Fixed Logic) -->
+        <header class="app-header">
+            <!-- Back to Home (Replaces app go:home logic) -->
+            <a href="index.html" class="back-btn" aria-label="Go Back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            
+            <h1 class="header-title">Schedule</h1>
+            
+            <!-- Spacer to center title perfectly -->
+            <div class="header-spacer"></div>
+        </header>
+
+        <div class="content-body">
+            
+            <!-- Current Status -->
+            <div class="status-card">
+                <div class="status-text" id="temple-status">Checking...</div>
+                <div class="status-sub" id="next-event">Please wait</div>
+            </div>
+
+            <h4 class="section-title">Daily Program</h4>
+
+            <!-- Timeline -->
+            <div class="timeline" id="schedule-list">
+                <!-- JavaScript will fill this -->
+            </div>
+
+            <div class="note">
+                <i class="fas fa-info-circle"></i> Schedule may change on festival days & Ekadashi.
+            </div>
+        
+        </div>
+    </div>
+
+<script>
+    // Theme Management (Persisted)
+    if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+    const schedule = [
+        { t: "04:30 AM", n: "Mangal Aarti", d: "First Darshan of the Day" },
+        { t: "05:15 AM", n: "Tulasi Aarti", d: "Worship of Tulasi Devi" },
+        { t: "07:30 AM", n: "Guru Puja", d: "Srila Prabhupada Puja" },
+        { t: "08:00 AM", n: "Srimad Bhagavatam", d: "Morning Class" },
+        { t: "08:30 AM", n: "Darshan Aarti", d: "Full Shringar Darshan" },
+        { t: "12:30 PM", n: "Raj Bhoga Aarti", d: "Noon Offering" },
+        { t: "01:00 PM", n: "Temple Closes", d: "Darshan Close for Afternoon" },
+        { t: "04:15 PM", n: "Dhupa Aarti", d: "Temple Re-opens" },
+        { t: "07:00 PM", n: "Sandhya Aarti", d: "Gaura Aarti & Kirtan" },
+        { t: "08:30 PM", n: "Shayana Aarti", d: "Final Darshan" },
+        { t: "09:00 PM", n: "Temple Closes", d: "Rest time for Deities" }
+    ];
+
+    const list = document.getElementById('schedule-list');
+    const statusEl = document.getElementById('temple-status');
+    const nextEl = document.getElementById('next-event');
+
+    // Populate List
+    schedule.forEach(item => {
+        // Simple HTML creation logic preserved but optimized structure
+        const div = document.createElement('div');
+        div.className = 'event';
+        div.innerHTML = `
+            <div class="time">${item.t}</div>
+            <div class="name">${item.n}</div>
+            <div class="desc">${item.d}</div>
+        `;
+        list.appendChild(div);
+    });
+
+    // Time Logic with Visual Updates
+    function updateStatus() {
+        const now = new Date();
+        const hour = now.getHours();
+        const minutes = now.getMinutes();
+        
+        // Accurate Time Logic
+        // Open: 04:30 to 13:00 (1PM)
+        // Open: 16:15 (4:15PM) to 21:00 (9PM)
+        
+        let isOpen = false;
+        
+        // Check Morning Slot
+        if (hour >= 4 && hour < 13) {
+            if (hour === 4 && minutes < 30) {
+                isOpen = false; 
+            } else {
+                isOpen = true;
+            }
+        }
+        // Check Evening Slot
+        else if (hour >= 16 && hour < 21) {
+            if (hour === 16 && minutes < 15) {
+                isOpen = false;
+            } else {
+                isOpen = true;
+            }
+        }
+
+        if(isOpen) {
+            statusEl.innerText = "TEMPLE IS OPEN";
+            nextEl.innerText = "Darshan is Available Now";
+            // Orange Gradient
+            document.querySelector('.status-card').style.background = "linear-gradient(135deg, var(--primary), #d84315)";
+        } else {
+            statusEl.innerText = "TEMPLE IS CLOSED";
+            nextEl.innerText = "Next Open: 4:30 AM / 4:15 PM";
+            // Dark Gradient
+            document.querySelector('.status-card').style.background = "linear-gradient(135deg, #444, #222)";
+        }
+
+        // Highlight Active Event Logic (Approximate)
+        highlightCurrentEvent(hour, minutes);
+    }
+
+    function highlightCurrentEvent(h, m) {
+        // Convert current time to comparable float (e.g., 4:30 -> 4.5)
+        let current = h + (m/60);
+        let events = document.querySelectorAll('.event');
+        
+        // Reset
+        events.forEach(e => e.classList.remove('active'));
+
+        // Basic Highlight Logic matching original intent
+        // We find the event closest to now but not passed for "Next" or current
+        // For simplicity based on prompt: Highlight generally active slots
+        // This is a UI enhancement that keeps app feel alive.
+        
+        // Find specific event logic index (manual mapping for key times)
+        let index = -1;
+        if(current >= 4.5 && current < 5.25) index = 0;
+        else if(current >= 5.25 && current < 7.5) index = 1;
+        else if(current >= 7.5 && current < 8) index = 2;
+        else if(current >= 8 && current < 8.5) index = 3;
+        else if(current >= 8.5 && current < 12.5) index = 4;
+        else if(current >= 12.5 && current < 13) index = 5;
+        else if(current >= 16.25 && current < 19) index = 7; // Skips closed
+        else if(current >= 19 && current < 20.5) index = 8;
+        else if(current >= 20.5 && current < 21) index = 9;
+
+        if(index > -1 && events[index]) {
+            events[index].classList.add('active');
+        }
+    }
+
+    updateStatus();
+    // Update every minute
+    setInterval(updateStatus, 60000);
+
+</script>
+</body>
+</html>
