@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ISKCON Kids Ultra Max</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<style>
+    /* --- 🎨 THEME: VIBRANT TOYLAND --- */
+    :root {
+        --bg-color: #FFFDE7;
+        --text: #4E342E;
+        /* Responsive Max Width */
+        --container-width: 900px; 
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0; padding-bottom: 50px;
+        font-family: 'Fredoka', 'Baloo 2', sans-serif;
+        background-color: var(--bg-color);
+        /* Polka Dots Pattern */
+        background-image: radial-gradient(#FFD54F 15%, transparent 16%), radial-gradient(#FFD54F 15%, transparent 16%);
+        background-size: 30px 30px;
+        background-position: 0 0, 15px 15px;
+        color: var(--text);
+        min-height: 100vh;
+        overflow-y: scroll; /* Force scrollbar prevents jump */
+        -webkit-tap-highlight-color: transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center layout on Desktop */
+    }
+
+    /* DEVICE AGNOSTIC WRAPPER */
+    .app-container {
+        width: 100%;
+        max-width: var(--container-width);
+        padding: 0 10px; /* Safety padding */
+    }
+
+    /* --- HEADER (Floating Pill) --- */
+    .kids-nav {
+        background: #FFFFFF;
+        margin: 15px 5px;
+        padding: 10px 15px;
+        border-radius: 50px;
+        display: flex; align-items: center; justify-content: space-between;
+        box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        border: 3px solid #FF9800;
+        position: relative; z-index: 100;
+        transition: 0.3s ease;
+    }
+    
+    /* MODIFIED BACK BUTTON STYLE */
+    .nav-back-btn { 
+        background: #FF5722; color: white; border-radius: 30px; 
+        padding: 8px 20px; display: flex; align-items: center; gap: 8px; justify-content: center; 
+        font-size: 1rem; cursor: pointer; font-weight: bold;
+        box-shadow: 0 4px 0 #BF360C; border: 2px solid white;
+        transition: 0.1s;
+        text-decoration: none; /* Web standard for links */
+        user-select: none;
+    }
+    
+    .nav-back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #BF360C; }
+    .nav-back-btn:active { transform: translateY(4px); box-shadow: none; }
+
+    .nav-title {
+        font-size: clamp(1.2rem, 4vw, 1.8rem); /* Responsive Font */
+        color: #FF9800; font-weight: 900;
+        text-transform: uppercase; letter-spacing: 1px;
+        text-shadow: 2px 2px 0px #FFE0B2;
+    }
+
+    /* --- HERO (Bouncing Krishna) --- */
+    .hero-wrap { padding: 15px 20px; text-align: center; width: 100%; }
+    
+    .hero-box {
+        background: #03A9F4;
+        color: white; padding: 20px; border-radius: 30px;
+        box-shadow: 0 10px 0 #0277BD;
+        border: 4px solid white;
+        transform: rotate(-2deg);
+        animation: floatHero 3s ease-in-out infinite;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    @keyframes floatHero { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
+    
+    .hero-msg { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; }
+
+    /* --- BIG IMAGE GRID (The Main Attraction) --- */
+    /* RESPONSIVE UPGRADE: Grid adapts to screen size */
+    .grid-menu {
+        display: grid; 
+        /* Mobile: 2 col | Tablet: 3 col | Desktop: 3/4 col */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+        gap: 20px; 
+        padding: 20px 10px;
+        width: 100%;
+    }
+    
+    .menu-card {
+        position: relative;
+        background: white; 
+        border-radius: 35px; /* Super rounded */
+        padding: 20px;
+        text-align: center; cursor: pointer;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        min-height: 180px;
+        
+        /* 3D TOY LOOK */
+        border: 4px solid;
+        box-shadow: 0 12px 0 rgba(0,0,0,0.1);
+        transition: transform 0.1s, box-shadow 0.1s;
+        overflow: hidden;
+        text-decoration: none; /* Removes anchor underline */
+    }
+    
+    /* Hover state for Desktop "Natural Feel" */
+    @media (hover: hover) {
+        .menu-card:hover {
+            transform: translateY(-5px) rotate(1deg);
+            box-shadow: 0 18px 0 rgba(0,0,0,0.1);
+        }
+    }
+
+    .menu-card:active {
+        transform: translateY(8px) !important;
+        box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+
+    /* --- BIG IMAGES --- */
+    .big-img {
+        width: 100px; height: 100px; /* Very Big */
+        object-fit: contain;
+        filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+        margin-bottom: 15px;
+        transition: 0.3s;
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn { from{transform:scale(0);} to{transform:scale(1);} }
+
+    .menu-card:hover .big-img { transform: scale(1.1) rotate(5deg); }
+
+    /* --- COLORFUL THEMES --- */
+    .c-quiz { border-color: #29B6F6; background: linear-gradient(to bottom, #E1F5FE, #fff); }
+    .c-quiz .card-title { color: #0288D1; }
+
+    .c-game { border-color: #66BB6A; background: linear-gradient(to bottom, #E8F5E9, #fff); }
+    .c-game .card-title { color: #2E7D32; }
+
+    .c-abc  { border-color: #AB47BC; background: linear-gradient(to bottom, #F3E5F5, #fff); }
+    .c-abc .card-title { color: #7B1FA2; }
+
+    .c-art  { border-color: #FF4081; background: linear-gradient(to bottom, #FCE4EC, #fff); }
+    .c-art .card-title { color: #C2185B; }
+
+    .c-story{ border-color: #FF9800; background: linear-gradient(to bottom, #FFF3E0, #fff); }
+    .c-story .card-title { color: #E65100; }
+
+    .c-japa { border-color: #009688; background: linear-gradient(to bottom, #E0F2F1, #fff); }
+    .c-japa .card-title { color: #00695C; }
+
+    /* --- TEXT STYLES --- */
+    .card-title { font-size: 1.4rem; font-weight: 800; line-height: 1.1; margin-bottom: 6px; }
+    .card-sub { font-size: 0.8rem; font-weight: 600; color: #777; background: rgba(255,255,255,0.8); padding: 5px 12px; border-radius: 12px; display: inline-block;}
+
+    /* --- HIDDEN MEDIA SECTION (Logic preserved but responsive) --- */
+    #hidden-media-container { display: none; margin-top: 20px; padding: 0 10px; width: 100%; }
+    
+    .media-btn {
+        background: white; border-radius: 25px; padding: 15px;
+        display: flex; align-items: center; justify-content: space-between;
+        box-shadow: 0 8px 0 #EEE; margin-bottom: 15px;
+        border: 3px solid #eee; cursor: pointer;
+        text-decoration: none;
+        max-width: 600px; margin-left: auto; margin-right: auto; /* Centered */
+        transition: transform 0.1s;
+    }
+    
+    .media-btn:hover { background: #fdfdfd; }
+    .media-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 #EEE; }
+    
+    .m-icon-box {
+        width: 50px; height: 50px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; color: white;
+    }
+
+    /* --- RESPONSIVE REFINEMENTS --- */
+    @media (min-width: 768px) {
+        /* Desktop specific enhancements */
+        .big-img { width: 120px; height: 120px; }
+        .grid-menu { gap: 30px; }
+    }
+
+</style>
+</head>
+<body>
+
+<!-- APP WRAPPER FOR DESKTOP -->
+<div class="app-container">
+
+    <!-- NAVBAR -->
+    <div class="kids-nav">
+        <!-- FIXED: Replaced onclick go:home with standard href -->
+        <a href="index.html" class="nav-back-btn">
+            <i class="fas fa-chevron-left"></i> <span data-key="back">BACK</span>
+        </a>
+        
+        <div class="nav-title">
+            Kids Zone
+        </div>
+        <div style="width:20px;"></div> <!-- Spacer -->
+    </div>
+
+    <!-- HERO -->
+    <div class="hero-wrap">
+        <div class="hero-box">
+            <div class="hero-msg" data-key="hero_text">Jai Shri Krishna!</div>
+        </div>
+    </div>
+
+    <!-- BIG IMAGE GRID -->
+    <div class="grid-menu">
+        
+        <!-- 1. QUIZ (href link update) -->
+        <a href="k_quiz.html" class="menu-card c-quiz">
+            <img src="https://cdn-icons-png.flaticon.com/512/3112/3112946.png" class="big-img" alt="Quiz">
+            <div class="card-title" data-key="quiz">Quiz</div>
+            <div class="card-sub" data-key="quiz_sub">Play & Win</div>
+        </a>
+
+        <!-- 2. MEMORY GAME -->
+        <a href="k_memory.html" class="menu-card c-game">
+            <img src="https://cdn-icons-png.flaticon.com/512/3063/3063835.png" class="big-img" alt="Memory">
+            <div class="card-title" data-key="memory">Memory</div>
+            <div class="card-sub" data-key="memory_sub">Brain Game</div>
+        </a>
+
+        <!-- 3. A-B-C -->
+        <a href="k_abc.html" class="menu-card c-abc">
+            <img src="https://cdn-icons-png.flaticon.com/512/3570/3570099.png" class="big-img" alt="ABC">
+            <div class="card-title" data-key="abc">A-B-C</div>
+            <div class="card-sub" data-key="abc_sub">Vedic A-Z</div>
+        </a>
+
+        <!-- 4. COLORING -->
+        <a href="k_art.html" class="menu-card c-art">
+            <img src="https://cdn-icons-png.flaticon.com/512/10341/10341526.png" class="big-img" alt="Colors">
+            <div class="card-title" data-key="color">Coloring</div>
+            <div class="card-sub" data-key="color_sub">Fill Colors</div>
+        </a>
+
+        <!-- 5. STORIES -->
+        <a href="k_stories.html" class="menu-card c-story">
+            <img src="https://cdn-icons-png.flaticon.com/512/3094/3094845.png" class="big-img" alt="Stories">
+            <div class="card-title" data-key="story">Stories</div>
+            <div class="card-sub" data-key="story_sub">Read Lilas</div>
+        </a>
+
+        <!-- 6. JAPA -->
+        <a href="k_japa.html" class="menu-card c-japa">
+            <img src="https://cdn-icons-png.flaticon.com/512/2649/2649359.png" class="big-img" alt="Japa">
+            <div class="card-title" data-key="japa">Japa</div>
+            <div class="card-sub" data-key="japa_sub">Chant Mantra</div>
+        </a>
+
+    </div>
+
+    <!-- HIDDEN MEDIA (Preserved structure, fixed links) -->
+    <div id="hidden-media-container" style="display: none;">
+        <a href="tmp_vids.html" class="media-btn" style="border-color: #E91E63;">
+            <div class="m-icon-box" style="background: #E91E63;"><i class="fas fa-play"></i></div>
+            <div style="flex:1; margin-left:15px; font-weight:bold; color:#E91E63; text-decoration:none;" data-key="videos">Videos</div>
+            <i class="fas fa-chevron-right" style="color:#ccc;"></i>
+        </a>
+        <a href="aud_krt.html" class="media-btn" style="border-color: #2196F3;">
+            <div class="m-icon-box" style="background: #2196F3;"><i class="fas fa-music"></i></div>
+            <div style="flex:1; margin-left:15px; font-weight:bold; color:#2196F3; text-decoration:none;" data-key="audio">Audio</div>
+            <i class="fas fa-chevron-right" style="color:#ccc;"></i>
+        </a>
+    </div>
+
+</div>
+
+<script>
+    // --- LANGUAGE DATA ---
+    const langData = {
+        en: {
+            back: "BACK",
+            hero_text: "Jai Shri Krishna!",
+            quiz: "Quiz", quiz_sub: "Win!",
+            memory: "Memory", memory_sub: "Game",
+            abc: "A-B-C", abc_sub: "Learn",
+            color: "Coloring", color_sub: "Paint",
+            story: "Stories", story_sub: "Read",
+            japa: "Japa", japa_sub: "Chant",
+            videos: "Videos", audio: "Audio"
+        },
+        hi: {
+            back: "वापस",
+            hero_text: "जय श्री कृष्ण!",
+            quiz: "क्विज़", quiz_sub: "जीतो!",
+            memory: "गेम", memory_sub: "खेलो",
+            abc: "वर्णमाला", abc_sub: "सीखो",
+            color: "पेंटिंग", color_sub: "रंग भरो",
+            story: "कहानियाँ", story_sub: "लीला",
+            japa: "जप", japa_sub: "मंत्र",
+            videos: "वीडियो", audio: "ऑडियो"
+        },
+        mr: {
+            back: "मागे",
+            hero_text: "जय श्री कृष्ण!",
+            quiz: "प्रश्नमंजुषा", quiz_sub: "जिंका!",
+            memory: "खेळ", memory_sub: "स्मरण",
+            abc: "वर्णमाला", abc_sub: "शिका",
+            color: "चित्रकला", color_sub: "रंग",
+            story: "गोष्टी", story_sub: "वाचा",
+            japa: "जप", japa_sub: "मंत्र",
+            videos: "व्हिडिओ", audio: "ऑडिओ"
+        }
+    };
+
+    // Auto Language Loading logic from LocalStorage
+    // This logic ensures if the User selected Hindi in 'Home', 
+    // it reflects here automatically without extra code.
+    let currentLang = localStorage.getItem('lang') || 'en';
+    
+    // Safety Fallback
+    if(!langData[currentLang]) currentLang = 'en';
+    const texts = langData[currentLang];
+    
+    // Applying Text
+    document.querySelectorAll('[data-key]').forEach(el => {
+        el.innerText = texts[el.getAttribute('data-key')];
+    });
+
+</script>
+</body>
+</html>
