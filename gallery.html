@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISKCON Gallery - Divine Darshan</title>
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- PhotoSwipe CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF9933; 
+            --bg-dark: #121212;
+            --card-dark: #1e1e1e;
+            --text-gold: #FFD700;
+            --text-light: #e0e0e0;
+            --grid-gap: 12px;
+            --max-width: 1440px; /* Container Max Width */
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif; 
+            color: white; 
+            margin: 0; 
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .navbar { 
+            background-color: var(--primary); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6); 
+            z-index: 1030;
+        }
+        
+        .navbar-brand { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.2rem; 
+            display: flex; align-items: center; gap: 10px; 
+            color: white !important; 
+        }
+        
+        .nav-logo-img { 
+            width: 40px; height: 40px; 
+            border-radius: 50%; border: 2px solid white; 
+            object-fit: cover;
+        }
+
+        /* Fixed Back Button in Navbar */
+        .nav-back-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-back-btn:hover {
+            background: rgba(255,255,255,1);
+            color: var(--primary);
+        }
+
+        /* --- SIDEBAR MENU --- */
+        .offcanvas { 
+            background-color: #1a1a1a; 
+            color: white; 
+            width: 300px !important; 
+            border-right: 1px solid #333;
+        }
+        
+        .menu-item { 
+            padding: 15px 20px; 
+            display: flex; align-items: center; 
+            font-size: 1.05rem; color: #e0e0e0; 
+            text-decoration: none; 
+            margin-bottom: 5px; 
+            border-radius: 10px; 
+            transition: 0.2s;
+        }
+        .menu-item:hover, .menu-item:focus { 
+            background: rgba(255, 153, 51, 0.15); 
+            color: var(--primary); 
+        }
+        .menu-item i { width: 35px; color: var(--primary); }
+
+        /* --- HEADER --- */
+        .header-section {
+            text-align: center; 
+            padding: 30px 15px;
+            background: linear-gradient(to bottom, #1e1e1e 0%, #121212 100%);
+            border-bottom: 1px solid #333; 
+            margin-bottom: 20px;
+        }
+        
+        .header-title {
+            font-family: 'Cinzel', 'Noto Sans Devanagari', serif; 
+            color: var(--text-gold); 
+            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive Font */
+            margin: 0; text-transform: uppercase; letter-spacing: 2px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+        
+        .header-subtitle { 
+            color: #aaa; 
+            font-size: clamp(0.85rem, 1.5vw, 1rem); 
+            margin-top: 8px; letter-spacing: 1px;
+        }
+
+        /* --- RESPONSIVE GALLERY GRID --- */
+        /* Device Agnostic Wrapper */
+        .content-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .pswp-gallery {
+            display: grid;
+            /* MOBILE: 2 Columns | TABLET: 3 Cols | DESKTOP: 4 Cols | TV: 6 Cols */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 15px; 
+            padding: 0 15px;
+        }
+
+        /* Larger Grid Gap for Larger Screens */
+        @media(min-width: 1024px) {
+            .pswp-gallery { gap: 20px; padding: 0 30px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+        }
+
+        .gallery-item {
+            position: relative; display: block; border-radius: 16px;
+            overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            aspect-ratio: 3 / 4; 
+            background: #252525; border: 1px solid #333;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-decoration: none;
+        }
+
+        /* Hover effect strictly for Mouse Users */
+        @media(hover: hover) {
+            .gallery-item:hover { 
+                transform: translateY(-5px); 
+                border-color: var(--text-gold);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 10px rgba(255, 215, 0, 0.2);
+            }
+            .gallery-item:hover img { transform: scale(1.05); }
+        }
+
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.6s ease;
+        }
+        
+        .caption-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+            color: white; padding: 30px 10px 10px 10px;
+            text-align: center; 
+            display: flex; flex-direction: column;
+            pointer-events: none; /* Let clicks pass to image */
+        }
+        
+        .cap-title {
+            font-weight: 700; font-size: 0.95rem; color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+        }
+        .cap-desc {
+            font-size: 0.75rem; color: #FFD700; display: none; margin-top: 4px; font-weight: 500;
+        }
+        
+        .show-sub .cap-desc { display: block; }
+
+        /* --- LIGHTBOX CUSTOM STYLES --- */
+        .pswp__caption__center { 
+            text-align: center; 
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif; 
+            color: #FFD700; 
+            font-size: 1.1rem; 
+            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        .pswp__bg { background: rgba(0, 0, 0, 0.96) !important; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Menu (Standardized Navigation) -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="appSidebar">
+        <div class="offcanvas-header" style="border-bottom:1px solid #333;">
+            <h5 class="offcanvas-title" style="font-family:'Cinzel',serif; color:var(--primary);" data-lang-key="menu_title">ISKCON Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> <span data-lang-key="home">Home</span></a>
+            <a href="darshan.html" class="menu-item"><i class="fas fa-video"></i> <span data-lang-key="darshan">Live Darshan</span></a>
+            <a href="gallery.html" class="menu-item" style="color:var(--primary); background:rgba(255,153,51,0.1);"><i class="fas fa-images"></i> <span data-lang-key="gallery">Gallery</span></a>
+            <a href="schedule.html" class="menu-item"><i class="far fa-calendar-alt"></i> <span data-lang-key="schedule">Schedule</span></a>
+            <!-- Divider -->
+            <hr style="border-color:#444; margin:15px 0;">
+            <div style="font-size:0.8rem; color:#666; padding:0 20px;">
+                Designed for Devotees
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Navbar -->
+    <nav class="navbar sticky-top navbar-dark">
+        <div class="container-fluid content-container" style="margin:0 auto; padding:0;">
+            
+            <div class="d-flex align-items-center">
+                <!-- Hamburger Trigger -->
+                <button class="navbar-toggler border-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Fixed Back Button -->
+                <a href="index.html" class="nav-back-btn" aria-label="Go Home">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+
+                <!-- Brand -->
+                <a class="navbar-brand" href="index.html">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg" class="nav-logo-img"> 
+                    <span class="d-none d-sm-block" data-lang-key="app_name">ISKCON Gallery</span>
+                    <span class="d-block d-sm-none">Gallery</span>
+                </a>
+            </div>
+
+            <span class="text-white d-none d-sm-block"><i class="fas fa-om fa-lg"></i></span>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="content-container">
+        
+        <!-- Header -->
+        <header class="header-section">
+            <h1 class="header-title" data-lang-key="page_title">Sri Sri Radha Vrindavanchandra</h1>
+            <p class="header-subtitle"><i class="fas fa-search-plus"></i> <span data-lang-key="tap_zoom">Tap on photo to Zoom</span></p>
+        </header>
+
+        <!-- Gallery Grid (Responsive) -->
+        <div class="pswp-gallery" id="my-gallery">
+            
+            <!-- 1. Temple Entrance -->
+            <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s1600/1000096371.webp" 
+            data-pswp-width="933" data-pswp-height="1244" target="_blank" class="gallery-item">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s700/1000096371.webp" alt="Entrance" />
+                <div class="caption-overlay">
+                    <span class="cap-title" data-lang-key="img1_title">Temple Entrance</span>
+                </div>
+                <!-- Data for Lightbox -->
+                <span class="hidden-caption-text d-none" data-lang-key="img1_desc">Welcome to ISKCON Hadapsar</span>
+            </a>
+
+            <!-- 2. Sri Sri Gaura Nitai -->
+            <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s1600/1000096372.webp" 
+            data-pswp-width="700" data-pswp-height="700" target="_blank" class="gallery-item">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s700/1000096372.webp" alt="Gaura Nitai" />
+                <div class="caption-overlay">
+                    <span class="cap-title" data-lang-key="img2_title">Sri Sri Gaura Nitai</span>
+                </div>
+                <span class="hidden-caption-text d-none" data-lang-key="img2_title">Sri Sri Gaura Nitai</span>
+            </a>
+
+            <!-- 3. Main Altar -->
+            <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" 
+            data-pswp-width="700" data-pswp-height="525" target="_blank" class="gallery-item">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" alt="Main Altar" />
+                <div class="caption-overlay">
+                    <span class="cap-title" data-lang-key="img3_title">Main Altar</span>
+                </div>
+                <span class="hidden-caption-text d-none" data-lang-key="img3_desc">Beautiful Darshan of Deities</span>
+            </a>
+
+            <!-- 4. Govardhan Festival -->
+            <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" 
+            data-pswp-width="700" data-pswp-height="525" target="_blank" class="gallery-item show-sub">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" alt="Govardhan" />
+                <div class="caption-overlay">
+                    <span class="cap-title" data-lang-key="img4_title">Govardhan Puja</span>
+                    <span class="cap-desc" data-lang-key="img4_sub">Giriraj Dharan Lila</span>
+                </div>
+                <span class="hidden-caption-text d-none" data-lang-key="img4_desc">Lord Krishna lifting Govardhan Hill to protect Vrindavan.</span>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Module Script for Logic -->
+    <script type="module">
+        import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js';
+        import PhotoSwipe from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js';
+
+        // --- 🌍 MULTI-LANGUAGE DATA 🌍 ---
+        const langData = {
+            en: {
+                app_name: "ISKCON Gallery",
+                page_title: "Sri Sri Radha Vrindavanchandra",
+                tap_zoom: "Tap photo to Zoom",
+                menu_title: "ISKCON Menu",
+                home: "Home", darshan: "Live Darshan", gallery: "Gallery", schedule: "Schedule",
+                img1_title: "Temple Entrance", img1_desc: "Main Entrance of ISKCON Hadapsar",
+                img2_title: "Sri Sri Gaura Nitai",
+                img3_title: "Main Altar", img3_desc: "Beautiful Altar Decoration",
+                img4_title: "Govardhan Puja", img4_sub: "Giriraj Dharan Lila",
+                img4_desc: "Lord Krishna lifting Govardhan Hill to protect the residents of Vrindavan from rain."
+            },
+            hi: {
+                app_name: "इस्कॉन गैलरी",
+                page_title: "श्री श्री राधा वृंदावनचंद्र",
+                tap_zoom: "बड़ा करने के लिए फोटो पर टैप करें",
+                menu_title: "इस्कॉन मेनू",
+                home: "होम", darshan: "लाइव दर्शन", gallery: "गैलरी", schedule: "समय सारणी",
+                img1_title: "मंदिर प्रवेश द्वार", img1_desc: "इस्कॉन हडपसर का मुख्य द्वार",
+                img2_title: "श्री श्री गौर निताई",
+                img3_title: "मुख्य वेदी दर्शन", img3_desc: "भगवान का सुंदर श्रृंगार और सजावट",
+                img4_title: "गोवर्धन पूजा", img4_sub: "गिरिराज धारण लीला",
+                img4_desc: "भगवान श्री कृष्ण ने वृंदावन वासियों की वर्षा से रक्षा करने के लिए गोवर्धन पर्वत उठाया।"
+            },
+            mr: {
+                app_name: "इस्कॉन गॅलरी",
+                page_title: "श्री श्री राधा वृंदावनचंद्र",
+                tap_zoom: "मोठे करण्यासाठी फोटोवर टॅप करा",
+                menu_title: "इस्कॉन मेनू",
+                home: "मुख्यपृष्ठ", darshan: "थेट दर्शन", gallery: "गॅलरी", schedule: "वेळापत्रक",
+                img1_title: "मंदिर प्रवेशद्वार", img1_desc: "इस्कॉन हडपसरचे मुख्य प्रवेशद्वार",
+                img2_title: "श्री श्री गौर निताई",
+                img3_title: "मुख्य वेदी दर्शन", img3_desc: "देवाची सुंदर सजावट आणि दर्शन",
+                img4_title: "गोवर्धन पूजा", img4_sub: "गिरिराज धारण लीला",
+                img4_desc: "वृंदावनवासीयांच्या रक्षणासाठी भगवान श्रीकृष्णांनी आपल्या करंगळीवर गोवर्धन पर्वत उचलला."
+            }
+        };
+
+        // --- APPLY LANGUAGE & CONTENT ---
+        function applyLanguage() {
+            // Check stored lang from main app context
+            const savedLang = localStorage.getItem('lang') || 'en';
+            // Safety fallback
+            const texts = langData[savedLang] || langData['en'];
+
+            // 1. Text Elements Update
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (texts[key]) el.innerText = texts[key];
+            });
+
+            // 2. Prepare Data for Lightbox
+            // We store translation IN the DOM so PhotoSwipe can read it when opening images
+            const galleryLinks = document.querySelectorAll('.gallery-item');
+            galleryLinks.forEach(link => {
+                // Find internal elements
+                const descElem = link.querySelector('.hidden-caption-text');
+                const titleElem = link.querySelector('.cap-title');
+                
+                const titleKey = titleElem?.getAttribute('data-lang-key');
+                const descKey = descElem?.getAttribute('data-lang-key');
+                
+                const finalTitle = titleKey ? texts[titleKey] : titleElem.innerText;
+                const finalDesc = descKey ? texts[descKey] : "";
+                
+                // Formulate HTML for Caption
+                const captionHTML = `<div style="text-align:center;">
+                    <strong style="color:#FFF; font-size:1.1rem; display:block; margin-bottom:5px;">${finalTitle}</strong>
+                    <span style="color:#FFD700; font-size:0.9rem;">${finalDesc}</span>
+                </div>`;
+                
+                link.setAttribute('data-pswp-caption-content', captionHTML);
+            });
+        }
+
+        // --- PHOTOSWIPE CONFIGURATION ---
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: '#my-gallery',
+            children: 'a',
+            pswpModule: PhotoSwipe,
+            bgOpacity: 0.95,
+            showHideAnimationType: 'zoom',
+            
+            // Register UI for custom Caption
+            pswpFilters: (filters) => {
+                filters.register('uiElement', (element, data) => {
+                    if (data.name === 'caption-content') {
+                        const currSlide = lightbox.currSlide;
+                        if (currSlide && currSlide.data.element) {
+                            element.innerHTML = currSlide.data.element.getAttribute('data-pswp-caption-content') || '';
+                        }
+                    }
+                });
+                return filters;
+            }
+        });
+
+        // Initialize Everything
+        applyLanguage();
+        lightbox.init();
+
+    </script>
+</body>
+</html>
