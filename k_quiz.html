@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ISKCON Kids Quiz</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Cute Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(160deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+            --card-radius: 30px;
+            --primary: #FF9A9E;
+            --white: #ffffff;
+            --gold: #FFD700;
+            --max-app-width: 800px;
+        }
+
+        body { 
+            background-image: var(--bg-gradient);
+            background-attachment: fixed; /* Parallax BG fix for Desktop */
+            font-family: 'Fredoka', sans-serif;
+            min-height: 100vh; 
+            margin: 0; 
+            padding-bottom: 20px;
+            overflow-x: hidden; 
+            display: flex;
+            justify-content: center; /* Center Layout on Large Screens */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* DEVICE AGNOSTIC CONTAINER */
+        #app-root {
+            width: 100%;
+            max-width: var(--max-app-width);
+            min-height: 100vh;
+            background: rgba(255,255,255,0.05); /* Slight tint */
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        /* --- NAVIGATION --- */
+        .app-navbar {
+            padding: 15px 20px; 
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(255, 255, 255, 0.35); 
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .nav-back { 
+            background: white; color: var(--primary); width: 45px; height: 45px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem; box-shadow: 0 8px 15px rgba(0,0,0,0.1); cursor: pointer;
+            transition: 0.2s; border: none;
+        }
+        
+        .nav-back:hover { transform: scale(1.1); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .nav-back:active { transform: scale(0.9); }
+
+        .nav-title {
+            font-family: 'Nunito', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.15); letter-spacing: 1px;
+        }
+        
+        .lang-select {
+            background: white; border: 2px solid white; padding: 5px 15px; border-radius: 20px;
+            color: var(--primary); font-weight: bold; font-family: 'Fredoka'; outline: none;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1); font-size: 0.95rem; cursor: pointer;
+        }
+
+        /* --- SCREENS --- */
+        .screen { display: none; padding-top: 15px; animation: fadeIn 0.4s; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
+
+        /* --- HOME SLIDER --- */
+        .slider-container { padding: 10px 15px; margin-bottom: 20px; }
+        .quiz-carousel {
+            border-radius: var(--card-radius); overflow: hidden; border: 4px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative;
+            cursor: pointer;
+        }
+        .carousel-item { height: clamp(200px, 30vh, 300px); }
+        .carousel-item img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .carousel-caption { 
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); 
+            padding-bottom: 15px; 
+            bottom: 0; left: 0; right: 0;
+        }
+
+        .section-header { 
+            padding: 15px 25px 10px; color: white; font-size: 1.5rem; 
+            font-family: 'Nunito', sans-serif; font-weight: 900; 
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px;
+        }
+
+        /* --- FLUID GRID SYSTEM --- */
+        .quiz-grid { 
+            display: grid; 
+            /* Adaptive Columns: Fits 2 cols on mobile, 3 on tablet, more on wide screens */
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; 
+            padding: 0 20px 40px; 
+        }
+        
+        .q-card {
+            background: white; border-radius: 25px; overflow: hidden; height: 260px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); position: relative;
+            transform-origin: center; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: floaty 4s ease-in-out infinite;
+        }
+        
+        /* Disable floating animation on hover for precision clicking on Desktop */
+        @media(hover:hover) {
+            .q-card:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+                animation-play-state: paused;
+            }
+        }
+        
+        .q-card:nth-child(even) { animation-duration: 5s; animation-delay: 1s; }
+        
+        .q-img-box { height: 72%; width: 100%; position: relative; }
+        .q-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .q-content { 
+            height: 28%; padding: 5px 10px; text-align: center; 
+            display: flex; flex-direction: column; justify-content: center; position: relative; 
+        }
+        
+        .play-btn-float {
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            width: 45px; height: 45px; 
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: 4px solid white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.1rem; 
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.5);
+            z-index: 5;
+        }
+        
+        .q-title { font-size: 1rem; font-weight: 700; color: #444; line-height: 1.2; margin-top: 15px; }
+
+        @keyframes floaty {
+            0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); }
+        }
+
+        /* --- LEVELS --- */
+        .lvl-list { padding: 20px; }
+        .lvl-item {
+            background: white; margin-bottom: 15px; padding: 20px; border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .lvl-item:hover { border-color: white; background: rgba(255,255,255,0.9); transform: translateY(-3px); }
+        
+        .lvl-name { font-weight: 700; color: #555; font-size: 1.15rem; }
+        .lvl-play { background: #FFD700; color: white; padding: 8px 20px; border-radius: 20px; font-weight: bold; border:none;}
+
+        /* --- GAME --- */
+        .game-card {
+            background: white; border-radius: 30px; margin: 30px 20px 20px; padding: 40px 20px 30px;
+            min-height: 220px; display: flex; align-items: center; justify-content: center;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-size: 1.4rem; font-weight: 700; color: #444; position: relative;
+        }
+        
+        .timer-badge {
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            background: #FFD700; color: white; width: 65px; height: 65px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; font-weight: 900; border: 5px solid white;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15); z-index: 10;
+        }
+        
+        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; max-width: 600px; margin: 0 auto; }
+        .opt-btn {
+            background: white; border: none; padding: 20px 10px; border-radius: 20px;
+            font-family: 'Fredoka'; font-weight: 600; color: #555; font-size: 1rem;
+            box-shadow: 0 6px 0 #f0f0f0; transition: 0.1s; position: relative;
+            cursor: pointer; height: 100%; display: flex; align-items: center; justify-content: center;
+            text-align: center;
+        }
+        .opt-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 0 #ebebeb; }
+        .opt-btn:active { transform: translateY(4px) !important; box-shadow: none !important; }
+        
+        .opt-btn.correct { background: #00E676; color: white; box-shadow: 0 6px 0 #00b359; animation: pulse 0.5s; }
+        .opt-btn.wrong { background: #FF5252; color: white; box-shadow: 0 6px 0 #d32f2f; animation: shake 0.4s; }
+        .opt-btn.hidden { opacity: 0; pointer-events: none; }
+
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+
+        .lifelines { display: flex; justify-content: center; gap: 20px; margin-top: 35px; }
+        .life-btn {
+            width: 55px; height: 55px; border-radius: 50%; border: none;
+            background: white; color: var(--primary); font-size: 1.3rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s;
+        }
+        .life-btn:hover:not(:disabled) { transform: translateY(-3px); }
+        .life-btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+
+        /* --- RESULT --- */
+        .res-box { text-align: center; margin-top: 60px; color: white; padding: 0 20px; }
+        .trophy { font-size: 100px; color: #FFD700; text-shadow: 0 8px 15px rgba(0,0,0,0.2); animation: floaty 3s infinite; margin-bottom: 20px;}
+        .score-big { font-size: 3.5rem; font-weight: 900; margin: 15px 0; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .btn-home {
+            background: white; color: var(--primary); border: none; padding: 15px 40px;
+            border-radius: 40px; font-weight: 800; font-size: 1.2rem; margin-top: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); transition: 0.2s; cursor: pointer;
+        }
+        .btn-home:hover { transform: scale(1.05); }
+
+        /* Poll Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal-card { background: white; padding: 30px; border-radius: 30px; width: 85%; max-width: 400px; animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popUp { from{transform: scale(0.8); opacity: 0;} to{transform: scale(1); opacity: 1;} }
+
+    </style>
+</head>
+<body>
+
+<div id="app-root">
+    
+    <!-- Navbar -->
+    <div class="app-navbar">
+        <!-- FIXED BACK BUTTON (Standard Web Logic) -->
+        <button class="nav-back" onclick="handleNavigation()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <div class="nav-title" id="page-title" data-key="title">Magic Quiz</div>
+        
+        <select id="lang" class="lang-select" onchange="changeLanguage(this.value)">
+            <option value="en">ENG</option>
+            <option value="hi">हिंदी</option>
+            <option value="mr">मराठी</option>
+        </select>
+    </div>
+
+    <!-- HOME SCREEN -->
+    <div id="screen-home" class="screen active">
+        <!-- Slider -->
+        <div class="slider-container" data-aos="zoom-in">
+            <div id="quizCarousel" class="carousel slide quiz-carousel" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active" onclick="loadCategory('levels_gita', 'Bhagavad Gita')">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYz0WRc9wOQDZITO8zdgFs_RoZrTZbaqwunZZTjMDsMVjtM5IvFjg1Ic3g13y-DT9FR19Q4KFQYWrwiUXkURhaN8zE5w4m7akzbnoEeY3VmVyF3uaCYWxDcUfSlpTq3jxvwPqpwPqX3Qrr2Fq1xEVS5sbgea2xkw2gwfl_FQeLMy24leHT_g0tpMRZrm79/s1024/1000098085.png" alt="Gita">
+                        <div class="carousel-caption"><h3 class="fw-bold m-0 text-white" style="text-shadow:2px 2px 4px #000" data-key="cat_gita">Bhagavad Gita</h3></div>
+                    </div>
+                    <div class="carousel-item" onclick="loadCategory('levels_krishna', 'Krishna Leela')">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjC6MgpYsrd8g1IBV2TTQLezkpntu-Bx3gb_7t0A-l-pcacTzGUotyeHOF6NOisKsvFiUrThiYZQ7ZsUZZMcnVGERYT-3OKXtHFHhmGpQgBGYSLw8vZ9LbHDV2zH7Gob9i6jC9NxoPFU-LWc8lWrbrwx8h-HpXVlJKl5qNjA1lNV8zriNxqMVF5fjuHECGi/s1024/1000098088.png" style="object-position: top;" alt="Krishna">
+                        <div class="carousel-caption"><h3 class="fw-bold m-0 text-white" style="text-shadow:2px 2px 4px #000" data-key="cat_krishna">Krishna</h3></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <i class="fas fa-gamepad" style="color:white;"></i> <span data-key="lets_play">Let's Play!</span>
+        </div>
+
+        <!-- Adaptive Grid -->
+        <div class="quiz-grid">
+            <!-- Gita -->
+            <div class="q-card" onclick="loadCategory('levels_gita', 'Bhagavad Gita')" data-aos="fade-up">
+                <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYz0WRc9wOQDZITO8zdgFs_RoZrTZbaqwunZZTjMDsMVjtM5IvFjg1Ic3g13y-DT9FR19Q4KFQYWrwiUXkURhaN8zE5w4m7akzbnoEeY3VmVyF3uaCYWxDcUfSlpTq3jxvwPqpwPqX3Qrr2Fq1xEVS5sbgea2xkw2gwfl_FQeLMy24leHT_g0tpMRZrm79/s1024/1000098085.png" class="q-img" loading="lazy"></div>
+                <div class="q-content">
+                    <div class="play-btn-float"><i class="fas fa-play"></i></div>
+                    <div class="q-title" data-key="cat_gita">Bhagavad Gita</div>
+                </div>
+            </div>
+
+            <!-- Prabhupada -->
+            <div class="q-card" onclick="loadCategory('levels_multi', 'Prabhupada')" data-aos="fade-up" data-aos-delay="100">
+                <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_EXseQhXiXGhFvEEzMtNKsVQxbgLqurLOHxIPYLB-IcGmv8IlLULZ7soivrcNLmRbX8wmFElWJuQrL9EOL-O_rAOPlrWqzHIjWZaGm_BywIbNHCgjVD6D5bYfDCBBNkefhu0nyKI5A4R6an5gy8fS7JLj8fDiQkIlu8ZKL9vgP3unbmgaa-J_7tUg8olb/s1024/1000098087.png" class="q-img" style="object-position: top;" loading="lazy"></div>
+                <div class="q-content">
+                    <div class="play-btn-float"><i class="fas fa-bolt"></i></div>
+                    <div class="q-title" data-key="cat_prabhu">Srila Prabhupada</div>
+                </div>
+            </div>
+
+            <!-- Krishna -->
+            <div class="q-card" onclick="loadCategory('levels_krishna', 'Krishna Leela')" data-aos="fade-up" data-aos-delay="200">
+                <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjC6MgpYsrd8g1IBV2TTQLezkpntu-Bx3gb_7t0A-l-pcacTzGUotyeHOF6NOisKsvFiUrThiYZQ7ZsUZZMcnVGERYT-3OKXtHFHhmGpQgBGYSLw8vZ9LbHDV2zH7Gob9i6jC9NxoPFU-LWc8lWrbrwx8h-HpXVlJKl5qNjA1lNV8zriNxqMVF5fjuHECGi/s1024/1000098088.png" class="q-img" style="object-position: top;" loading="lazy"></div>
+                <div class="q-content">
+                    <div class="play-btn-float"><i class="fas fa-crown"></i></div>
+                    <div class="q-title" data-key="cat_krishna">Shree Krishna</div>
+                </div>
+            </div>
+
+            <!-- Ramayan -->
+            <div class="q-card" onclick="loadCategory('levels_ramayan', 'Ramayan')" data-aos="fade-up" data-aos-delay="300">
+                <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghB61cw_2ud5OVnT3t0-AR8L408ITAx3JSukhyphenhyphenSvUdoSGDhdCAcjBL_Uq_EsqYlvgkAepbKuCJVTU2KBxtSMzgXa9YfciM5dZv6lLAjcP7t2Q0ME_UV9eXwgIWP3Sx7siBQ0OYVL27aQ-8q0Oo2CnG0nLOSmtdKOk8dgxADF7atlMFyjmsvUtnqEbublKC/s1024/1000098086.png" class="q-img" loading="lazy"></div>
+                <div class="q-content">
+                    <div class="play-btn-float"><i class="fas fa-play"></i></div>
+                    <div class="q-title" data-key="cat_ram">Ramayan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEVELS SCREEN -->
+    <div id="screen-levels" class="screen">
+        <div id="lvl-container" class="lvl-list">Loading...</div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="screen-game" class="screen">
+        <div class="d-flex justify-content-between px-4 text-white fw-bold fs-5">
+            <span><span data-key="score_lbl">Score</span>: <span id="score">0</span></span>
+            <span><i class="fas fa-heart" style="color:#FFD700"></i></span>
+        </div>
+
+        <div class="game-card">
+            <div class="timer-badge" id="timer">30</div>
+            <div id="q-text">Loading...</div>
+        </div>
+
+        <div class="opt-grid">
+            <button class="opt-btn" id="opt0" onclick="check(0)">Option A</button>
+            <button class="opt-btn" id="opt1" onclick="check(1)">Option B</button>
+            <button class="opt-btn" id="opt2" onclick="check(2)">Option C</button>
+            <button class="opt-btn" id="opt3" onclick="check(3)">Option D</button>
+        </div>
+
+        <div class="lifelines">
+            <button class="life-btn" id="ll-50" onclick="use5050()" title="50:50"><i class="fas fa-cut"></i></button>
+            <button class="life-btn" id="ll-poll" onclick="usePoll()" title="Audience Poll"><i class="fas fa-poll"></i></button>
+            <button class="life-btn" id="ll-skip" onclick="nextQuestion()" title="Skip Question"><i class="fas fa-forward"></i></button>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="screen-result" class="screen">
+        <div class="res-box">
+            <i class="fas fa-trophy trophy"></i>
+            <h2 class="fw-bold" data-key="good_job">Good Job!</h2>
+            <p data-key="you_scored" class="fs-5 opacity-75">You scored</p>
+            <div class="score-big" id="final-score">0</div>
+            <button class="btn-home" onclick="goHome()" data-key="play_again">Play Again</button>
+        </div>
+    </div>
+
+    <!-- POLL MODAL -->
+    <div id="poll-modal" class="modal-overlay" onclick="this.style.display='none'">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h4 class="text-center fw-bold mb-4" style="color: var(--primary)" data-key="poll_title">Audience Says</h4>
+            <div id="poll-bars"></div>
+            <div class="text-center mt-3">
+                <button class="btn btn-sm btn-outline-danger rounded-pill px-4" onclick="document.getElementById('poll-modal').style.display='none'">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+    AOS.init({ once: true, offset: 50 });
+    
+    // FIREBASE
+    const firebaseConfig = { apiKey: "AIzaSyDxuMG5tqPshrZBs4DSwQFAEnN4ufpAoEQ", authDomain: "iskcon-quize.firebaseapp.com", databaseURL: "https://iskcon-quize-default-rtdb.firebaseio.com", projectId: "iskcon-quize", storageBucket: "iskcon-quize.firebasestorage.app", messagingSenderId: "912283239180", appId: "1:912283239180:web:71d3500598a0aa8308ff29" };
+    firebase.initializeApp(firebaseConfig); 
+    const db = firebase.database();
+
+    // UI TRANSLATION DATA
+    const uiData = {
+        en: { title: "Magic Quiz", cat_gita: "Bhagavad Gita", cat_krishna: "Krishna Leela", cat_prabhu: "Srila Prabhupada", cat_ram: "Ramayan", lets_play: "Let's Play!", score_lbl: "Score", good_job: "Good Job!", you_scored: "You scored", play_again: "Play Again", poll_title: "Audience Says" },
+        hi: { title: "जादुई क्विज़", cat_gita: "भगवद गीता", cat_krishna: "कृष्ण लीला", cat_prabhu: "श्रील प्रभुपाद", cat_ram: "रामायण", lets_play: "चलो खेलें!", score_lbl: "अंक", good_job: "शाबाश!", you_scored: "आपका स्कोर", play_again: "फिर से खेलें", poll_title: "जनता की राय" },
+        mr: { title: "जादुई प्रश्नमंजुषा", cat_gita: "भगवद गीता", cat_krishna: "कृष्ण लीला", cat_prabhu: "श्रील प्रभुपाद", cat_ram: "रामायण", lets_play: "चला खेळूया!", score_lbl: "गुण", good_job: "मस्त खेळलात!", you_scored: "तुमचे गुण", play_again: "पुन्हा खेळा", poll_title: "प्रेक्षकांचे मत" }
+    };
+
+    // STATE
+    let selectedLang = localStorage.getItem('lang') || 'en';
+    let currentQuestions=[], qIndex=0, score=0, timerInt, timeLeft=30, currentAnsIndex=0;
+    let screenStack = ['screen-home'];
+
+    // INIT
+    window.onload = function() {
+        const dd = document.getElementById('lang');
+        if(dd) dd.value = selectedLang;
+        updateUIText();
+        // Reset state on reload
+        screenStack = ['screen-home'];
+    };
+
+    function changeLanguage(val) {
+        selectedLang = val;
+        localStorage.setItem('lang', val); 
+        updateUIText();
+    }
+
+    function updateUIText() {
+        const t = uiData[selectedLang];
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if(t[key]) el.innerText = t[key];
+        });
+        
+        // Refresh Category Texts on Home if they are static HTML
+        // Note: Carousel items also have keys.
+    }
+
+    // NAVIGATION LOGIC (REPLACES go: home logic)
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(screenStack[screenStack.length-1] !== id) screenStack.push(id);
+        window.scrollTo(0,0);
+    }
+
+    function handleNavigation() {
+        // FIXED BACK BUTTON LOGIC
+        if(screenStack.length > 1) { 
+            screenStack.pop(); 
+            show(screenStack[screenStack.length-1]);
+            // Remove duplicate entry caused by show() push
+            screenStack.pop(); 
+        } else {
+            // We are at Main Menu -> Exit to Parent Site
+            // Logic for converting 'go:home' to website structure
+            window.location.href = 'kids_zone.html'; 
+        }
+    }
+
+    function goHome() { 
+        screenStack=['screen-home']; 
+        show('screen-home'); 
+        // Manually fix stack logic
+        screenStack=['screen-home']; 
+    }
+
+    // LEVELS
+    function loadCategory(path, title) {
+        show('screen-levels');
+        document.getElementById('lvl-container').innerHTML = '<div class="text-center mt-5 text-white fs-4"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        db.ref(path).once('value', snapshot => {
+            const list = document.getElementById('lvl-container'); list.innerHTML = "";
+            const data = snapshot.val();
+            if(!data) { list.innerHTML = "<div class='text-center text-white'>No levels found!</div>"; return; }
+            Object.entries(data).forEach(([key, val]) => {
+                const name = (val.name && (val.name[selectedLang] || val.name['en'])) || "Level";
+                // Animation Delay for staggering effect
+                list.innerHTML += `<div class="lvl-item" onclick="startGame('${path}/${key}/questions')"><span class="lvl-name">${name}</span><button class="lvl-play"><i class="fas fa-play"></i></button></div>`;
+            });
+        });
+    }
+
+    // GAME ENGINE
+    function startGame(path) {
+        db.ref(path).once('value', snapshot => {
+            if(!snapshot.val()) return alert("No questions available currently!");
+            currentQuestions = Object.values(snapshot.val());
+            // Filter nulls just in case
+            currentQuestions = currentQuestions.filter(q => q);
+            if(currentQuestions.length === 0) return alert("Empty level!");
+            
+            qIndex = 0; score = 0;
+            document.querySelectorAll('.life-btn').forEach(b => b.disabled = false);
+            show('screen-game'); 
+            loadQuestion();
+        });
+    }
+
+    function loadQuestion() {
+        if(qIndex >= currentQuestions.length) { showResult(); return; }
+        const qData = currentQuestions[qIndex];
+        currentAnsIndex = qData.a;
+        
+        document.getElementById('q-text').innerHTML = (qData.q[selectedLang] || qData.q['en']);
+        document.getElementById('score').innerText = score;
+        
+        document.querySelectorAll('.opt-btn').forEach((btn, i) => {
+            btn.className = 'opt-btn'; 
+            btn.disabled = false;
+            // Handle null options safely
+            let txt = qData.o && qData.o[i] ? (qData.o[i][selectedLang] || qData.o[i]['en']) : "-";
+            btn.innerHTML = `<span class="fw-bold me-2 text-muted">${['A','B','C','D'][i]}.</span> ${txt}`;
+        });
+        startTimer();
+    }
+
+    function startTimer() {
+        clearInterval(timerInt); 
+        timeLeft = 30; 
+        document.getElementById('timer').innerText = timeLeft;
+        document.getElementById('timer').style.color = 'white';
+        document.getElementById('timer').style.backgroundColor = '#FFD700';
+
+        timerInt = setInterval(() => { 
+            timeLeft--; 
+            document.getElementById('timer').innerText = timeLeft; 
+            
+            // Critical warning styles
+            if(timeLeft <= 10) {
+                 document.getElementById('timer').style.backgroundColor = '#FF5252';
+            }
+            
+            if(timeLeft <= 0) { 
+                clearInterval(timerInt); 
+                check(-1); // Time up logic
+            } 
+        }, 1000);
+    }
+
+    function check(idx) {
+        clearInterval(timerInt);
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+        
+        if(idx === currentAnsIndex) {
+            document.getElementById('opt'+idx).classList.add('correct');
+            // Play Audio (Simulated here)
+            score += 1000 + (timeLeft * 10); // Bonus for speed
+            setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
+        } else {
+            if(idx !== -1) document.getElementById('opt'+idx).classList.add('wrong');
+            document.getElementById('opt'+currentAnsIndex).classList.add('correct'); // Show right answer
+            setTimeout(showResult, 2000);
+        }
+    }
+
+    function nextQuestion() { 
+        document.getElementById('ll-skip').disabled = true; 
+        qIndex++; 
+        loadQuestion(); 
+    }
+    
+    function use5050() { 
+        document.getElementById('ll-50').disabled = true; 
+        let hiddenCount = 0; 
+        [0,1,2,3].sort(()=>Math.random()-0.5).forEach(i=>{
+            if(i !== currentAnsIndex && hiddenCount < 2){
+                document.getElementById('opt'+i).classList.add('hidden'); 
+                hiddenCount++;
+            }
+        }); 
+    }
+    
+    function usePoll() {
+        document.getElementById('ll-poll').disabled = true; 
+        document.getElementById('poll-modal').style.display = 'flex';
+        let p = [15, 15, 15, 15]; // Base distribution
+        p[currentAnsIndex] = 55;  // Majority bias
+        // Randomize slightly
+        let total = 0;
+        p = p.map(val => { let v = val + Math.floor(Math.random()*10); total+=v; return v; });
+        
+        document.getElementById('poll-bars').innerHTML = ['A','B','C','D'].map((l,i)=>`
+            <div class="d-flex align-items-center mb-3">
+                <b class="me-3" style="width:20px">${l}</b>
+                <div class="progress w-100 shadow-sm" style="height:12px; border-radius:10px;">
+                    <div class="progress-bar ${i===currentAnsIndex ? 'bg-success' : 'bg-warning'}" 
+                         style="width:${(p[i]/total)*100}%"></div>
+                </div>
+                <span class="ms-2 small text-muted">${Math.round((p[i]/total)*100)}%</span>
+            </div>
+        `).join('');
+    }
+
+    function showResult() { 
+        clearInterval(timerInt);
+        show('screen-result'); 
+        document.getElementById('final-score').innerText = score; 
+        // Trigger celebration or fireworks can go here
+    }
+</script>
+</body>
+</html>
