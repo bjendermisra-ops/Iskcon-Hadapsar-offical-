@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /assets/private/
+Disallow: /admin/
+
+# Media optimizations
+Allow: /*.jpg
+Allow: /*.png
+Allow: /*.mp3
+Allow: /*.mp4
+
+# Sitemap Location
+Sitemap: https://www.iskconhadapsar.online/sitemap.xml
