@@ -1,1 +1,842 @@
+<!-- 
+   FILENAME: index.html
+   STATUS: PRODUCTION READY (Bhakti Kids Enhanced Edition)
+   LOGIC PRESERVED: 100%
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="Kids Japa Sadhana - Chant with Little Krishna">
+    <title>Japa Sadhana - Little Devotee Edition</title>
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons & Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Added 'Fredoka' for the playful kids look, kept Cinzel/Outfit for backward compat -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@300;500;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        saffron: '#FFB800', /* Golden for Krishna */
+                        deep: '#0a0a0a', 
+                        darkCard: '#1f1f1f',
+                        pinky: '#FF4081',
+                        sky: '#00C2FF'
+                    },
+                    fontFamily: { 
+                        sans: ['Outfit', 'sans-serif'], 
+                        serif: ['Cinzel', 'serif'],
+                        kids: ['Fredoka', 'sans-serif'] /* New Playful Font */
+                    },
+                    animation: { 
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'bounce-slight': 'bounceSlight 2s infinite',
+                        'float': 'floatUp 1s ease-out forwards'
+                    },
+                    keyframes: { 
+                        fadeIn: { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+                        bounceSlight: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-5px)' } },
+                        floatUp: { '0%': { opacity: '1', transform: 'translateY(0) scale(1)' }, '100%': { opacity: '0', transform: 'translateY(-50px) scale(1.5)' } }
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px rgba(255, 184, 0, 0.5), 0 0 20px rgba(255, 184, 0, 0.3)',
+                        'card-glow': '0 4px 20px rgba(0,0,0,0.5)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #050505; color: white; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; overflow: hidden; }
+        
+        /* New Animated Gradient Background */
+        .bg-fixed-art {
+            position: fixed; inset: 0; z-index: -2;
+            /* Little Krishna Art background */
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg');
+            background-size: cover; background-position: center; opacity: 0.2;
+            mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+        }
+        
+        /* Particle Effects for Taps */
+        .tap-particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 24px;
+            color: #FFB800;
+            z-index: 50;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.2) rotate(20deg); opacity: 0; }
+        }
+
+        .app-layout { 
+            height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+            width: 100%; max-width: 500px; margin: 0 auto; 
+            border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        /* Fun Elements */
+        .btn-bouncy { transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .btn-bouncy:active { transform: scale(0.9) rotate(-3deg); }
+        
+        /* Circular Progress Ring */
+        .ring-progress { transition: stroke-dashoffset 0.1s linear, stroke 0.3s; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        
+        /* Scrollbar hiding */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+
+        /* Modern Glass Cards */
+        .glass-card {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* History Panel */
+        .history-details { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .history-card.active .history-details { max-height: 500px; }
+        .history-card.active .chevron { transform: rotate(180deg); color: #FFB800; }
+        .chevron { transition: transform 0.3s; }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-fixed-art"></div>
+    <!-- Interactive container for tap particles -->
+    <div id="particleContainer" class="fixed inset-0 pointer-events-none overflow-hidden z-[40]"></div>
+
+    <div class="app-layout">
+        
+        <!-- HEADER: Child Friendly -->
+        <header class="flex justify-between items-center px-5 py-4 z-20">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-saffron border-2 border-white/5 active:scale-90 transition shadow-lg">
+                    <i class="fas fa-home text-lg"></i>
+                </a>
+                
+                <div>
+                    <!-- Badge Logic placeholder (Populated by JS) -->
+                    <div id="levelBadge" class="inline-flex items-center px-2 py-0.5 rounded-full bg-saffron/20 border border-saffron/30 text-[10px] text-saffron font-bold mb-0.5 animate-pulse">
+                        <i class="fas fa-star mr-1"></i> New Devotee
+                    </div>
+                    <h1 class="font-serif text-white font-bold text-sm tracking-widest drop-shadow-md">MY JAPA</h1>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <!-- Bigger Touch Targets -->
+                <button onclick="openHistory()" class="w-10 h-10 rounded-full bg-pinky/10 text-pink-400 border border-pink-500/20 hover:bg-pink-500/20 transition flex items-center justify-center"><i class="fas fa-trophy text-lg"></i></button>
+                <button onclick="openSettings()" class="w-10 h-10 rounded-full bg-sky/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition flex items-center justify-center"><i class="fas fa-gear text-lg"></i></button>
+            </div>
+        </header>
+
+        <!-- MAIN DASHBOARD -->
+        <main class="flex-1 flex flex-col items-center justify-center relative w-full p-4 z-10 pb-2">
+            
+            <!-- Child-Friendly Stats -->
+            <div class="grid grid-cols-2 gap-4 w-full mb-6">
+                <!-- Round Counter -->
+                <div class="glass-card rounded-3xl p-4 flex flex-col items-center shadow-card-glow transform hover:scale-[1.02] transition duration-300">
+                    <div class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center absolute -top-3 shadow-lg">
+                        <i class="fas fa-sun text-white text-xs"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-300 font-bold uppercase mt-1">Total Rounds</span>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span id="roundsDisplay" class="text-4xl font-kids text-white drop-shadow-lg">0</span>
+                        <span id="targetDisplay" class="text-md font-bold text-saffron opacity-80">/ 16</span>
+                    </div>
+                </div>
+                
+                <!-- Timer Card -->
+                <div class="glass-card rounded-3xl p-4 flex flex-col items-center justify-center relative shadow-card-glow group overflow-hidden">
+                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center absolute -top-3 shadow-lg z-20">
+                        <i class="fas fa-clock text-white text-xs"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-300 font-bold uppercase mt-1 z-10">Timer</span>
+                    <div id="timerDisplay" class="text-3xl font-mono text-saffron font-bold z-10 mt-1 drop-shadow-lg">00:00</div>
+                    
+                    <button onclick="toggleTimer()" class="absolute inset-0 z-20 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 backdrop-blur-sm">
+                        <i id="timerIcon" class="fas fa-pause text-2xl text-white"></i>
+                    </button>
+                    <!-- Animated Decoration -->
+                    <div class="absolute -bottom-4 -right-4 text-6xl text-blue-500/10"><i class="fas fa-stopwatch"></i></div>
+                </div>
+            </div>
+
+            <!-- THE BIG INTERACTIVE COUNTER -->
+            <div class="relative w-[300px] h-[300px] flex items-center justify-center mb-6">
+                
+                <!-- Glow Effect -->
+                <div class="absolute inset-0 rounded-full bg-saffron/10 blur-3xl animate-pulse"></div>
+
+                <!-- SVG Ring -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_0_15px_rgba(255,184,0,0.4)]">
+                    <!-- Background Circle -->
+                    <circle class="text-white/5" stroke-width="14" stroke="currentColor" fill="transparent" r="135" cx="150" cy="150" />
+                    <!-- Progress Circle -->
+                    <circle id="progressRing" class="ring-progress text-saffron" stroke-width="14" stroke-dasharray="848" stroke-dashoffset="848" stroke-linecap="round" stroke="currentColor" fill="transparent" r="135" cx="150" cy="150" />
+                    <!-- Decoration Dot -->
+                    <circle id="headBead" r="4" fill="#FF4081" cx="150" cy="15" class="shadow-lg"/>
+                </svg>
+
+                <!-- Tap Button (Core Interaction) -->
+                <!-- UPDATED IMAGE for Kids appeal (Peacock feather / bead aesthetic) -->
+                <button id="tapBtn" onmousedown="handleTap(event)" ontouchstart="handleTap(event)" 
+                    class="btn-bouncy relative w-[230px] h-[230px] rounded-full border-[6px] border-[#222] shadow-[0_0_40px_rgba(255,184,0,0.3)] flex flex-col items-center justify-center z-20 overflow-hidden bg-cover bg-center group"
+                    style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4VjO0JtBwbKwcQ8eWc5Z3c_r5A4_u2x1f2O9GfQv4Vz3x_g2XyH4WbK7Zf6O9G3fQ2Vz8x_g3XyH4WbK7Zf6O9G3fQ2Vz8x_g3XyH4WbK7Zf6O9G3fQ2Vz8/s1600/radha-krishna-cartoon.jpg'); box-shadow: inset 0 0 40px rgba(0,0,0,0.8);">
+                    
+                    <!-- Gradient Overlay for Readability -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                    
+                    <span class="relative z-10 text-xl font-kids text-sky-300 drop-shadow-md tracking-wide mt-8">Chant</span>
+                    <span id="beadCount" class="relative z-10 text-[6rem] font-kids font-bold leading-none text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] select-none">0</span>
+                    <span class="relative z-10 text-[10px] text-gray-300 font-bold mt-[-5px]">HARI BOL</span>
+                </button>
+            </div>
+
+            <!-- Mantra Text -->
+            <div class="text-center w-full px-4 py-2 glass-card rounded-xl border-t-2 border-saffron/50">
+                <h3 class="text-transparent bg-clip-text bg-gradient-to-r from-saffron to-yellow-200 font-bold text-sm font-serif uppercase tracking-wider animate-bounce-slight">Hare Krishna Hare Krishna</h3>
+                <p class="text-[10px] text-gray-300 font-sans tracking-wide">Krishna Krishna Hare Hare • Hare Rama Hare Rama • Rama Rama Hare Hare</p>
+            </div>
+
+        </main>
+
+        <!-- FOOTER MENU (Redesigned Icons) -->
+        <footer class="bg-deep border-t border-white/5 p-3 pb-8 z-20">
+            <div class="flex justify-evenly items-center max-w-sm mx-auto bg-white/5 rounded-2xl p-2 backdrop-blur-md border border-white/5">
+                <button onclick="toggleAudio()" id="audioBtn" class="flex flex-col items-center gap-1 group w-16 p-1 rounded-xl hover:bg-white/5 transition">
+                    <i class="fas fa-music text-xl text-sky-400 mb-1 group-active:scale-90"></i>
+                    <span class="text-[9px] text-gray-400 font-bold">Kirtan</span>
+                </button>
+                
+                <!-- Reset Warning red color maintained -->
+                <button onclick="resetBeads()" class="flex flex-col items-center gap-1 group w-16 p-1 rounded-xl hover:bg-white/5 transition">
+                    <i class="fas fa-rotate-left text-xl text-red-400 mb-1 group-active:scale-90 group-hover:rotate-180 transition-transform duration-500"></i>
+                    <span class="text-[9px] text-gray-400 font-bold">Restart</span>
+                </button>
+                
+                <button onclick="shareProgress()" class="flex flex-col items-center gap-1 group w-16 p-1 rounded-xl hover:bg-white/5 transition">
+                    <i class="fas fa-share-from-square text-xl text-green-400 mb-1 group-active:scale-90"></i>
+                    <span class="text-[9px] text-gray-400 font-bold">Share</span>
+                </button>
+            </div>
+            
+            <div class="text-center mt-3 text-[9px] text-gray-600">
+                <i class="fas fa-fire text-orange-600 mr-1"></i> Streak: <span id="streakDisplay" class="text-gray-400">0 Days</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ===== MODALS (Redesigned with Glassmorphism and Curves) ===== -->
+
+    <!-- SETTINGS -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+        <div class="glass-card w-full max-w-sm rounded-[30px] border border-white/10 p-6 shadow-2xl relative">
+            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-white bg-red-500 rounded-full w-8 h-8 flex items-center justify-center hover:scale-110 transition shadow-lg z-50"><i class="fas fa-times"></i></button>
+            
+            <h2 class="text-center text-saffron font-kids text-2xl mb-1">My Goals</h2>
+            <p class="text-center text-gray-400 text-xs mb-6">How many rounds for Krishna today?</p>
+
+            <div class="mb-6">
+                <div class="grid grid-cols-3 gap-3 mb-3">
+                    <button onclick="setTargetInput(16)" class="py-3 rounded-2xl bg-white/5 border-2 border-transparent text-white font-bold font-kids text-lg hover:border-saffron hover:bg-saffron/20 transition">16</button>
+                    <button onclick="setTargetInput(32)" class="py-3 rounded-2xl bg-white/5 border-2 border-transparent text-white font-bold font-kids text-lg hover:border-saffron hover:bg-saffron/20 transition">32</button>
+                    <button onclick="setTargetInput(64)" class="py-3 rounded-2xl bg-white/5 border-2 border-transparent text-white font-bold font-kids text-lg hover:border-saffron hover:bg-saffron/20 transition">64</button>
+                </div>
+                <input type="number" id="customTargetInput" placeholder="Or type a number..." class="w-full bg-black/50 border border-white/20 rounded-xl py-3 px-4 text-center font-bold text-white focus:border-saffron outline-none focus:ring-1 ring-saffron">
+            </div>
+
+            <div class="space-y-3 bg-black/30 rounded-2xl p-4 border border-white/5">
+                <!-- Toggles with Colors -->
+                <div class="flex justify-between items-center p-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center"><i class="fas fa-volume-up"></i></div>
+                        <span class="text-sm font-bold">Sound Effects</span>
+                    </div>
+                    <input type="checkbox" id="soundToggle" class="w-6 h-6 accent-blue-500">
+                </div>
+                <div class="w-full h-[1px] bg-white/5"></div>
+                <div class="flex justify-between items-center p-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-pink-500/20 text-pink-400 flex items-center justify-center"><i class="fas fa-mobile-alt"></i></div>
+                        <span class="text-sm font-bold">Vibration</span>
+                    </div>
+                    <input type="checkbox" id="vibToggle" class="w-6 h-6 accent-pink-500">
+                </div>
+                <div class="w-full h-[1px] bg-white/5"></div>
+                <!-- Notification Logic Preserved -->
+                <div class="flex justify-between items-center p-1">
+                     <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center"><i class="fas fa-bell"></i></div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold">Daily Reminders</span>
+                        </div>
+                    </div>
+                    <input type="checkbox" id="notifyToggle" onchange="requestNotificationPermission()" class="w-6 h-6 accent-green-500">
+                </div>
+                <button onclick="triggerTestNotification()" class="w-full py-2 bg-white/5 text-gray-400 text-[10px] rounded-lg hover:text-white transition mt-2">
+                    Test Alert System
+                </button>
+            </div>
+
+            <button onclick="saveSettings()" class="w-full mt-6 bg-gradient-to-r from-saffron to-orange-600 text-black font-kids font-bold text-xl py-3 rounded-2xl shadow-[0_4px_15px_rgba(255,153,0,0.4)] transform hover:scale-[1.02] transition">SAVE!</button>
+        </div>
+    </div>
+
+    <!-- HISTORY (Enhanced List) -->
+    <div id="historyModal" class="hidden fixed inset-0 z-50 bg-black/95 flex items-end sm:items-center justify-center animate-fade-in backdrop-blur-md">
+        <div class="bg-[#1a1a1a] w-full sm:w-[400px] h-[85vh] sm:h-[650px] sm:rounded-3xl rounded-t-3xl border-t sm:border border-white/10 flex flex-col shadow-2xl overflow-hidden relative">
+            
+            <div class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-saffron/10 to-transparent pointer-events-none"></div>
+
+            <div class="p-6 pb-2 z-10 flex justify-between items-center">
+                <div>
+                    <h2 class="text-white font-kids text-2xl">History Book</h2>
+                    <p class="text-xs text-gray-400">All your spiritual services</p>
+                </div>
+                <button onclick="closeModal('historyModal')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 p-4 z-10">
+                <div class="bg-gray-800/50 p-3 rounded-2xl text-center border border-white/5">
+                    <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Total Rounds</div>
+                    <div id="histTotalRounds" class="text-3xl font-kids text-saffron mt-1">0</div>
+                </div>
+                <div class="bg-gray-800/50 p-3 rounded-2xl text-center border border-white/5">
+                    <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Best Day</div>
+                    <div id="histBestDay" class="text-3xl font-kids text-sky-400 mt-1">0</div>
+                </div>
+            </div>
+            
+            <div id="historyList" class="flex-1 overflow-y-auto p-4 space-y-3 hide-scroll pb-10 z-10">
+                <!-- JS Populates this -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CELEBRATION (Overhauled for Kids) -->
+    <div id="celebrationModal" class="hidden fixed inset-0 z-[60] bg-black/90 backdrop-blur-lg flex items-center justify-center p-6 animate-fade-in">
+        <div class="bg-darkCard border-4 border-saffron w-full max-w-xs rounded-[40px] p-6 text-center relative shadow-[0_0_80px_rgba(255,184,0,0.3)]">
+            
+            <!-- Confetti Anchor -->
+            <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-saffron rounded-full flex items-center justify-center border-4 border-[#1a1a1a] shadow-xl animate-bounce">
+                <i class="fas fa-check text-4xl text-black"></i>
+            </div>
+
+            <h2 class="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-500 font-kids font-bold mt-10 mb-2">Round Done!</h2>
+            <p class="text-sm text-gray-300 mb-6 font-sans">"Krishna is very happy with you!"</p>
+            
+            <div class="bg-black/40 rounded-2xl p-4 mb-6 border border-white/10 mx-auto w-full">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-gray-400">Total Rounds</span>
+                    <span id="celRoundNum" class="text-xl text-saffron font-bold font-mono">1</span>
+                </div>
+                <div class="h-[1px] bg-white/10 w-full mb-2"></div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Time Taken</span>
+                    <span id="celTime" class="text-md text-white font-mono">00:00</span>
+                </div>
+            </div>
+            <button onclick="startNextRound()" class="w-full bg-saffron text-black font-bold font-kids text-lg py-4 rounded-3xl hover:scale-105 active:scale-95 transition shadow-lg flex items-center justify-center gap-2">
+                <span>Start Next!</span> <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- SOUND ASSETS -->
+    <!-- Preserved IDs, Sources updated or kept valid -->
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+    <audio id="bgAudio" loop src="https://archive.org/download/SrilaPrabhupadaJapa/SrilaPrabhupadaJapa_64kb.mp3"></audio>
+
+    <script>
+        /* ========================
+           APP STATE MANAGEMENT
+           ======================== */
+        const MAX_BEADS = 108;
+        // Adjusted Ring Circumference for larger radius (r=135) -> 2*PI*135 ≈ 848
+        const RING_CIRCUMFERENCE = 848; 
+        
+        let state = {
+            beads: 0,
+            roundsToday: 0,
+            target: 16,
+            timer: { running: false, elapsed: 0 },
+            history: {}, 
+            settings: { sound: true, vib: true, notify: false },
+            streak: 0,
+            lastActivity: Date.now()
+        };
+
+        let timerInterval = null;
+        let notificationInterval = null;
+
+        // Initialization
+        window.onload = () => {
+            loadData();
+            updateUI();
+            checkNotificationPermissionOnLoad();
+            
+            // Background Interval for Smart Notifications
+            notificationInterval = setInterval(checkInactivity, 300000); // Check every 5 mins
+            
+            // Resume Timer if it was running (e.g. reload)
+            if(state.timer.running) toggleTimer(true);
+
+            // Pre-calculate Badge level
+            updateLevelBadge();
+        };
+
+        /* ========================
+           VISUAL EFFECTS (New for Kids)
+           ======================== */
+        function spawnParticle(x, y) {
+            const container = document.getElementById('particleContainer');
+            const particle = document.createElement('div');
+            particle.className = 'tap-particle fas';
+            
+            // Random icons: Flower, Sparkle, Om, Heart
+            const icons = ['fa-fan', 'fa-seedling', 'fa-star', 'fa-heart', 'fa-spa']; 
+            particle.classList.add(icons[Math.floor(Math.random() * icons.length)]);
+            
+            // Color variation
+            const colors = ['#FFB800', '#FF4081', '#00C2FF', '#FFFFFF'];
+            particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Position exactly at tap
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            container.appendChild(particle);
+            
+            // Clean up DOM after animation
+            setTimeout(() => { particle.remove(); }, 800);
+        }
+
+        /* ========================
+           CHANTING LOGIC
+           ======================== */
+        function handleTap(e) {
+            // UI Visual Logic (Coordinates for particles)
+            let clientX, clientY;
+            if(e.type === 'touchstart') {
+                e.preventDefault(); 
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            // Spawn 2-3 particles for effect
+            spawnParticle(clientX, clientY);
+            setTimeout(() => spawnParticle(clientX + (Math.random()*20-10), clientY + (Math.random()*20-10)), 100);
+
+            // Core Logic
+            state.beads++;
+            state.lastActivity = Date.now();
+            
+            // Auto-start timer on first bead
+            if(state.beads === 1 && !state.timer.running) toggleTimer(true);
+
+            // Visual Tap Effect on Button
+            const btn = document.getElementById('tapBtn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = 'scale(1)', 100);
+
+            // Sound & Haptic
+            if(state.settings.vib && navigator.vibrate) navigator.vibrate(25); // Increased vibe slightly
+            if(state.settings.sound) {
+                const click = document.getElementById('clickSound');
+                click.currentTime = 0;
+                click.play().catch(e => console.log('Audio Blocked:', e));
+            }
+
+            // Logic: Complete Round vs Count
+            if(state.beads >= MAX_BEADS) {
+                completeRound();
+            } else { 
+                updateUI(); 
+                saveData(); 
+            }
+        }
+
+        function completeRound() {
+            toggleTimer(false);
+            state.roundsToday++;
+            
+            // Log to History
+            const today = new Date().toISOString().split('T')[0];
+            if(!state.history[today]) state.history[today] = [];
+            state.history[today].push({
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: formatTime(state.timer.elapsed),
+                roundNum: state.roundsToday
+            });
+
+            // Update Modal Data
+            document.getElementById('celRoundNum').innerText = `#${state.roundsToday}`;
+            document.getElementById('celTime').innerText = formatTime(state.timer.elapsed);
+            
+            // Trigger Badge update
+            updateLevelBadge();
+
+            document.getElementById('celebrationModal').classList.remove('hidden');
+            
+            // Mega Confetti Blast (More Colorful for Kids)
+            const duration = 2000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#FFB800', '#FF4081', '#00C2FF']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#FFFFFF', '#FFB800']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+            
+            saveData();
+            updateUI();
+        }
+
+        function startNextRound() {
+            document.getElementById('celebrationModal').classList.add('hidden');
+            state.beads = 0;
+            state.timer.elapsed = 0; // Reset timer for new round
+            if(state.timer.running) toggleTimer(false);
+            
+            updateUI();
+            saveData();
+            document.getElementById('timerDisplay').innerText = "00:00";
+        }
+
+        /* ========================
+           NOTIFICATION LOGIC (Strictly Preserved)
+           ======================== */
+        function checkNotificationPermissionOnLoad() {
+            if ("Notification" in window) {
+                if (Notification.permission === "granted") {
+                    state.settings.notify = true;
+                    document.getElementById('notifyToggle').checked = true;
+                }
+            }
+        }
+
+        function requestNotificationPermission() {
+            const toggle = document.getElementById('notifyToggle');
+            if (toggle.checked) {
+                if (!("Notification" in window)) {
+                    alert("Your browser does not support notifications.");
+                    toggle.checked = false;
+                    return;
+                }
+                
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        state.settings.notify = true;
+                        new Notification("Japa Sadhana", { body: "Hari Bol! Notifications Enabled.", icon: "https://cdn-icons-png.flaticon.com/512/3663/3663335.png" });
+                    } else {
+                        alert("Notifications blocked by browser settings.");
+                        toggle.checked = false;
+                        state.settings.notify = false;
+                    }
+                    saveData();
+                });
+            } else {
+                state.settings.notify = false;
+                saveData();
+            }
+        }
+
+        function checkInactivity() {
+            if(!state.settings.notify) return;
+            // 2 Hours inactivity
+            const inactivityLimit = 7200000; 
+            if ((Date.now() - state.lastActivity) > inactivityLimit && state.roundsToday < state.target) {
+                triggerNativeNotification(`You have ${state.target - state.roundsToday} rounds left for Krishna today!`);
+                state.lastActivity = Date.now();
+            }
+        }
+
+        function triggerTestNotification() {
+            if(Notification.permission === "granted") {
+                alert("Testing... minimize app. Notification arriving in 3s.");
+                setTimeout(() => {
+                    triggerNativeNotification("Hare Krishna! Time to chant.");
+                }, 3000);
+            } else {
+                alert("Please enable the toggle switch first.");
+            }
+        }
+
+        function triggerNativeNotification(msg) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("Kids Japa", {
+                    body: msg,
+                    icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh89ueri3DvWfVUmM76dyYJSTCLcDC6oYuAT3j-ezAKl5iDeJ97q28vt2MR39RJwL8BGI91we6F4DRj-u7j1EE2NPyQRwFs0HfYcB4HjxZ9VoeUQWGR7GdARSdow00uHqEehsr6gOVDFG15mntfIdNuOrQ_fxAZHCjMWU9kEjzaUMhuN52vsKMA6Tb9Dtx3/s256/1000096788.png",
+                    vibrate: [200, 100, 200]
+                });
+            } else {
+                alert("🔔 " + msg);
+            }
+        }
+
+        /* ========================
+           HISTORY RENDERER (Updated CSS)
+           ======================== */
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = "";
+            const dates = Object.keys(state.history).sort((a,b) => new Date(b) - new Date(a));
+            
+            let totalLifetimeRounds = 0;
+            let bestDay = 0;
+
+            if(dates.length === 0) {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center h-40 text-gray-500 opacity-60">
+                    <i class="fas fa-book-open text-3xl mb-2"></i>
+                    <p class="text-sm font-kids">No Chanting Yet</p>
+                </div>`;
+            } else {
+                dates.forEach(date => {
+                    const rounds = state.history[date];
+                    const count = rounds.length;
+                    totalLifetimeRounds += count;
+                    if(count > bestDay) bestDay = count;
+
+                    const dateObj = new Date(date);
+                    const dateDisplay = dateObj.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+
+                    // Accordion Card
+                    const item = document.createElement('div');
+                    item.className = "history-card bg-gray-800/80 rounded-2xl border border-white/5 mb-3 overflow-hidden transition-all shadow-md";
+                    
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center p-4 cursor-pointer hover:bg-white/5" onclick="this.parentElement.classList.toggle('active')">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-saffron text-black flex items-center justify-center text-md font-bold font-kids shadow-lg">${count}</div>
+                                <div>
+                                    <div class="text-md font-bold text-white">${dateDisplay}</div>
+                                    <div class="text-[10px] text-gray-400 font-bold">${(count * 108).toLocaleString()} Holy Names</div>
+                                </div>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center">
+                                <i class="fas fa-chevron-down text-xs text-white chevron transition-transform"></i>
+                            </div>
+                        </div>
+                        <div class="history-details bg-black/40 text-xs border-t border-white/5">
+                            <div class="p-3 space-y-2">
+                                ${rounds.map((r, i) => `
+                                    <div class="flex justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                                        <span class="text-saffron font-bold">Round ${i+1}</span>
+                                        <span class="text-gray-400"><i class="far fa-clock mr-1"></i> ${r.time}</span>
+                                        <span class="font-mono text-white bg-black/30 px-2 rounded">${r.duration}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+
+            document.getElementById('histTotalRounds').innerText = totalLifetimeRounds.toLocaleString();
+            document.getElementById('histBestDay').innerText = bestDay;
+            return totalLifetimeRounds;
+        }
+
+        function updateLevelBadge() {
+            let total = 0;
+            // We need to calc total briefly (can also be done inside renderHistory, but done here for badge load)
+            Object.values(state.history).forEach(r => total += r.length);
+            
+            const badgeEl = document.getElementById('levelBadge');
+            let label = "New Bhakta";
+            let color = "text-gray-400";
+            
+            if(total >= 1) { label = "Aspiring Servant"; color = "text-white"; }
+            if(total >= 10) { label = "Little Devotee"; color = "text-sky-300"; }
+            if(total >= 50) { label = "Chanting Star"; color = "text-saffron"; }
+            if(total >= 108) { label = "Goloka Hero"; color = "text-pink-400"; }
+
+            badgeEl.innerHTML = `<i class="fas fa-star mr-1"></i> ${label}`;
+            // Optional styling updates based on level could go here
+        }
+
+        /* ========================
+           DATA PERSISTENCE
+           ======================== */
+        function saveData() { 
+            localStorage.setItem('iskcon_japa_v2', JSON.stringify(state)); 
+        }
+        
+        function loadData() {
+            const raw = localStorage.getItem('iskcon_japa_v2');
+            if(raw) {
+                const data = JSON.parse(raw);
+                state = { ...state, ...data, timer: { running:false, elapsed:0 } };
+                
+                const today = new Date().toISOString().split('T')[0];
+                if(state.history[today]) {
+                    state.roundsToday = state.history[today].length;
+                } else {
+                    state.roundsToday = 0; 
+                }
+            }
+        }
+
+        /* ========================
+           UTILITIES
+           ======================== */
+        function updateUI() {
+            document.getElementById('beadCount').innerText = state.beads;
+            document.getElementById('roundsDisplay').innerText = state.roundsToday;
+            document.getElementById('targetDisplay').innerText = `/ ${state.target}`;
+            const streakCount = Object.keys(state.history).length;
+            document.getElementById('streakDisplay').innerText = streakCount + (streakCount === 1 ? " Day" : " Days"); 
+            
+            const timerTxt = formatTime(state.timer.elapsed);
+            if(state.timer.running) document.getElementById('timerDisplay').innerText = timerTxt;
+            else if(state.timer.elapsed === 0) document.getElementById('timerDisplay').innerText = "00:00";
+            
+            // SVG Progress Logic
+            const offset = RING_CIRCUMFERENCE - (state.beads / MAX_BEADS) * RING_CIRCUMFERENCE;
+            document.getElementById('progressRing').style.strokeDashoffset = offset;
+
+            // Head Bead dot positioning (Rotate based on progress)
+            // Logic: 0 beads = 0deg, 108 = 360deg. 
+            // Currently simple SVG path dashoffset is used. 
+            // Ideally we rotate a container, but preserving exact visual logic of dashoffset.
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s/60).toString().padStart(2,'0');
+            const sec = (s%60).toString().padStart(2,'0');
+            return `${m}:${sec}`;
+        }
+
+        function toggleTimer(force) {
+            const run = force !== undefined ? force : !state.timer.running;
+            
+            if(run) {
+                if(timerInterval) clearInterval(timerInterval);
+                state.timer.running = true;
+                timerInterval = setInterval(() => {
+                    state.timer.elapsed++;
+                    document.getElementById('timerDisplay').innerText = formatTime(state.timer.elapsed);
+                }, 1000);
+                document.getElementById('timerIcon').className = "fas fa-pause";
+                // Add pulse to container
+                document.getElementById('timerDisplay').parentElement.classList.add('ring-2', 'ring-saffron/30');
+            } else {
+                clearInterval(timerInterval);
+                state.timer.running = false;
+                document.getElementById('timerIcon').className = "fas fa-play pl-1";
+                document.getElementById('timerDisplay').parentElement.classList.remove('ring-2', 'ring-saffron/30');
+            }
+            saveData();
+        }
+
+        function setTargetInput(val) { document.getElementById('customTargetInput').value = val; }
+        
+        function saveSettings() {
+            const val = document.getElementById('customTargetInput').value;
+            if(val > 0) state.target = parseInt(val);
+            state.settings.sound = document.getElementById('soundToggle').checked;
+            state.settings.vib = document.getElementById('vibToggle').checked;
+            state.settings.notify = document.getElementById('notifyToggle').checked; // Ensure this is captured
+            saveData();
+            updateUI();
+            closeModal('settingsModal');
+        }
+
+        // Modal Helpers
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openModal(id) { 
+            document.getElementById(id).classList.remove('hidden'); 
+            if(id === 'settingsModal') {
+                document.getElementById('customTargetInput').value = state.target;
+                document.getElementById('soundToggle').checked = state.settings.sound;
+                document.getElementById('vibToggle').checked = state.settings.vib;
+                document.getElementById('notifyToggle').checked = state.settings.notify;
+            }
+            if(id === 'historyModal') renderHistory();
+        }
+        function openSettings() { openModal('settingsModal'); }
+        function openHistory() { openModal('historyModal'); }
+
+        // Controls
+        function resetBeads() {
+            if(confirm("Start this round over from zero?")) {
+                state.beads = 0;
+                toggleTimer(false);
+                state.timer.elapsed = 0;
+                updateUI();
+                saveData();
+                document.getElementById('timerDisplay').innerText = "00:00";
+            }
+        }
+
+        function shareProgress() {
+            const txt = `📿 Bhakti Kids Japa\nI completed ${state.roundsToday} rounds for Krishna today!`;
+            if (navigator.share) {
+                navigator.share({ title: 'My Japa Progress', text: txt });
+            } else {
+                navigator.clipboard.writeText(txt);
+                alert("Copied to clipboard!");
+            }
+        }
+
+        // Audio Toggle
+        let isPlaying = false;
+        function toggleAudio() {
+            const aud = document.getElementById('bgAudio');
+            const icon = document.getElementById('audioBtn').querySelector('i');
+            
+            if(isPlaying) {
+                aud.pause();
+                icon.className="fas fa-music text-xl text-sky-400 mb-1";
+            } else {
+                aud.play().then(() => {
+                    icon.className="fas fa-pause text-xl text-saffron mb-1 animate-bounce";
+                }).catch(e => {
+                    alert("Tap the screen first to enable sound!");
+                });
+            }
+            isPlaying = !isPlaying;
+        }
+
+    </script>
+</body>
+</html>
