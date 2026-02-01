@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ISKCON Gallery - Divine Darshan and Festivals">
     <title>ISKCON Gallery - Divine Darshan</title>
     
-    <!-- Bootstrap & Icons -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     
@@ -40,6 +41,7 @@
             background-color: var(--primary); 
             box-shadow: 0 4px 20px rgba(0,0,0,0.6); 
             z-index: 1030;
+            padding: 10px 0;
         }
         
         .navbar-brand { 
@@ -70,32 +72,10 @@
         .nav-back-btn:hover {
             background: rgba(255,255,255,1);
             color: var(--primary);
+            transform: translateX(-2px);
         }
 
-        /* --- SIDEBAR MENU --- */
-        .offcanvas { 
-            background-color: #1a1a1a; 
-            color: white; 
-            width: 300px !important; 
-            border-right: 1px solid #333;
-        }
-        
-        .menu-item { 
-            padding: 15px 20px; 
-            display: flex; align-items: center; 
-            font-size: 1.05rem; color: #e0e0e0; 
-            text-decoration: none; 
-            margin-bottom: 5px; 
-            border-radius: 10px; 
-            transition: 0.2s;
-        }
-        .menu-item:hover, .menu-item:focus { 
-            background: rgba(255, 153, 51, 0.15); 
-            color: var(--primary); 
-        }
-        .menu-item i { width: 35px; color: var(--primary); }
-
-        /* --- HEADER --- */
+        /* --- HEADER SECTION --- */
         .header-section {
             text-align: center; 
             padding: 30px 15px;
@@ -107,7 +87,7 @@
         .header-title {
             font-family: 'Cinzel', 'Noto Sans Devanagari', serif; 
             color: var(--text-gold); 
-            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive Font */
+            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Fluid Typography */
             margin: 0; text-transform: uppercase; letter-spacing: 2px;
             text-shadow: 0 4px 10px rgba(0,0,0,0.8);
         }
@@ -128,15 +108,16 @@
 
         .pswp-gallery {
             display: grid;
-            /* MOBILE: 2 Columns | TABLET: 3 Cols | DESKTOP: 4 Cols | TV: 6 Cols */
+            /* Adaptive Grid: Mobile (2 col) -> Tablet (3 col) -> Desktop (4+ col) */
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
             gap: 15px; 
             padding: 0 15px;
         }
 
-        /* Larger Grid Gap for Larger Screens */
+        /* Optimizations for Large Screens */
         @media(min-width: 1024px) {
-            .pswp-gallery { gap: 20px; padding: 0 30px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .pswp-gallery { gap: 20px; padding: 0 30px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+            .header-section { padding: 50px 15px; }
         }
 
         .gallery-item {
@@ -147,16 +128,17 @@
             background: #252525; border: 1px solid #333;
             transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-decoration: none;
+            cursor: zoom-in;
         }
 
         /* Hover effect strictly for Mouse Users */
         @media(hover: hover) {
             .gallery-item:hover { 
-                transform: translateY(-5px); 
+                transform: translateY(-8px); 
                 border-color: var(--text-gold);
-                box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 10px rgba(255, 215, 0, 0.2);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 15px rgba(255, 215, 0, 0.15);
             }
-            .gallery-item:hover img { transform: scale(1.05); }
+            .gallery-item:hover img { transform: scale(1.08); }
         }
 
         .gallery-item img {
@@ -164,18 +146,20 @@
             transition: transform 0.6s ease;
         }
         
+        /* Image Caption Overlay */
         .caption-overlay {
             position: absolute; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
-            color: white; padding: 30px 10px 10px 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+            color: white; padding: 40px 10px 15px 10px;
             text-align: center; 
             display: flex; flex-direction: column;
-            pointer-events: none; /* Let clicks pass to image */
+            pointer-events: none;
         }
         
         .cap-title {
             font-weight: 700; font-size: 0.95rem; color: #fff;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+            text-shadow: 0 2px 4px rgba(0,0,0,1);
+            letter-spacing: 0.5px;
         }
         .cap-desc {
             font-size: 0.75rem; color: #FFD700; display: none; margin-top: 4px; font-weight: 500;
@@ -190,43 +174,25 @@
             color: #FFD700; 
             font-size: 1.1rem; 
             padding: 20px;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255,215,0,0.2);
+            bottom: 20px;
         }
         .pswp__bg { background: rgba(0, 0, 0, 0.96) !important; }
 
     </style>
+<link rel="me" href="https://www.blogger.com/profile/18035977914919880974" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
 </head>
 <body>
 
-    <!-- Sidebar Menu (Standardized Navigation) -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="appSidebar">
-        <div class="offcanvas-header" style="border-bottom:1px solid #333;">
-            <h5 class="offcanvas-title" style="font-family:'Cinzel',serif; color:var(--primary);" data-lang-key="menu_title">ISKCON Menu</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> <span data-lang-key="home">Home</span></a>
-            <a href="darshan.html" class="menu-item"><i class="fas fa-video"></i> <span data-lang-key="darshan">Live Darshan</span></a>
-            <a href="gallery.html" class="menu-item" style="color:var(--primary); background:rgba(255,153,51,0.1);"><i class="fas fa-images"></i> <span data-lang-key="gallery">Gallery</span></a>
-            <a href="schedule.html" class="menu-item"><i class="far fa-calendar-alt"></i> <span data-lang-key="schedule">Schedule</span></a>
-            <!-- Divider -->
-            <hr style="border-color:#444; margin:15px 0;">
-            <div style="font-size:0.8rem; color:#666; padding:0 20px;">
-                Designed for Devotees
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navbar -->
+    <!-- Responsive Navbar (Sidebar Removed) -->
     <nav class="navbar sticky-top navbar-dark">
-        <div class="container-fluid content-container" style="margin:0 auto; padding:0;">
+        <div class="container-fluid content-container ps-3 pe-3">
             
             <div class="d-flex align-items-center">
-                <!-- Hamburger Trigger -->
-                <button class="navbar-toggler border-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar">
-                    <i class="fas fa-bars"></i>
-                </button>
                 
                 <!-- Fixed Back Button -->
                 <a href="index.html" class="nav-back-btn" aria-label="Go Home">
@@ -241,7 +207,8 @@
                 </a>
             </div>
 
-            <span class="text-white d-none d-sm-block"><i class="fas fa-om fa-lg"></i></span>
+            <!-- Om Icon on right side -->
+            <span class="text-white d-none d-sm-block opacity-75"><i class="fas fa-om fa-lg"></i></span>
         </div>
     </nav>
 
@@ -250,17 +217,17 @@
         
         <!-- Header -->
         <header class="header-section">
-            <h1 class="header-title" data-lang-key="page_title">Sri Sri Radha Vrindavanchandra</h1>
-            <p class="header-subtitle"><i class="fas fa-search-plus"></i> <span data-lang-key="tap_zoom">Tap on photo to Zoom</span></p>
+            <h1 class="header-title" data-lang-key="page_title">iskcon Hadapsar </h1>
+            <p class="header-subtitle"><i class="fas fa-search-plus text-primary"></i> <span data-lang-key="tap_zoom">Tap photo to Zoom</span></p>
         </header>
 
-        <!-- Gallery Grid (Responsive) -->
+        <!-- Gallery Grid -->
         <div class="pswp-gallery" id="my-gallery">
             
             <!-- 1. Temple Entrance -->
             <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s1600/1000096371.webp" 
             data-pswp-width="933" data-pswp-height="1244" target="_blank" class="gallery-item">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s700/1000096371.webp" alt="Entrance" />
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s700/1000096371.webp" alt="Entrance" loading="lazy" />
                 <div class="caption-overlay">
                     <span class="cap-title" data-lang-key="img1_title">Temple Entrance</span>
                 </div>
@@ -271,7 +238,7 @@
             <!-- 2. Sri Sri Gaura Nitai -->
             <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s1600/1000096372.webp" 
             data-pswp-width="700" data-pswp-height="700" target="_blank" class="gallery-item">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s700/1000096372.webp" alt="Gaura Nitai" />
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s700/1000096372.webp" alt="Gaura Nitai" loading="lazy" />
                 <div class="caption-overlay">
                     <span class="cap-title" data-lang-key="img2_title">Sri Sri Gaura Nitai</span>
                 </div>
@@ -281,7 +248,7 @@
             <!-- 3. Main Altar -->
             <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" 
             data-pswp-width="700" data-pswp-height="525" target="_blank" class="gallery-item">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" alt="Main Altar" />
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" alt="Main Altar" loading="lazy" />
                 <div class="caption-overlay">
                     <span class="cap-title" data-lang-key="img3_title">Main Altar</span>
                 </div>
@@ -291,7 +258,7 @@
             <!-- 4. Govardhan Festival -->
             <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" 
             data-pswp-width="700" data-pswp-height="525" target="_blank" class="gallery-item show-sub">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" alt="Govardhan" />
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" alt="Govardhan" loading="lazy" />
                 <div class="caption-overlay">
                     <span class="cap-title" data-lang-key="img4_title">Govardhan Puja</span>
                     <span class="cap-desc" data-lang-key="img4_sub">Giriraj Dharan Lila</span>
@@ -303,21 +270,20 @@
     </main>
 
     <!-- Dependencies -->
+    <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Module Script for Logic -->
+    <!-- Module Script for PhotoSwipe & Logic -->
     <script type="module">
         import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js';
         import PhotoSwipe from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js';
 
-        // --- 🌍 MULTI-LANGUAGE DATA 🌍 ---
+        // --- 🌍 MULTI-LANGUAGE DATA (Preserved) 🌍 ---
         const langData = {
             en: {
                 app_name: "ISKCON Gallery",
-                page_title: "Sri Sri Radha Vrindavanchandra",
+                page_title: "Iskcon Hadapsar",
                 tap_zoom: "Tap photo to Zoom",
-                menu_title: "ISKCON Menu",
-                home: "Home", darshan: "Live Darshan", gallery: "Gallery", schedule: "Schedule",
                 img1_title: "Temple Entrance", img1_desc: "Main Entrance of ISKCON Hadapsar",
                 img2_title: "Sri Sri Gaura Nitai",
                 img3_title: "Main Altar", img3_desc: "Beautiful Altar Decoration",
@@ -326,10 +292,8 @@
             },
             hi: {
                 app_name: "इस्कॉन गैलरी",
-                page_title: "श्री श्री राधा वृंदावनचंद्र",
+                page_title: "इस्कॉन हडपसर",
                 tap_zoom: "बड़ा करने के लिए फोटो पर टैप करें",
-                menu_title: "इस्कॉन मेनू",
-                home: "होम", darshan: "लाइव दर्शन", gallery: "गैलरी", schedule: "समय सारणी",
                 img1_title: "मंदिर प्रवेश द्वार", img1_desc: "इस्कॉन हडपसर का मुख्य द्वार",
                 img2_title: "श्री श्री गौर निताई",
                 img3_title: "मुख्य वेदी दर्शन", img3_desc: "भगवान का सुंदर श्रृंगार और सजावट",
@@ -338,10 +302,8 @@
             },
             mr: {
                 app_name: "इस्कॉन गॅलरी",
-                page_title: "श्री श्री राधा वृंदावनचंद्र",
+                page_title: "इस्कॉन हडपसर",
                 tap_zoom: "मोठे करण्यासाठी फोटोवर टॅप करा",
-                menu_title: "इस्कॉन मेनू",
-                home: "मुख्यपृष्ठ", darshan: "थेट दर्शन", gallery: "गॅलरी", schedule: "वेळापत्रक",
                 img1_title: "मंदिर प्रवेशद्वार", img1_desc: "इस्कॉन हडपसरचे मुख्य प्रवेशद्वार",
                 img2_title: "श्री श्री गौर निताई",
                 img3_title: "मुख्य वेदी दर्शन", img3_desc: "देवाची सुंदर सजावट आणि दर्शन",
@@ -377,10 +339,10 @@
                 const finalTitle = titleKey ? texts[titleKey] : titleElem.innerText;
                 const finalDesc = descKey ? texts[descKey] : "";
                 
-                // Formulate HTML for Caption
+                // Formulate HTML for Lightbox Caption
                 const captionHTML = `<div style="text-align:center;">
-                    <strong style="color:#FFF; font-size:1.1rem; display:block; margin-bottom:5px;">${finalTitle}</strong>
-                    <span style="color:#FFD700; font-size:0.9rem;">${finalDesc}</span>
+                    <strong style="color:#FFF; font-size:1.1rem; display:block; margin-bottom:5px; text-transform: uppercase; letter-spacing:1px;">${finalTitle}</strong>
+                    <span style="color:#FFD700; font-size:0.95rem; line-height:1.4; display:block;">${finalDesc}</span>
                 </div>`;
                 
                 link.setAttribute('data-pswp-caption-content', captionHTML);
