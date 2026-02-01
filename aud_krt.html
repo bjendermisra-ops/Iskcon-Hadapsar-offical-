@@ -1,1 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Vaishnava Kirtan Library - Listen to transcendental sounds">
+    <title>Kirtan Library</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* === APP THEME VARIABLES (PRESERVED) === */
+        :root {
+            --primary: #FF9933; 
+            --bg: #fcf5e5; 
+            --text: #333; 
+            --card-bg: #ffffff;
+            --sub-text: #666;
+            --border-color: rgba(255, 153, 51, 0.1);
+            --shadow: 0 8px 20px rgba(0,0,0,0.06);
+            --max-width: 1440px; /* Constraint for large screens */
+        }
+        
+        [data-theme="dark"] {
+            --primary: #FF9933; 
+            --bg: #121212; 
+            --text: #e0e0e0; 
+            --card-bg: #1e1e1e;
+            --sub-text: #aaa;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); 
+            font-family: 'Poppins', sans-serif; 
+            color: var(--text); 
+            margin: 0; 
+            transition: background 0.3s ease, color 0.3s ease; 
+            padding: 15px;
+            padding-bottom: 40px; /* Extra bottom padding for scroll */
+            overflow-y: scroll; /* Force scrollbar for consistency */
+        }
 
+        /* === MAIN WRAPPER FOR RESPONSIVENESS === */
+        /* Prevents layout from looking stretched on TVs/Monitors */
+        .app-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* === HEADER (Flexbox) === */
+        .header { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            padding: 5px; 
+            position: relative;
+        }
+        
+        .back-btn { 
+            font-size: 24px; 
+            color: var(--primary); 
+            margin-right: 18px; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+            padding: 5px; /* Bigger touch target */
+            text-decoration: none; /* For A tag conversion */
+        }
+        .back-btn:hover { transform: translateX(-3px); }
+
+        .title { 
+            font-family: 'Cinzel', serif; 
+            font-size: 22px; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin: 0; 
+            letter-spacing: 0.5px; 
+        }
+
+        /* === SEARCH BAR (Adaptive) === */
+        .search-container { 
+            position: relative; 
+            margin-bottom: 25px; 
+            max-width: 600px; /* Don't let search stretch full width on desktop */
+            margin-left: 0; 
+            width: 100%;
+        }
+        
+        .search-icon { 
+            position: absolute; 
+            left: 18px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--primary); 
+            font-size: 16px;
+            pointer-events: none;
+        }
+        
+        .search-box {
+            width: 100%; 
+            padding: 14px 20px 14px 50px; 
+            border-radius: 12px; 
+            border: 2px solid transparent;
+            background: var(--card-bg); 
+            color: var(--text); 
+            outline: none;
+            font-family: 'Poppins', sans-serif; 
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s all;
+        }
+        
+        .search-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(255, 153, 51, 0.2);
+        }
+
+        /* === GRID SYSTEM FOR CARDS === */
+        #list {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile Default */
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Responsive Breakpoints */
+        @media (min-width: 600px) {
+            #list { grid-template-columns: repeat(2, 1fr); } /* Tablets */
+            .header { padding-left: 0; }
+        }
+        
+        @media (min-width: 900px) {
+            #list { grid-template-columns: repeat(3, 1fr); } /* Laptops */
+        }
+        
+        @media (min-width: 1200px) {
+            #list { grid-template-columns: repeat(4, 1fr); } /* Desktops */
+        }
+
+        /* === MUSIC CARD DESIGN (Preserved App Look) === */
+        .music-card {
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s;
+            position: relative;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Uniform height in grid */
+            text-decoration: none; /* For link wrapper */
+        }
+        
+        /* Desktop Hover Effect */
+        @media (hover: hover) {
+            .music-card:hover { 
+                transform: translateY(-5px); 
+                box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+                border-color: var(--primary);
+            }
+        }
+        
+        /* Mobile Touch Effect */
+        .music-card:active { transform: scale(0.97); opacity: 0.95; }
+
+        /* === IMAGE AREA WITH BLUR EFFECT === */
+        .img-wrapper { 
+            position: relative; 
+            width: 100%; 
+            padding-top: 60%; /* Aspect Ratio based height responsive */
+            min-height: 190px; /* Fallback for content matches original app */
+            overflow: hidden;
+            background: #000;
+        }
+        
+        /* Blurred Background Image */
+        .bg-blur {
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: blur(20px) brightness(0.5); 
+            transform: scale(1.2); 
+            z-index: 1;
+            transition: 0.3s;
+        }
+
+        /* Main Center Image */
+        .card-img { 
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
+            object-fit: contain; /* Keeps whole image visible */
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+        
+        /* Play Button Overlay */
+        .play-overlay {
+            position: absolute; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 50px; height: 50px; 
+            background: rgba(255, 153, 51, 0.9);
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 153, 51, 0.6);
+            z-index: 3; 
+            border: 2px solid #fff;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .music-card:hover .play-overlay {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: #fff;
+        }
+        
+        .music-card:hover .play-overlay i { color: var(--primary); }
+
+        .play-overlay i { 
+            color: white; 
+            font-size: 20px; 
+            margin-left: 3px; /* Optical adjustment */
+            transition: color 0.3s;
+        }
+
+        /* === INFO SECTION === */
+        .info { 
+            padding: 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-grow: 1; /* Pushes content to bottom of card */
+        }
+        
+        .text-content { flex-grow: 1; padding-right: 15px; }
+        
+        .song-title { 
+            font-weight: 600; 
+            font-size: 16px; 
+            margin: 0 0 6px 0; 
+            line-height: 1.4; 
+            color: var(--text); 
+            /* Ellipsis for long titles on grid */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .song-artist { 
+            font-size: 11px; 
+            font-weight: 600; 
+            color: var(--primary); 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px;
+            display: inline-block; 
+            background: rgba(255, 153, 51, 0.12); 
+            padding: 4px 8px; 
+            border-radius: 4px;
+        }
+        
+        .arrow-icon { 
+            color: var(--sub-text); 
+            font-size: 14px; 
+            opacity: 0.4;
+            transition: 0.2s;
+        }
+        
+        .music-card:hover .arrow-icon { opacity: 1; transform: translateX(3px); color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Responsive Container -->
+    <div class="app-container">
+
+        <!-- Header with Fixed Back Button -->
+        <div class="header">
+            <!-- Updated Back Logic: href to index.html for Website standards -->
+            <a href="index.html" class="back-btn" aria-label="Go Home">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h2 class="title">Kirtan Library</h2>
+        </div>
+
+        <!-- Adaptive Search Bar -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search Bhajan, Aarti..." onkeyup="filterList()">
+        </div>
+
+        <!-- Responsive Grid List -->
+        <div id="list"></div>
+
+    </div>
+
+<script>
+    // === AUTO DARK MODE ===
+    // Safe check for local storage availability
+    try {
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+    } catch(e) { console.log('LocalStorage restricted'); }
+
+    // === DATA SOURCE (LINKS UPDATED TO .HTML) ===
+    const kirtans = [
+        { t: "Mangala Aarti", a: "Morning Prayers", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaZSUu1t1ioA8FH5Dswww0K6l9rL__civt4QPUdSGcK9dL1CFDHY_QD_a0S6PPX66e6DG1fUx5DUL-m4sk1UmsjiZAbHCSc-PLLtaOhgMRQ_MjmsK6f6kmIzJNvHdV2XFH28Yrh8nupNqjdt0D-CdokemNsbpOpxwU2phSenRJ6a4mn282MQT2oblr2_s/s1280/maxresdefault.jpg", link: "aud_1.html" },
+        
+        { t: "Narasimha Aarti", a: "Protection Mantra", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQRuE7cczvQqNxHxu2fc4P3a6q8kuOOuXjsD8B-M5-Bm35pvCooNOx_Gn-EqGq8Qx-O-T4Ed8VzCJiVVmdxiQkYDZbSKNA-sggqSKoeEocBQP9X7PM5rspelhBhQoSSMoGrDzLvoHyWJm9g6zP9km-KKLc-xYMK_UcOrXIpKkQ_fYR-QQQg2Q0QIPoO1o/s1280/maxresdefault%20(1).jpg", link: "aud_2.html" },
+        
+        { t: "Jai Radha Madhava", a: "Original Melody", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg", link: "aud_3.html" },
+        
+        { t: "Gaura Aarti", a: "Evening Prayer", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhBSfv-Cddk4-Gb71xy6rPJAdyMBWSg0g8FLi4yuh6uMBnHKoGPhKNl1Ylrz5Frk4ScTDphUiMobFJvF9OsE5uQcOR9Yf5ARqE_Ca3vtza07m5WTaCdfUhyphenhyphent2YYCR3SLSkjIfq6Gk18af_UuOHwgkUsU6xlLtG0-jkg_CZnRWNZLHFsNxkYzKljJ0DRp2A/s1280/maxresdefault%20(3).jpg", link: "aud_4.html" },
+        
+        { t: "Hare Krishna Kirtan", a: "Mahamantra", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirgrNGMiVt9YDhP0uMOM-0ZQPEU3scVnj63XU8Y8AOd6tVNWzdN4SoR5Gpc3MO13B0esgg0w4IiM2foESz2O9zRm7XWfd7SDW7Lnz32S3F_noDfiplH57pVO6Ceqq8ckaPeyW8h9NkBiI0gkQREatMEHQ-gw7_C_upDGjoqmMgqS1mBuCwcCIPsx2qoxY/s300/ab67616d00001e02883b470cb0cf592269216bd6.jpeg", link: "aud_5.html" },
+        
+        { t: "Shree Guru Vandana", a: "Guru Puja", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgO397bo-_hF4Mx7qVTPLbpxL28gZqp-hqHbwIwJU_JIwrATi0eZvj_sz6wbIQOm-OgDEJpeJP8b-AaVAHwLV-FrCwBLxjm6V-4A8gm3nLxKZO34wUXQr504ptY94a8C34xaernihhWpA9SkaJKhYybAdN1juWO2n4SVE9HjeNDtd4OC5HUNbnXVRHYYpU/s1280/maxresdefault%20(6).jpg", link: "aud_6.html" },
+        
+        { t: "Tulasi Aarti", a: "Namnamo Tulasi", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhddODSjvcuVzlbcME-GQRqSg1nDLbHAVz3iLb19b4xLHxz_6iJDzkXOZpbdbQpo_fQKpEiQ1imB0iBPiExvqF94tGCgakyANR13oQYi3ylPYwAmVx97pO0S4Z8y216N8THghp2bk059o2EYK03n5HvA5aIiqFuC9TXMJV6Hjnuq-JoTya9Bn_zJ4hh7EY/s686/hq720.jpg", link: "aud_7.html" },
+        
+        { t: "Gauranga Bolite Habe", a: "Vaishnava Bhajan", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8dqTYoL10z14scTKhzz3iBJYQU87pM__nDfJl6S0_0DbsRi0V9yzA6XB_6UFbC8Bd9_IrHQ1wCfizbrdf_-POarwnmjJPrjjrCMyQJGJdz03x4Y3EpE-092s-5UY4mA3zJ3vNPNnoH99HVKBZXE-rCtBjbn9cDI5k9YQHngi3ocMRZ0F1gwqLFs-lAHY/s568/IMG_20251124_111940.jpg", link: "aud_8.html" },
+        
+        { t: "Govindam Adi Purusham", a: "Darshan Aarti", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg95qR0DC-9T1kX1Nnr43xN7Pdxvwtu9EvVRCnax4oYjoGzvPNq_8gs4jmqXwDH8DJ30qzyBCYpKUV3mEE66muWX2sp_kfUho3Wfa8BODhnQ2dXQN37AhoA3iS7fDM3sZhhRXaZWt_6sWAnJyye3YXQM8kQ1r1EKfau-riJboBj4WFfrhLvkVyl8_GE6ro/s500/resized-image%20(26).png", link: "aud_9.html" },
+        
+        { t: "Jai Radha Madhava (Slow)", a: "Meditation", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhC15IHzGpoohNVXFZYEmyuQylLwys7w1KmUWSzySotkwWNtTfJe-FeViJks2DdnovaVu2fiTCMhtMPqRLuiLCsKc3XeqkdhKE8YsoVWoHkopEXsLgMWBi6WCJhL0_37IXKXQXxi-j605GguUDrGnp3nUPuQRHHh-2zZ9T9IDlH5rWTW-0uS67TmSWdObE/s500/resized-image%20(15).png", link: "aud_10.html" },
+        
+        { t: "Shri Krishna Govind", a: "Hare Murari", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEbPa8Qyo-MsGmxn7VdJMNVhUqsbMwCKSoD5U1SX9ok6iUsMa5Qg6Ocom_nMa2s137DtlMIT_YcwTCxydG897azbcPXcqsfgpGuiFP87iZtnRbUrvsPVpETwLdIRw2tgoT7sXpdx9yii7iO-tU3DXmLp9rIg6Cw2SrLUL5hxXh1EFAnTbpj8gcUWAtONo/s1280/maxresdefault%20(5).jpg", link: "aud_11.html" },
+        
+        { t: "Radhe Radhe Govinda", a: "Kirtan Mela", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-k_l6rG6IwzeJrnLGVBTSKGkvWRlbxgZ7IHTCDia_QgMZ6EoTP-Kf5ANmRmPqhiomMOg-GidMuFzkjf9DHqRtEv-QIAbaVDqVsouAd26KSPAfOEGnttbjXDp6kPrEF3v_NxFPfUipByV-BIajWXYco7k6qGhW9dpoYMLnQrb_rTGisK3CWvmepKSVO_E/s500/IMG_20251119_002236.jpg", link: "aud_12.html" }
+    ];
+
+    const listContainer = document.getElementById('list');
+
+    // === RENDER LOGIC ===
+    function renderList(items) {
+        listContainer.innerHTML = "";
+        
+        if(items.length === 0) {
+            // Enhanced Empty State for large screens
+            listContainer.innerHTML = `
+                <div style='grid-column: 1 / -1; text-align:center; padding: 40px; color: var(--sub-text);'>
+                    <i class="fas fa-music" style="font-size: 40px; margin-bottom: 15px; opacity:0.3"></i>
+                    <p>No kirtan found matching your search.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Updated loop: Used <a href> wrapper instead of onclick for SEO & Accessibility
+        items.forEach(i => {
+            // Generate valid .html file link (already updated in array)
+            const fileLink = i.link;
+            
+            listContainer.innerHTML += `
+            <a href="${fileLink}" class="music-card">
+                <div class="img-wrapper">
+                    <!-- BLURRED BACKGROUND (AppCreate24 Style) -->
+                    <img src="${i.img}" class="bg-blur" loading="lazy" alt="background">
+                    <!-- MAIN IMAGE -->
+                    <img src="${i.img}" class="card-img" loading="lazy" alt="${i.t}">
+                    <div class="play-overlay"><i class="fas fa-play"></i></div>
+                </div>
+                <div class="info">
+                    <div class="text-content">
+                        <div class="song-title">${i.t}</div>
+                        <div class="song-artist">${i.a}</div>
+                    </div>
+                    <i class="fas fa-chevron-right arrow-icon"></i>
+                </div>
+            </a>`;
+        });
+    }
+
+    // Initial Render
+    renderList(kirtans);
+
+    // Search Logic (Preserved)
+    function filterList() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        if (!query) {
+            renderList(kirtans);
+            return;
+        }
+        const filtered = kirtans.filter(item => 
+            item.t.toLowerCase().includes(query) || 
+            item.a.toLowerCase().includes(query)
+        );
+        renderList(filtered);
+    }
+</script>
+</body>
+</html>
