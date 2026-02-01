@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>ISKCON Divine Player</title>
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Outfit:wght@300;500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* --- THEME COLORS --- */
+            --primary: #FF9933; 
+            --primary-dark: #E68A2E;
+            --bg-light: #FFF8E1; 
+            --text-light: #333;
+            --card-light: rgba(255, 255, 255, 0.85);
+            
+            --bg-dark: #121212;
+            --text-dark: #e0e0e0;
+            --card-dark: rgba(30, 30, 30, 0.85);
+            
+            --art-size: clamp(240px, 30vh, 320px); /* Responsive Size */
+        }
+
+        /* Default Light Theme */
+        body { 
+            --bg-color: var(--bg-light);
+            --text-main: var(--text-light);
+            --card-bg: var(--card-light);
+            --accent: var(--primary);
+        }
+
+        /* Dark Theme Override */
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark);
+            --text-main: var(--text-dark);
+            --card-bg: var(--card-dark);
+            --accent: #FFD54F;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            transition: 0.3s;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR & SIDEBAR --- */
+        .navbar { background-color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; height: 60px; }
+        .navbar-brand { font-family: 'Cinzel', serif; color: white !important; font-size: 1.15rem; display: flex; align-items: center; }
+        .nav-logo-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; margin-right: 10px; object-fit: cover; }
+        
+        .offcanvas { background-color: var(--bg-color); color: var(--text-main); width: 280px !important; z-index: 10000; }
+        .menu-item { padding: 12px 15px; display: flex; align-items: center; font-size: 1rem; color: var(--text-main); border-radius: 10px; margin-bottom: 5px; text-decoration: none; transition: 0.2s; }
+        .menu-item:active { background: rgba(255,153,51,0.2); }
+        .menu-item i { width: 30px; font-size: 1.1rem; color: var(--primary); }
+
+        /* Back Button Style */
+        .btn-back { margin-right: 10px; color: white; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px; }
+
+        /* --- PLAYER CONTAINER --- */
+        .player-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 30%, rgba(255, 153, 51, 0.15), transparent 70%);
+        }
+
+        /* --- FLOWER RAIN --- */
+        #flower-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; overflow: hidden;
+        }
+        
+        .flower {
+            position: absolute; top: -50px; 
+            animation: fall linear forwards;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+        }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* --- MUSIC CARD --- */
+        .player-card {
+            width: 100%; max-width: 400px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            padding: 30px 25px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; 
+            z-index: 5;
+            transition: all 0.3s ease;
+        }
+
+        /* ALBUM ART */
+        .art-wrapper {
+            width: var(--art-size); height: var(--art-size);
+            perspective: 800px; margin-bottom: 25px; margin-top: 10px;
+        }
+
+        .art-inner {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            border-radius: 50%; /* Circle look preferred for devotional, change to 20px if square needed */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: transform 0.5s ease;
+            background: #222;
+        }
+
+        .art-inner img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            border: 4px solid var(--primary);
+        }
+        
+        /* ANIMATION */
+        .playing .art-inner { animation: slowSpin 20s linear infinite; }
+        @keyframes slowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* INFO */
+        .info { text-align: center; width: 100%; margin-bottom: 15px; }
+        .info h2 {
+            font-family: 'Cinzel', serif; color: var(--text-main);
+            font-size: 1.5rem; margin-bottom: 5px; font-weight: 800;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .info p {
+            color: var(--accent); font-size: 0.9rem; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        /* PROGRESS */
+        .progress-area { width: 100%; margin: 10px 0 20px 0; padding: 0 5px; }
+        .progress-bg {
+            width: 100%; height: 6px; background: rgba(128,128,128,0.3);
+            border-radius: 10px; cursor: pointer; overflow: hidden; position: relative;
+        }
+        .progress-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--primary), #FF5722);
+            border-radius: 10px; position: relative;
+        }
+        /* Seek Knob visual */
+        .progress-fill::after {
+            content: ''; position: absolute; right: -4px; top: -3px; 
+            width: 12px; height: 12px; background: white; border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.5); opacity: 0; transition: 0.2s;
+        }
+        .progress-bg:hover .progress-fill::after { opacity: 1; }
+
+        .timers {
+            display: flex; justify-content: space-between; font-size: 0.8rem;
+            color: var(--text-main); margin-top: 8px; opacity: 0.7; font-weight: 500;
+        }
+
+        /* CONTROLS */
+        .controls { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 5px; margin-top: 10px;}
+        .btn-ctrl {
+            background: none; border: none; cursor: pointer; color: var(--text-main);
+            padding: 10px; transition: 0.2s; opacity: 0.7; position: relative;
+        }
+        .btn-ctrl:active { transform: scale(0.9); }
+        .btn-ctrl svg { width: 24px; height: 24px; fill: currentColor; }
+        .btn-ctrl:hover { opacity: 1; }
+
+        .btn-voice {
+            background: rgba(255, 153, 51, 0.15); 
+            border-radius: 12px;
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .play-btn {
+            width: 70px; height: 70px;
+            background: var(--primary);
+            border-radius: 50%; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(255, 153, 51, 0.4);
+            transition: transform 0.2s; border: none;
+        }
+        .play-btn:active { transform: scale(0.95); box-shadow: 0 5px 15px rgba(255, 153, 51, 0.3); }
+        .play-btn svg { width: 30px; height: 30px; fill: #fff; }
+
+        /* --- SINGER SELECTION POP-UP (MODAL) --- */
+        .modal-backdrop.show { opacity: 0.7; backdrop-filter: blur(5px); }
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px; border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-main);
+        }
+        .modal-header { border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .modal-title { font-family: 'Cinzel', serif; font-weight: 700; color: var(--primary); }
+        
+        .singer-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 10px;
+        }
+        .singer-item {
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: pointer; transition: 0.3s; padding: 10px; border-radius: 15px;
+        }
+        .singer-item:active { background: rgba(0,0,0,0.05); transform: scale(0.95); }
+        .singer-item.active { background: rgba(255, 153, 51, 0.15); border: 1px solid var(--primary); }
+        
+        .singer-img {
+            width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+            border: 2px solid var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+        }
+        .singer-name { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
+
+    </style>
+</head>
+<body>
+
+    <!-- FLOWERS OVERLAY -->
+    <div id="flower-container"></div>
+
+    <!-- SIDEBAR -->
+    <div class="offcanvas offcanvas-start" id="appSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" style="font-family:'Cinzel',serif; color:var(--primary);">ISKCON Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" style="filter: invert(0.5);"></button>
+        </div>
+        <div class="offcanvas-body">
+            <a href="go:home" class="menu-item"><i class="fas fa-home"></i> Home</a>
+            <a href="go:schedule" class="menu-item"><i class="far fa-calendar-alt"></i> Schedule</a>
+            <a href="go:darshan" class="menu-item"><i class="fas fa-image"></i> Live Darshan</a>
+            <a href="go:gallery" class="menu-item"><i class="fas fa-images"></i> Gallery</a>
+            <hr>
+            <div class="menu-item" onclick="toggleTheme()"><i class="fas fa-moon"></i> Dark Mode</div>
+        </div>
+    </div>
+
+    <!-- NAVBAR WITH BACK BUTTON -->
+    <nav class="navbar sticky-top">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <!-- NEW BACK BUTTON -->
+                <button class="btn-back" onclick="goBack()" title="Go Back">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                
+                <a class="navbar-brand" href="javascript:void(0)">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKkhc5IkA65STmeUrIgSBI6nDpLrBG5GmZ1pzSkHZnSl5pTc1fzyHFmg1wqwDkeEaa0HZM6vcNk2WWTPuUpvhq-Uee_FUtPQwP2OUyAg8wzbJV1rk6_lCx1X0UlRuxpgulL3trFgzRAvgI1-aSRojJJWUMChXOl9yRSmsOLoHrdmOVDh8gVeUop5T3_VzU/s256/1000198120.png" class="nav-logo-img"> 
+                    Divine Player
+                </a>
+            </div>
+            
+            <button class="btn btn-sm text-white shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN PLAYER -->
+    <div class="player-container">
+        
+        <div class="player-card">
+            
+            <!-- Album Art -->
+            <div class="art-wrapper">
+                <div class="art-inner">
+                    <img id="cover-img" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaZSUu1t1ioA8FH5Dswww0K6l9rL__civt4QPUdSGcK9dL1CFDHY_QD_a0S6PPX66e6DG1fUx5DUL-m4sk1UmsjiZAbHCSc-PLLtaOhgMRQ_MjmsK6f6kmIzJNvHdV2XFH28Yrh8nupNqjdt0D-CdokemNsbpOpxwU2phSenRJ6a4mn282MQT2oblr2_s/s1280/maxresdefault.jpg" alt="Art">
+                </div>
+            </div>
+
+            <!-- Song Info -->
+            <div class="info">
+                <h2 id="song-title">Hare Krishna</h2>
+                <p id="singer-name">Srila Prabhupada</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-area">
+                <div class="progress-bg" id="progress-box">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="timers">
+                    <span id="curr-time">00:00</span>
+                    <span id="dur-time">00:00</span>
+                </div>
+            </div>
+
+            <!-- Audio Controls -->
+            <div class="controls">
+                <!-- Change Voice Button (NEW) -->
+                <button class="btn-ctrl btn-voice" onclick="openSingerModal()" title="Change Singer">
+                    <i class="fas fa-microphone-alt"></i>
+                </button>
+
+                <button class="btn-ctrl" id="prev-btn"><i class="fas fa-backward"></i></button>
+                
+                <button class="play-btn" id="play-btn">
+                    <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    <svg id="icon-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                </button>
+
+                <button class="btn-ctrl" id="next-btn"><i class="fas fa-forward"></i></button>
+                <button class="btn-ctrl" id="loop-btn"><i class="fas fa-redo"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- VOICE SELECTION MODAL (NEW) -->
+    <div class="modal fade" id="singerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Divine Voice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter:invert(0.5)"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="singer-grid" id="singerGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO SOURCE -->
+    <audio id="audio"></audio>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- 1. SINGER DATA & CONFIG ---
+        const singers = [
+            {
+                name: "Srila Prabhupada",
+                img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaZSUu1t1ioA8FH5Dswww0K6l9rL__civt4QPUdSGcK9dL1CFDHY_QD_a0S6PPX66e6DG1fUx5DUL-m4sk1UmsjiZAbHCSc-PLLtaOhgMRQ_MjmsK6f6kmIzJNvHdV2XFH28Yrh8nupNqjdt0D-CdokemNsbpOpxwU2phSenRJ6a4mn282MQT2oblr2_s/s1280/maxresdefault.jpg",
+                audio: "https://od.lk/s/NTRfMzkxNjM5Njhf/Samsara%20Davanala%20~%20Srila%20Prabhupada%20-%20Krishna%20Bhakti%20Art%20%E0%A5%90.mp3",
+                trackName: "Mangala Aarti"
+            },
+            {
+                name: "Indradyumna Swami",
+                img: "https://iskconnews.org/media/images/2023/10/IDS-portrait.jpg",
+                audio: "https://ia800409.us.archive.org/21/items/IDS_Kirtan_London_2008/IDS_Kirtan_London_2008.mp3",
+                trackName: "Hare Krishna Kirtan"
+            },
+            {
+                name: "Lokanath Swami",
+                img: "https://pbs.twimg.com/profile_images/1305417387498422273/Wp-S6G66_400x400.jpg",
+                audio: "https://ia600508.us.archive.org/3/items/Kirtan_By_Loknath_Swami_Maharaj/Kirtan_By_Loknath_Swami_Maharaj.mp3",
+                trackName: "Ecstatic Kirtan"
+            },
+            {
+                name: "Radhanath Swami",
+                img: "https://www.radhanathswami.com/wp-content/uploads/2012/10/radhanath-swami-portrait-new.jpg",
+                audio: "https://audio.iskcondesiretree.com/02_-_ISKCON_Swamis/ISKCON_Swamis_-_R_to_Y/His_Holiness_Radhanath_Swami/Kirtans/Kirtan_with_Harmonium/RNS_Kirtan_with_Harmonium_-_Hare_Krishna_Mahamantra_-_2012-04-22_-_Chowpatty_Mumbai.mp3",
+                trackName: "Slow Bhajans"
+            },
+            {
+                name: "Aindra Prabhu",
+                img: "https://i.pinimg.com/736x/8a/7e/63/8a7e638f3223063f820258169623223e.jpg",
+                audio: "https://audio.iskcondesiretree.com/03_-_ISKCON_Prabhujis/ISKCON_Prabhujis_-_A_to_J/His_Grace_Aindra_Prabhu/Kirtans/Aindra_Prabhu_-_Hare_Krishna_Kirtan_-_1995.mp3",
+                trackName: "24h Kirtan VRN"
+            },
+            {
+                name: "Temple Live",
+                img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg",
+                audio: "https://stream.zeno.fm/2w35485934zuv", // Replaced with a demo stream url
+                trackName: "Live Stream"
+            }
+        ];
+
+        let currentSingerIndex = 0;
+        let isPlaying = false;
+        let isLoop = false;
+        let flowerInterval;
+        let singerModal;
+
+        // --- DOM ELEMENTS ---
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        const progressBox = document.getElementById('progress-box');
+        const progressFill = document.getElementById('progress-fill');
+        const currTime = document.getElementById('curr-time');
+        const durTime = document.getElementById('dur-time');
+        const flowerContainer = document.getElementById('flower-container');
+        
+        const titleEl = document.getElementById('song-title');
+        const singerEl = document.getElementById('singer-name');
+        const coverEl = document.getElementById('cover-img');
+        const singerGrid = document.getElementById('singerGrid');
+
+        // --- INIT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            singerModal = new bootstrap.Modal(document.getElementById('singerModal'));
+            loadSinger(0);
+            renderSingers();
+        });
+
+        // --- BACK BUTTON LOGIC ---
+        function goBack() {
+            // Priority 1: Browser History (Website mode)
+            if(window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Priority 2: Fallback to Index if opened directly
+                window.location.href = "index.html"; 
+            }
+        }
+
+        // --- RENDER POPUP GRID ---
+        function renderSingers() {
+            singerGrid.innerHTML = '';
+            singers.forEach((singer, index) => {
+                const activeClass = index === currentSingerIndex ? 'active' : '';
+                singerGrid.innerHTML += `
+                    <div class="singer-item ${activeClass}" onclick="changeSinger(${index})">
+                        <img src="${singer.img}" class="singer-img" loading="lazy">
+                        <div class="singer-name">${singer.name}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function openSingerModal() {
+            renderSingers(); // Re-render to show active class
+            singerModal.show();
+        }
+
+        // --- CHANGE SINGER LOGIC (Instant Play) ---
+        function changeSinger(index) {
+            if(currentSingerIndex === index && isPlaying) {
+                singerModal.hide();
+                return; // Same singer, do nothing
+            }
+
+            currentSingerIndex = index;
+            loadSinger(index);
+            
+            // "Click karte hi awaz show honi chahiye"
+            playMusic(); // Auto play new selection
+            
+            singerModal.hide();
+        }
+
+        function loadSinger(index) {
+            const s = singers[index];
+            titleEl.innerText = s.trackName;
+            singerEl.innerText = s.name;
+            coverEl.src = s.img;
+            audio.src = s.audio;
+            audio.load();
+        }
+
+        function playMusic() {
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isPlaying = true;
+                    updatePlayBtnUI();
+                    startFlowers();
+                    document.querySelector('.player-card').classList.add('playing');
+                }).catch(error => {
+                    console.log("Playback blocked until user interaction.");
+                });
+            }
+        }
+
+        function togglePlay() {
+            if(isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                stopFlowers();
+                document.querySelector('.player-card').classList.remove('playing');
+            } else {
+                playMusic();
+            }
+            updatePlayBtnUI();
+        }
+
+        function updatePlayBtnUI() {
+            if(isPlaying) {
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+            } else {
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+            }
+        }
+
+        playBtn.addEventListener('click', togglePlay);
+
+        // --- THEME ---
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // --- FLOWER SHOWER ---
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.classList.add('flower');
+            const icons = ['🌸', '🌺', '🌼', '🌷', '🍃']; 
+            flower.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            flower.style.left = Math.random() * 95 + 'vw';
+            flower.style.animationDuration = Math.random() * 3 + 4 + 's';
+            flower.style.fontSize = Math.random() * 15 + 20 + 'px';
+            flower.style.opacity = Math.random() * 0.5 + 0.5;
+            flowerContainer.appendChild(flower);
+            setTimeout(() => { flower.remove(); }, 7000);
+        }
+        function startFlowers() { if(!flowerInterval) flowerInterval = setInterval(createFlower, 400); }
+        function stopFlowers() { clearInterval(flowerInterval); flowerInterval = null; setTimeout(() => { flowerContainer.innerHTML = ''; }, 2000); }
+
+        // --- PROGRESS BAR ---
+        audio.addEventListener('timeupdate', (e) => {
+            const { duration, currentTime } = e.srcElement;
+            if(duration) {
+                progressFill.style.width = `${(currentTime / duration) * 100}%`;
+                currTime.innerText = formatTime(currentTime);
+                durTime.innerText = formatTime(duration);
+            }
+        });
+
+        progressBox.addEventListener('click', (e) => {
+            const width = progressBox.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        });
+
+        function formatTime(t) {
+            if(isNaN(t)) return "00:00";
+            const m = Math.floor(t / 60);
+            const s = Math.floor(t % 60);
+            return `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+        }
+
+        // --- BTN ACTIONS ---
+        document.getElementById('prev-btn').addEventListener('click', () => {
+             // Prev singer logic
+             let newIndex = currentSingerIndex - 1;
+             if(newIndex < 0) newIndex = singers.length - 1;
+             changeSinger(newIndex);
+        });
+        document.getElementById('next-btn').addEventListener('click', () => {
+            // Next singer logic
+            let newIndex = currentSingerIndex + 1;
+            if(newIndex >= singers.length) newIndex = 0;
+            changeSinger(newIndex);
+        });
+        document.getElementById('loop-btn').addEventListener('click', function() { 
+            isLoop = !isLoop; 
+            this.style.color = isLoop ? 'var(--primary)' : 'var(--text-main)';
+            this.style.opacity = isLoop ? '1' : '0.6';
+        });
+
+        audio.addEventListener('ended', () => {
+            if(isLoop) { audio.currentTime = 0; audio.play(); }
+            else { 
+                // Autoplay next singer (optional, good for player feel)
+                document.getElementById('next-btn').click();
+            }
+        });
+
+        audio.addEventListener('loadedmetadata', () => { 
+            if(audio.duration && isFinite(audio.duration)) durTime.innerText = formatTime(audio.duration); 
+            else durTime.innerText = "Live";
+        });
+
+    </script>
+</body>
+</html>
