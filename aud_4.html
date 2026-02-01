@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>ISKCON Divine Player</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKkhc5IkA65STmeUrIgSBI6nDpLrBG5GmZ1pzSkHZnSl5pTc1fzyHFmg1wqwDkeEaa0HZM6vcNk2WWTPuUpvhq-Uee_FUtPQwP2OUyAg8wzbJV1rk6_lCx1X0UlRuxpgulL3trFgzRAvgI1-aSRojJJWUMChXOl9yRSmsOLoHrdmOVDh8gVeUop5T3_VzU/s256/1000198120.png">
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF9933; 
+            --primary-gradient: linear-gradient(135deg, #FF9933, #FF5722);
+            --bg-light: #FFF8E1; 
+            --text-light: #4E342E;
+            --card-light: rgba(255, 255, 255, 0.90);
+            
+            --bg-dark: #121212;
+            --text-dark: #e0e0e0;
+            --card-dark: rgba(30, 30, 30, 0.90);
+            
+            --art-size: clamp(250px, 40vh, 320px);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: var(--bg-dark);
+            --text-main: var(--text-dark);
+            --card-bg: var(--card-dark);
+        }
+
+        body { 
+            --bg-color: var(--bg-light);
+            --text-main: var(--text-light);
+            --card-bg: var(--card-light);
+            
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            transition: 0.3s;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar { background-color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; height: 60px; }
+        .navbar-brand { font-family: 'Cinzel', serif; color: white !important; font-size: 1.15rem; display: flex; align-items: center; }
+        .nav-logo-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; margin-right: 10px; object-fit: cover; }
+        
+        .btn-back { color: white; background: none; border: none; font-size: 1.3rem; margin-right: 15px; cursor: pointer; transition: 0.2s; }
+        .btn-back:active { transform: scale(0.9); }
+
+        /* --- PLAYER CONTAINER --- */
+        .player-container {
+            flex-grow: 1; display: flex; justify-content: center; align-items: center;
+            position: relative; padding: 20px;
+            background-image: radial-gradient(circle at 50% 30%, rgba(255, 153, 51, 0.15), transparent 70%);
+        }
+
+        /* --- FLOWER RAIN --- */
+        #flower-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+        .flower { position: absolute; top: -50px; animation: fall linear forwards; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2)); }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* --- MUSIC CARD --- */
+        .player-card {
+            width: 100%; max-width: 450px;
+            background: var(--card-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            padding: 25px 20px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; z-index: 5;
+            transition: all 0.3s ease;
+        }
+
+        /* ALBUM ART */
+        .art-wrapper { width: var(--art-size); height: var(--art-size); margin-bottom: 20px; perspective: 1000px; }
+        .art-inner {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d;
+            border-radius: 50%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 4px solid var(--primary);
+            transition: transform 0.5s ease;
+        }
+        .art-inner img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+        .playing .art-inner { animation: spin 20s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* INFO */
+        .info { text-align: center; width: 100%; margin-bottom: 20px; }
+        .info h2 { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700; margin: 0; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .info p { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; }
+
+        /* PROGRESS */
+        .progress-area { width: 100%; padding: 0 10px; margin-bottom: 25px; }
+        .progress-bg { height: 6px; background: rgba(0,0,0,0.1); border-radius: 5px; position: relative; cursor: pointer; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary-gradient); border-radius: 5px; position: relative; }
+        .progress-fill::after { content:''; position: absolute; right: -5px; top: -3px; width: 12px; height: 12px; background: white; border-radius: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.3); }
+        .timers { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-main); margin-top: 8px; opacity: 0.7; }
+
+        /* CONTROLS GRID */
+        .main-controls { display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%; margin-bottom: 20px; }
+        .bottom-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 10px; }
+
+        /* Buttons */
+        .btn-icon { background: none; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; opacity: 0.8; padding: 10px; transition: 0.2s; position: relative;}
+        .btn-icon:hover { opacity: 1; color: var(--primary); }
+        .btn-icon:active { transform: scale(0.9); }
+        
+        .play-btn {
+            width: 70px; height: 70px;
+            background: var(--primary-gradient);
+            border-radius: 50%; border: none;
+            color: white; font-size: 1.8rem;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4);
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .play-btn:active { transform: scale(0.95); box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3); }
+
+        .btn-link { 
+            background: rgba(0,0,0,0.05); border-radius: 12px; 
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; 
+            color: var(--text-main); text-decoration: none; 
+        }
+
+        .btn-voice { border: 2px solid var(--primary); color: var(--primary); border-radius: 50%; width: 50px; height: 50px; }
+        .loop-active { color: #00E676 !important; text-shadow: 0 0 10px rgba(0,230,118,0.5); opacity: 1; }
+
+        .btn-seek { font-size: 1.4rem; color: var(--text-main); background: none; border: none; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+        .seek-txt { font-size: 0.6rem; margin-top: 4px; font-weight: 600; opacity: 0.7; }
+
+        /* MODAL */
+        .modal-content { background: var(--card-bg); backdrop-filter: blur(25px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
+        .modal-header { border-bottom: 1px solid rgba(0,0,0,0.1); }
+        .singer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 10px; }
+        .singer-item { text-align: center; cursor: pointer; padding: 10px; border-radius: 12px; transition: 0.2s; }
+        .singer-item:active { background: rgba(255,153,51,0.1); transform: scale(0.95); }
+        .singer-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); margin-bottom: 5px; }
+        .singer-name { font-size: 0.75rem; font-weight: 600; color: var(--text-main); }
+
+        /* Sidebar */
+        .offcanvas { background: var(--bg-color); color: var(--text-main); }
+        .menu-item { padding: 10px 15px; display: block; color: var(--text-main); text-decoration: none; font-weight: 500; }
+        .menu-item i { width: 30px; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="offcanvas offcanvas-start" id="appSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" style="font-family:'Cinzel';color:var(--primary);">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" style="filter:invert(0.6)"></button>
+        </div>
+        <div class="offcanvas-body">
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Home</a>
+            <a href="about.html" class="menu-item"><i class="fas fa-info-circle"></i> About</a>
+            <div class="menu-item" onclick="toggleTheme()"><i class="fas fa-moon"></i> Dark Mode</div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar sticky-top">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <!-- 1. BACK BUTTON -->
+                <button class="btn-back" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></button>
+                <a class="navbar-brand" href="#">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKkhc5IkA65STmeUrIgSBI6nDpLrBG5GmZ1pzSkHZnSl5pTc1fzyHFmg1wqwDkeEaa0HZM6vcNk2WWTPuUpvhq-Uee_FUtPQwP2OUyAg8wzbJV1rk6_lCx1X0UlRuxpgulL3trFgzRAvgI1-aSRojJJWUMChXOl9yRSmsOLoHrdmOVDh8gVeUop5T3_VzU/s256/1000198120.png" class="nav-logo-img"> 
+                    Divine Player
+                </a>
+            </div>
+            <button class="btn shadow-none text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="player-container">
+        <!-- FALLING FLOWERS -->
+        <div id="flower-container"></div>
+
+        <div class="player-card">
+            
+            <!-- ALBUM ART -->
+            <div class="art-wrapper">
+                <div class="art-inner">
+                    <img id="track-img" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaZSUu1t1ioA8FH5Dswww0K6l9rL__civt4QPUdSGcK9dL1CFDHY_QD_a0S6PPX66e6DG1fUx5DUL-m4sk1UmsjiZAbHCSc-PLLtaOhgMRQ_MjmsK6f6kmIzJNvHdV2XFH28Yrh8nupNqjdt0D-CdokemNsbpOpxwU2phSenRJ6a4mn282MQT2oblr2_s/s1280/maxresdefault.jpg">
+                </div>
+            </div>
+
+            <!-- INFO -->
+            <div class="info">
+                <h2 id="track-name">Mangala Arti</h2>
+                <p id="artist-name">Srila Prabhupada</p>
+            </div>
+
+            <!-- PROGRESS -->
+            <div class="progress-area">
+                <div class="progress-bg" id="progress-box">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="timers">
+                    <span id="curr-time">00:00</span>
+                    <span id="dur-time">00:00</span>
+                </div>
+            </div>
+
+            <!-- SEEK & PLAY CONTROLS -->
+            <div class="main-controls">
+                <!-- SEEK BACK 10s -->
+                <button class="btn-seek" onclick="seekTrack(-10)">
+                    <i class="fas fa-undo"></i>
+                    <span class="seek-txt">-10s</span>
+                </button>
+
+                <!-- PLAY/PAUSE -->
+                <button class="play-btn" id="play-btn">
+                    <i class="fas fa-play" id="icon-play"></i>
+                    <i class="fas fa-pause" id="icon-pause" style="display:none;"></i>
+                </button>
+
+                <!-- SEEK FORWARD 10s -->
+                <button class="btn-seek" onclick="seekTrack(10)">
+                    <i class="fas fa-redo"></i>
+                    <span class="seek-txt">+10s</span>
+                </button>
+            </div>
+
+            <!-- NAVIGATION & OPTIONS -->
+            <div class="bottom-controls">
+                <!-- 2. CHANGE VOICE POPUP -->
+                <button class="btn-icon btn-voice" onclick="openModal()">
+                    <i class="fas fa-microphone-alt"></i>
+                </button>
+                
+                <!-- 3. PREV PAGE (HTML LINK) -->
+                <a href="previous_track.html" class="btn-link" id="prev-link">
+                    <i class="fas fa-step-backward"></i>
+                </a>
+
+                <!-- 5. LOOP BUTTON -->
+                <button class="btn-icon" id="loop-btn">
+                    <i class="fas fa-repeat"></i>
+                </button>
+
+                <!-- 3. NEXT PAGE (HTML LINK) -->
+                <a href="next_track.html" class="btn-link" id="next-link">
+                    <i class="fas fa-step-forward"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SINGER SELECTION MODAL -->
+    <div class="modal fade" id="voiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-family:'Cinzel'; color:var(--primary);">Select Divine Voice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="singer-grid" id="singerGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO SOURCE -->
+    <audio id="audio"></audio>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* 
+         * ==========================================
+         * ⚙️ CONFIGURATION: SET YOUR LINKS HERE
+         * ==========================================
+         */
+        const PREV_PAGE_URL = "track_1.html";  // Your HTML File for previous song
+        const NEXT_PAGE_URL = "track_3.html";  // Your HTML File for next song
+        
+        // SETUP LINKS
+        document.getElementById('prev-link').href = PREV_PAGE_URL;
+        document.getElementById('next-link').href = NEXT_PAGE_URL;
+
+        // DATA: VOICE VERSIONS
+        const voiceData = [
+            {
+                name: "Srila Prabhupada",
+                img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhaZSUu1t1ioA8FH5Dswww0K6l9rL__civt4QPUdSGcK9dL1CFDHY_QD_a0S6PPX66e6DG1fUx5DUL-m4sk1UmsjiZAbHCSc-PLLtaOhgMRQ_MjmsK6f6kmIzJNvHdV2XFH28Yrh8nupNqjdt0D-CdokemNsbpOpxwU2phSenRJ6a4mn282MQT2oblr2_s/s1280/maxresdefault.jpg",
+                audio: "https://od.lk/s/NTRfMzkxNjM5Njhf/Samsara%20Davanala%20~%20Srila%20Prabhupada%20-%20Krishna%20Bhakti%20Art%20%E0%A5%90.mp3"
+            },
+            {
+                name: "Radhanath Swami",
+                img: "https://www.radhanathswami.com/wp-content/uploads/2012/10/radhanath-swami-portrait-new.jpg",
+                audio: "https://audio.iskcondesiretree.com/02_-_ISKCON_Swamis/ISKCON_Swamis_-_R_to_Y/His_Holiness_Radhanath_Swami/Kirtans/Kirtan_with_Harmonium/RNS_Kirtan_with_Harmonium_-_Hare_Krishna_Mahamantra_-_2012-04-22_-_Chowpatty_Mumbai.mp3"
+            },
+            {
+                name: "Aindra Prabhu",
+                img: "https://i.pinimg.com/736x/8a/7e/63/8a7e638f3223063f820258169623223e.jpg",
+                audio: "https://audio.iskcondesiretree.com/03_-_ISKCON_Prabhujis/ISKCON_Prabhujis_-_A_to_J/His_Grace_Aindra_Prabhu/Kirtans/Aindra_Prabhu_-_Hare_Krishna_Kirtan_-_1995.mp3"
+            },
+            {
+                name: "Loknath Swami",
+                img: "https://pbs.twimg.com/profile_images/1305417387498422273/Wp-S6G66_400x400.jpg",
+                audio: "https://ia600508.us.archive.org/3/items/Kirtan_By_Loknath_Swami_Maharaj/Kirtan_By_Loknath_Swami_Maharaj.mp3"
+            }
+        ];
+
+        /* ==========================================
+           PLAYER LOGIC
+           ========================================== */
+        
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const loopBtn = document.getElementById('loop-btn');
+        const voiceModal = new bootstrap.Modal(document.getElementById('voiceModal'));
+        const progressBox = document.getElementById('progress-box');
+        const flowerContainer = document.getElementById('flower-container');
+        
+        let isPlaying = false;
+        let isLoop = false;
+        let flowerInterval;
+        
+        // 1. INIT
+        loadTrack(0); // Load first singer default
+        renderModal();
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+        function loadTrack(index) {
+            const data = voiceData[index];
+            document.getElementById('artist-name').innerText = data.name;
+            document.getElementById('track-img').src = data.img;
+            audio.src = data.audio;
+            // Note: We don't auto play here initially to respect browser autoplay policy on load
+        }
+
+        // 2. PLAY / PAUSE
+        playBtn.addEventListener('click', () => {
+            if(isPlaying) {
+                audio.pause();
+                stopFlowers();
+            } else {
+                audio.play();
+                startFlowers();
+            }
+            updatePlayUI();
+        });
+
+        function updatePlayUI() {
+            if(isPlaying) {
+                document.getElementById('icon-play').style.display = 'none';
+                document.getElementById('icon-pause').style.display = 'block';
+                document.querySelector('.player-card').classList.add('playing');
+            } else {
+                document.getElementById('icon-play').style.display = 'block';
+                document.getElementById('icon-pause').style.display = 'none';
+                document.querySelector('.player-card').classList.remove('playing');
+            }
+        }
+
+        audio.onplay = () => { isPlaying = true; updatePlayUI(); };
+        audio.onpause = () => { isPlaying = false; updatePlayUI(); };
+
+        // 3. SEEK (-10s / +10s)
+        window.seekTrack = function(seconds) {
+            audio.currentTime += seconds;
+        }
+
+        // 4. INSTANT SWITCH SINGER
+        function renderModal() {
+            const grid = document.getElementById('singerGrid');
+            grid.innerHTML = voiceData.map((d, i) => `
+                <div class="singer-item" onclick="changeVoice(${i})">
+                    <img src="${d.img}" class="singer-img">
+                    <div class="singer-name">${d.name}</div>
+                </div>
+            `).join('');
+        }
+        
+        window.openModal = () => voiceModal.show();
+        
+        window.changeVoice = (index) => {
+            loadTrack(index);
+            // "Jab alag naam pe click karega to INSTANT play hona chahiye"
+            audio.play(); 
+            voiceModal.hide();
+        }
+
+        // 5. LOOP FEATURE
+        loopBtn.addEventListener('click', () => {
+            isLoop = !isLoop;
+            loopBtn.classList.toggle('loop-active');
+        });
+
+        audio.onended = () => {
+            if(isLoop) {
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                // If not loop, maybe auto-go to next page?
+                // Keeping simple: stops here.
+                stopFlowers();
+            }
+        }
+
+        // 6. PROGRESS BAR
+        audio.ontimeupdate = () => {
+            if(audio.duration) {
+                const pct = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('progress-fill').style.width = pct + '%';
+                document.getElementById('curr-time').innerText = formatTime(audio.currentTime);
+                document.getElementById('dur-time').innerText = formatTime(audio.duration);
+            }
+        };
+        
+        progressBox.addEventListener('click', (e) => {
+            const w = progressBox.clientWidth;
+            const clickX = e.offsetX;
+            audio.currentTime = (clickX / w) * audio.duration;
+        });
+
+        function formatTime(s) {
+            const min = Math.floor(s/60);
+            const sec = Math.floor(s%60);
+            return `${min<10?'0'+min:min}:${sec<10?'0'+sec:sec}`;
+        }
+
+        // FLOWER ANIMATION
+        function createFlower() {
+            const f = document.createElement('div');
+            f.className = 'flower';
+            f.innerHTML = ['🌸','🌺','🌼','🌷'][Math.floor(Math.random()*4)];
+            f.style.left = Math.random()*100+'vw';
+            f.style.fontSize = Math.random()*10+15+'px';
+            f.style.animationDuration = Math.random()*3+4+'s';
+            flowerContainer.appendChild(f);
+            setTimeout(()=>f.remove(),7000);
+        }
+        function startFlowers() { if(!flowerInterval) flowerInterval = setInterval(createFlower, 400); }
+        function stopFlowers() { clearInterval(flowerInterval); flowerInterval=null; }
+        
+        // THEME
+        window.toggleTheme = () => {
+            const d = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', d ? 'light' : 'dark');
+            localStorage.setItem('theme', d ? 'light' : 'dark');
+        }
+
+    </script>
+</body>
+</html>
