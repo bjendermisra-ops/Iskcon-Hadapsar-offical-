@@ -1,1 +1,738 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF9933">
+    <meta name="description" content="Official ISKCON Pune Directory & Darshan Gallery">
+    <title>ISKCON Pune Temples</title>
+
+    <!-- Google Fonts: 'Playfair Display' (Spiritual) & 'Inter' (Modern) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 
+           ========================================
+           1. CORE THEME & RESET 
+           ========================================
+        */
+        :root {
+            --primary: #FF9933;         /* Sacred Saffron */
+            --primary-dark: #D35400;    /* Deep Saffron */
+            --secondary: #4E342E;       /* Wood/Earth */
+            --bg-body: #FFF8F0;         /* Cream */
+            --bg-surface: #FFFFFF;      /* White */
+            --text-main: #2D2D2D;
+            --text-light: #666666;
+            --radius-lg: 16px;
+            --radius-sm: 8px;
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow-float: 0 8px 30px rgba(255, 153, 51, 0.2);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-bottom: 80px; /* Space for scrolling */
+            overflow-x: hidden;
+        }
+
+        /* 
+           ========================================
+           2. HEADER AREA 
+           ========================================
+        */
+        header {
+            background: var(--bg-surface);
+            position: sticky;
+            top: 0;
+            z-index: 800;
+            padding: 10px 15px 15px 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        /* Back Button */
+        .btn-nav-back {
+            background: #FFF3E0;
+            color: var(--secondary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-nav-back:active { transform: scale(0.95); background: var(--primary); color: white; }
+
+        .app-title h1 {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--secondary);
+        }
+        .app-title p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+        }
+
+        /* Search & Chips */
+        .search-container { position: relative; width: 100%; margin-bottom: 12px; }
+        .search-container i {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--primary);
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border-radius: 50px;
+            border: 1px solid #EEE;
+            background: #FAFAFA;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            outline: none; border-color: var(--primary); background: #FFF;
+            box-shadow: 0 2px 10px rgba(255,153,51,0.15);
+        }
+
+        .filter-scroll {
+            display: flex; gap: 8px; overflow-x: auto; 
+            padding-bottom: 4px; scrollbar-width: none;
+        }
+        .filter-scroll::-webkit-scrollbar { display: none; }
+
+        .chip {
+            border: none; padding: 6px 16px; border-radius: 20px;
+            background: #EFEFEF; color: var(--text-light); font-weight: 500; font-size: 0.85rem;
+            flex-shrink: 0; cursor: pointer; transition: 0.3s;
+        }
+        .chip.active { background: var(--secondary); color: #fff; }
+
+        /* 
+           ========================================
+           3. MAIN LIST GRID 
+           ========================================
+        */
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+        
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .temple-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 
+           ========================================
+           4. CARD THUMBNAIL SLIDER (INLINE)
+           ========================================
+        */
+        .thumb-wrapper {
+            position: relative;
+            height: 220px;
+            background-color: #f0f0f0;
+        }
+        
+        /* The horizontal scroll container */
+        .thumb-scroller {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .thumb-scroller::-webkit-scrollbar { display: none; }
+
+        .thumb-slide {
+            flex: 0 0 100%;
+            height: 100%;
+            scroll-snap-align: center;
+            position: relative;
+        }
+
+        /* These images are 'cover' so they look good in the card */
+        .thumb-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tap-hint {
+            position: absolute; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,0.65); color: #fff;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.75rem; pointer-events: none;
+            backdrop-filter: blur(4px); z-index: 2;
+        }
+
+        /* Overlay Icon on Thumbnails */
+        .view-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.1); /* light tint */
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; cursor: pointer;
+        }
+        .view-overlay i {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+        .thumb-slide:active .view-overlay,
+        .thumb-slide:hover .view-overlay { opacity: 1; }
+
+        /* 
+           ========================================
+           5. CARD DETAILS
+           ========================================
+        */
+        .card-details {
+            padding: 16px 18px 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .area-badge {
+            color: var(--primary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .card-title {
+            margin: 0 0 8px;
+            color: var(--secondary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .card-addr {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        /* Buttons */
+        .action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .btn {
+            border: none; border-radius: 8px;
+            padding: 12px; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.97); }
+
+        .btn-ghost { background: #F5F5F5; color: #444; border: 1px solid #EEE; }
+        .btn-fill { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white; 
+            box-shadow: 0 4px 10px rgba(255, 153, 51, 0.3);
+        }
+
+        /* 
+           ========================================
+           6. FULL SCREEN GALLERY (LIGHTBOX)
+           ========================================
+        */
+        .fs-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: black; /* Pure Black Background */
+            flex-direction: column;
+        }
+
+        .fs-modal.active { display: flex; animation: fadeReveal 0.25s ease-out; }
+        @keyframes fadeReveal { from{opacity: 0; transform: scale(0.95);} to{opacity: 1; transform: scale(1);} }
+
+        /* Top Bar of Modal */
+        .fs-top {
+            position: absolute; top: 0; width: 100%; z-index: 2005;
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+        .fs-title { color: white; font-weight: 600; font-size: 1.1rem; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .fs-close { color: white; font-size: 2rem; cursor: pointer; opacity: 0.8; padding: 10px;}
+
+        /* Main Image Area */
+        .fs-viewport {
+            flex-grow: 1;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; position: relative;
+        }
+
+        .fs-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* CRITICAL: Shows Full Uncropped Image */
+            user-select: none;
+            pointer-events: auto; /* For touch gestures */
+            transition: opacity 0.3s;
+        }
+
+        /* Navigation Arrows (Visible on PC, Touch on Mobile) */
+        .fs-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.15); color: white;
+            border: none; width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            backdrop-filter: blur(5px); transition: 0.2s; z-index: 2010;
+        }
+        .fs-nav:hover { background: rgba(255,255,255,0.3); }
+        .fs-prev { left: 20px; }
+        .fs-next { right: 20px; }
+
+        .fs-caption {
+            position: absolute; bottom: 30px;
+            background: rgba(30,30,30,0.7);
+            color: #eee;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(5px);
+            left: 50%; transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        /* Utils */
+        .toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translate(-50%, 20px);
+            background: #333; color: white; padding: 12px 24px; border-radius: 30px;
+            font-size: 0.9rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 3000;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+        
+        .empty-msg { text-align: center; color: #999; margin-top: 50px; }
+
+        @media (min-width: 768px) {
+            .grid-layout { grid-template-columns: repeat(2, 1fr); }
+            .fs-close { display: block; } 
+            .btn-nav-back { display: none; } /* Standard Web app behavior */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="header-top">
+            <!-- Functional Back Button -->
+            <button class="btn-nav-back" onclick="handleBackAction()" aria-label="Go Back">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="app-title">
+                <h1>ISKCON Pune Directory</h1>
+                <p>Darshan & Locations</p>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search Hadapsar, Katraj, Camp...">
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-scroll" id="filterContainer">
+            <!-- Chips Injected by JS -->
+        </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="container">
+        <div id="gridTarget" class="grid-layout">
+            <!-- Temple Cards Injected by JS -->
+        </div>
+        <div id="emptyState" class="empty-msg" style="display:none">
+            <i class="fas fa-om" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+            No temples found matching that search.
+        </div>
+    </main>
+
+    <!-- FULL SCREEN IMAGE LIGHTBOX (The "Real View") -->
+    <div id="galleryModal" class="fs-modal">
+        <div class="fs-top">
+            <span class="fs-title" id="fsTitle">Temple Name</span>
+            <div class="fs-close" onclick="closeGallery()"><i class="fas fa-times"></i></div>
+        </div>
+
+        <div class="fs-viewport" id="touchSurface">
+            <button class="fs-nav fs-prev" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+            <img id="fsImage" class="fs-img" src="" alt="Full view">
+            <button class="fs-nav fs-next" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="fs-caption" id="fsCounter">1 / 5</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="appToast">Address Copied to Clipboard</div>
+
+    <script>
+        /**
+         * ISKCON Pune Directory Application
+         * Pure Vanilla JavaScript - No Frameworks
+         */
+        
+        // ===============================================
+        // 1. DATA DATABASE (Includes REAL Hadapsar Images)
+        // ===============================================
+        const templesData = [
+            {
+                id: 1,
+                name: "ISKCON Hadapsar",
+                locality: "Hadapsar",
+                address: "Survey No 50/11, Purandhare Colony, Pandhari Nagar, Handewadi Rd, Hadapsar, Pune, MH 411028",
+                mapUrl: "ISKCON+Hadapsar",
+                // YOUR PROVIDED REAL IMAGES
+                images: [
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj6USIM28qETy1v-VjEwq4AzLg6P13oywxY3vlPRkDOmdcRmyeLqyPKjspUPnv6gUwivhXGpmXUiViRjLw7t_HzCfUQJgE0CJED3VCDhBLOY9pRhSPU4PZ7Tfe1fNxaZcZW850DZuoPdH6ybBxW-rlP3IPk3_9lwBgGRlxcGuyMNBTylyhi9UDBBm6372cj/s1024/1000198175.webp",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhsK9kBQzO7BCgKc_Mydhf4BMguzyXcv9Qe2b32C6RiQWh9ABXp5fe3rxbJrXPvDJS8AWb310MUesu1v6RsACiXE-GOEXa5SdqwGxHkuQqQ2sowmfeccCSu8-9jXoQtUOAmescfeCSYiMKGmGbuJZv3KF1RlwXrhZ8a0X1dpohyfBb3tMXt5yZ5Rk-xrPPT/s1024/1000198172.webp",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYdM390GLnOXqBGZcXlQpoQfTFQurHuutf4bUR4a-hc1s6BzUoQ3cp4TFQGqsV7Srunki-j7tSjg-HyrolhN6lPVwdEEvEfeKDW7soRGvLd5TpvFQPfVOo_9RJUKX8T35DBvCpjRVSg5bEAWQX14FxfljOFvtO8BGfaCk3sUTPzHAuY_qZfho_CbpJUby8/s1024/1000198174.webp",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJoRx2A-fAfGKCTTzqaO6RcdxY3fq43gEEU78227Lpp6jQg7cRvgXRRzMeU4swdY5x2UJqWoOdLIxeDb-ZxBXgx1cS_5GPp7g_eJMiEbiCf4zpW-IC6Ivcj7976WaCPkuZerLxp36BySJVMdcsEklna64Z6AezIQsKp9VC75XU1L7DAOsZIKia7JwpZeDd/s1024/1000198176.webp",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiYqH87_Q069mVgKpks__prYJr8Gd04JRLmGgFaZ9gf1LFjGRUni9DuA4YpszGFiHpZMMZe9likl_CmSeVGru9G18sGI-PgwvUM-_fPZD8r_yQ9kLuvFVaAL30zR3sQxhrUaQT0NSagOOSu4yX3LigwuWDxDVn1NjDseT3haVrqpDr0MgHMArCcGQL-FeKR/s1024/1000198173.webp"
+                ]
+            },
+            {
+                id: 2,
+                name: "ISKCON NVCC",
+                locality: "Katraj",
+                address: "Sr. No. 50, Katraj-Kondhwa Road, Tilekar Nagar, Kondhwa Budruk, Pune, MH 411048",
+                mapUrl: "ISKCON+NVCC+Pune",
+                images: [
+                    "https://iskconpune.com/wp-content/uploads/2019/08/temple-hall-compressor.jpg",
+                    "https://lh5.googleusercontent.com/p/AF1QipN3pY84yEsqMvY4QeNXZdqa_dKz2Y8Gv0XbK3Q=w400-h300-k-no",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/ISKCON_Temple_Pune_Night_View.jpg/640px-ISKCON_Temple_Pune_Night_View.jpg"
+                ]
+            },
+            {
+                id: 3,
+                name: "Sri Sri Radha Kunjabihari",
+                locality: "Camp",
+                address: "4, Tarapore Road, Beside Dastur Boys School, Camp, Pune, MH 411001",
+                mapUrl: "ISKCON+Camp+Pune",
+                images: [
+                    "https://tse3.mm.bing.net/th?id=OIP.hF8g24sJTy0xIiy_Ggw1yAHaFj&pid=Api",
+                    "https://i.pinimg.com/736x/8d/62/16/8d62168344e2776361a4f02861c2807f.jpg"
+                ]
+            },
+            {
+                id: 4,
+                name: "ISKCON Pimpri Chinchwad",
+                locality: "Ravet",
+                address: "Sr. No. 4, H. No 4/1, Near Mansarovar Hotel, Ravet, Pimpri-Chinchwad, Pune",
+                mapUrl: "ISKCON+Pimpri+Chinchwad",
+                images: [
+                    "https://tse1.mm.bing.net/th?id=OIP.0l7K_9y-2z-8Q-9Q-1w-2wHaFj&pid=Api",
+                    "https://live.staticflickr.com/4054/4514578964_60e67e3518_b.jpg"
+                ]
+            }
+        ];
+
+        // ===============================================
+        // 2. STATE MANAGEMENT
+        // ===============================================
+        let currentState = {
+            filter: 'All',
+            search: '',
+            galleryOpen: false,
+            currentTempleId: null,
+            imgIndex: 0
+        };
+
+        // ===============================================
+        // 3. INITIALIZATION
+        // ===============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFilterChips();
+            renderTemples();
+            setupTouchGestures();
+            
+            // Search Listener
+            document.getElementById('searchInput').addEventListener('keyup', (e) => {
+                currentState.search = e.target.value.toLowerCase().trim();
+                renderTemples();
+            });
+
+            // Keyboard support for Gallery
+            document.addEventListener('keydown', (e) => {
+                if(!currentState.galleryOpen) return;
+                if(e.key === 'ArrowRight') moveSlide(1);
+                if(e.key === 'ArrowLeft') moveSlide(-1);
+                if(e.key === 'Escape') closeGallery();
+            });
+        });
+
+        // ===============================================
+        // 4. RENDERING ENGINE
+        // ===============================================
+        function renderFilterChips() {
+            const chipContainer = document.getElementById('filterContainer');
+            const uniqueAreas = ['All', ...new Set(templesData.map(t => t.locality))];
+
+            chipContainer.innerHTML = uniqueAreas.map(area => `
+                <button class="chip ${area === 'All' ? 'active' : ''}" 
+                    onclick="setFilter(this, '${area}')">${area}</button>
+            `).join('');
+        }
+
+        function setFilter(el, area) {
+            currentState.filter = area;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderTemples();
+        }
+
+        function renderTemples() {
+            const grid = document.getElementById('gridTarget');
+            const empty = document.getElementById('emptyState');
+            
+            // Filtering Logic
+            const filtered = templesData.filter(t => {
+                const matchArea = currentState.filter === 'All' || t.locality === currentState.filter;
+                const matchSearch = t.name.toLowerCase().includes(currentState.search) || 
+                                    t.locality.toLowerCase().includes(currentState.search) ||
+                                    t.address.toLowerCase().includes(currentState.search);
+                return matchArea && matchSearch;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            } else {
+                empty.style.display = 'none';
+            }
+
+            // Generating HTML
+            grid.innerHTML = filtered.map(temple => {
+                // Generate Thumbnails Loop
+                const thumbSlides = temple.images.map((img, idx) => `
+                    <div class="thumb-slide" onclick="openGallery(${temple.id}, ${idx})">
+                        <div class="view-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                        <img src="${img}" loading="lazy" alt="${temple.name} image">
+                    </div>
+                `).join('');
+
+                return `
+                <article class="temple-card">
+                    <!-- Thumbnail Scroller -->
+                    <div class="thumb-wrapper">
+                        <div class="thumb-scroller">
+                            ${thumbSlides}
+                        </div>
+                        <span class="tap-hint"><i class="fas fa-hand-pointer"></i> Tap image to Expand</span>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="card-details">
+                        <span class="area-badge"><i class="fas fa-map-marker-alt"></i> ${temple.locality}</span>
+                        <h3 class="card-title">${temple.name}</h3>
+                        <p class="card-addr">${temple.address}</p>
+                        
+                        <!-- Buttons -->
+                        <div class="action-row">
+                            <button class="btn btn-ghost" onclick="copyAddress('${temple.address.replace(/'/g, "\\'")}')">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                            <button class="btn btn-fill" onclick="openMap('${temple.mapUrl}')">
+                                <i class="fas fa-directions"></i> Map
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        // ===============================================
+        // 5. FULL SCREEN GALLERY LOGIC (Lightbox)
+        // ===============================================
+        function openGallery(templeId, index) {
+            currentState.currentTempleId = templeId;
+            currentState.imgIndex = index;
+            currentState.galleryOpen = true;
+
+            const temple = templesData.find(t => t.id === templeId);
+            document.getElementById('fsTitle').textContent = temple.name;
+            
+            updateGalleryImage();
+
+            document.getElementById('galleryModal').classList.add('active');
+            
+            // Push state to browser history so 'Back' button works on Android
+            window.history.pushState({modal: true}, "Gallery");
+        }
+
+        function closeGallery() {
+            document.getElementById('galleryModal').classList.remove('active');
+            currentState.galleryOpen = false;
+            // Clean history if we pushed it
+            if (window.history.state && window.history.state.modal) {
+                window.history.back();
+            }
+        }
+
+        // Handling System Back Button (Hardware/Browser)
+        window.onpopstate = function(event) {
+            if(currentState.galleryOpen) {
+                // If modal was open, simple remove class, logic already handled
+                document.getElementById('galleryModal').classList.remove('active');
+                currentState.galleryOpen = false;
+            }
+        };
+
+        // Manual Header Back Button Handler
+        function handleBackAction() {
+            if (currentState.galleryOpen) {
+                closeGallery();
+            } else if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                alert("This is the root page."); // Or redirect to Home
+            }
+        }
+
+        function moveSlide(step) {
+            const temple = templesData.find(t => t.id === currentState.currentTempleId);
+            const total = temple.images.length;
+            
+            currentState.imgIndex += step;
+            
+            // Infinite loop logic
+            if(currentState.imgIndex >= total) currentState.imgIndex = 0;
+            if(currentState.imgIndex < 0) currentState.imgIndex = total - 1;
+
+            updateGalleryImage();
+        }
+
+        function updateGalleryImage() {
+            const temple = templesData.find(t => t.id === currentState.currentTempleId);
+            const imgUrl = temple.images[currentState.imgIndex];
+            
+            // Loader effect
+            const imgEl = document.getElementById('fsImage');
+            imgEl.style.opacity = '0.5';
+            imgEl.src = imgUrl;
+
+            // Wait for load/cached for fade in
+            imgEl.onload = () => imgEl.style.opacity = '1';
+
+            // Update Counter
+            document.getElementById('fsCounter').textContent = 
+                `${currentState.imgIndex + 1} / ${temple.images.length}`;
+        }
+
+        // ===============================================
+        // 6. TOUCH GESTURES (SWIPE)
+        // ===============================================
+        function setupTouchGestures() {
+            const surface = document.getElementById('touchSurface');
+            let startX = 0;
+            let endX = 0;
+
+            surface.addEventListener('touchstart', (e) => {
+                startX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            surface.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].screenX;
+                handleGesture();
+            }, {passive: true});
+
+            function handleGesture() {
+                if (!currentState.galleryOpen) return;
+                
+                const threshold = 50; // min distance
+                if (endX < startX - threshold) moveSlide(1); // Swipe Left (Next)
+                if (endX > startX + threshold) moveSlide(-1); // Swipe Right (Prev)
+            }
+        }
+
+        // ===============================================
+        // 7. UTILITIES
+        // ===============================================
+        function openMap(query) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
+            window.open(url, '_blank');
+        }
+
+        function copyAddress(text) {
+            const toast = document.getElementById('appToast');
+            
+            // Function to trigger toast
+            const show = () => {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            };
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(show);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                show();
+            }
+        }
+    </script>
+</body>
+</html>
