@@ -1,1 +1,257 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Temple Video Gallery - Watch latest kirtans and darshans">
+    <title>Temple Videos</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* === THEME VARIABLES (PRESERVED) === */
+        :root { 
+            --primary: #FF9933; 
+            --bg: #fcf5e5; 
+            --text: #333; 
+            --card: #fff; 
+            --card-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            --max-width: 1200px;
+        }
+
+        [data-theme="dark"] { 
+            --primary: #FF9933; 
+            --bg: #121212; 
+            --text: #e0e0e0; 
+            --card: #1e1e1e;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* === RESET & LAYOUT === */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            min-height: 100vh;
+            transition: background 0.3s ease;
+        }
+
+        /* Responsive Container */
+        .app-container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        /* === HEADER === */
+        .header { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 25px; 
+            padding-top: 5px;
+        }
+        
+        /* Updated Link Styles for Back Button */
+        .back-btn-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn { 
+            font-size: 22px; 
+            color: var(--primary); 
+            margin-right: 18px; 
+            cursor: pointer; 
+            transition: transform 0.2s ease;
+        }
+        
+        .back-btn:hover { transform: translateX(-4px); }
+
+        .title { 
+            font-family: 'Cinzel', serif; 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin: 0; 
+            letter-spacing: 0.5px;
+        }
+
+        /* === VIDEO LIST GRID SYSTEM === */
+        #list {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile Default (Single Col) */
+            gap: 20px;
+        }
+
+        /* Tablet Breakpoint */
+        @media (min-width: 600px) {
+            #list { grid-template-columns: repeat(2, 1fr); }
+            .thumb { height: 200px !important; }
+        }
+
+        /* Laptop Breakpoint */
+        @media (min-width: 900px) {
+            #list { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* Large Screen Breakpoint */
+        @media (min-width: 1400px) {
+            #list { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* === CARD STYLING === */
+        .v-card { 
+            background: var(--card); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: var(--card-shadow);
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s;
+            cursor: pointer;
+            text-decoration: none; /* Reset link underline */
+            display: block; /* Ensure full clickable area */
+        }
+
+        .v-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .v-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Thumb Wrapper to handle aspect ratios properly on resize */
+        .img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+            background: #000;
+        }
+
+        .thumb { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; 
+            height: 100% !important; 
+            object-fit: cover; 
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Play Icon Overlay (Desktop Enhancements) */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .v-card:hover .overlay { opacity: 1; }
+        
+        .overlay i { font-size: 40px; color: #fff; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+
+        .info { 
+            padding: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-top: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .v-name { 
+            font-weight: 600; 
+            color: var(--text); 
+            font-size: 15px;
+            /* Text Truncation for Grid Cleanliness */
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            max-width: 85%;
+        }
+
+        .play { 
+            color: var(--primary); 
+            font-size: 24px; 
+            transition: transform 0.2s;
+        }
+        
+        .v-card:hover .play { transform: scale(1.1); }
+
+    </style>
+</head>
+<body>
+    
+    <div class="app-container">
+        <!-- HEADER -->
+        <div class="header">
+            <!-- Fixed Back Button Link -->
+            <a href="index.html" class="back-btn-link" aria-label="Go Back">
+                <i class="fas fa-arrow-left back-btn"></i>
+            </a>
+            <h2 class="title">Temple Videos</h2>
+        </div>
+
+        <!-- LIST CONTAINER -->
+        <div id="list"></div>
+    </div>
+
+<script>
+    // Theme Logic (Persistent)
+    try {
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+    } catch(e) { console.log('LocalStorage unavailable'); }
+
+    // === DATA SOURCE (CONVERTED TO WEBSITE LINKS) ===
+    const data = [
+        { 
+            t: "Janmashtami 2024", 
+            img: "https://i.ytimg.com/vi/b4XW-P_eA6Y/maxresdefault.jpg", 
+            link: "vid_1.html" 
+        },
+        { 
+            t: "Gaur Purnima", 
+            img: "https://i.ytimg.com/vi/JzF5B-qG4NQ/maxresdefault.jpg", 
+            link: "vid_2.html" 
+        },
+        { 
+            t: "Sunday Feast", 
+            img: "https://i.ytimg.com/vi/wA-a25S-aBI/maxresdefault.jpg", 
+            link: "vid_3.html" 
+        }
+    ];
+
+    const list = document.getElementById('list');
+
+    // === RENDER LOGIC ===
+    data.forEach(i => {
+        // Changed outer div to <a> tag for semantic SEO + Standard Web behavior
+        list.innerHTML += `
+        <a href="${i.link}" class="v-card">
+            <div class="img-wrapper">
+                <img src="${i.img}" class="thumb" loading="lazy" alt="${i.t}">
+                <!-- New hover overlay for larger screens -->
+                <div class="overlay"><i class="fas fa-play-circle"></i></div>
+            </div>
+            <div class="info">
+                <div class="v-name">${i.t}</div>
+                <i class="fas fa-play-circle play"></i>
+            </div>
+        </a>`;
+    });
+</script>
+</body>
+</html>
