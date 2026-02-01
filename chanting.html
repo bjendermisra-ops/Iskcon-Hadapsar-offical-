@@ -1,1 +1,640 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="ISKCON Hadapsar Japa Sadhana - Digital Chanting Counter">
+    <title>Japa Sadhana - ISKCON Hadapsar</title>
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons & Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { saffron: '#FF9933', deep: '#050505', darkCard: '#1a1a1a' },
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], serif: ['Cinzel', 'serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.3s ease-out' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'scale(0.98)' }, '100%': { opacity: '1', transform: 'scale(1)' } } }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #000; color: white; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+        
+        /* Fixed Background Art */
+        .bg-fixed-art {
+            position: fixed; inset: 0; z-index: -1;
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg');
+            background-size: cover; background-position: center; opacity: 0.15;
+        }
+
+        /* Mobile Container Constraint for Desktop */
+        .app-layout { 
+            height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+            width: 100%; max-width: 500px; margin: 0 auto; background: rgba(0,0,0,0.2); 
+            border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* UI States */
+        .tap-active { transform: scale(0.96); border-color: #FF9933 !important; box-shadow: 0 0 40px rgba(255, 153, 51, 0.5); }
+        .ring-progress { transition: stroke-dashoffset 0.1s linear; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        
+        /* History Panel */
+        .history-details { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .history-card.active .history-details { max-height: 500px; }
+        .history-card.active .chevron { transform: rotate(180deg); color: #FF9933; }
+        .chevron { transition: transform 0.3s; }
+        
+        /* Utilities */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        * { user-select: none; -webkit-user-select: none; outline: none; }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-fixed-art"></div>
+
+    <div class="app-layout">
+        
+        <!-- HEADER -->
+        <header class="flex justify-between items-center px-5 py-4 bg-black/60 backdrop-blur-md border-b border-white/10 z-20">
+            <div class="flex items-center gap-4">
+                <!-- FIX: Back Button uses index.html -->
+                <a href="index.html" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-saffron border border-white/10 active:scale-95 transition">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                
+                <div>
+                    <h1 class="font-serif text-saffron font-bold text-sm tracking-widest">JAPA SADHANA</h1>
+                    <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                        <i class="fas fa-fire text-orange-500"></i>
+                        <span id="streakDisplay">0 Day Streak</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="openHistory()" class="text-gray-300 hover:text-saffron transition transform active:scale-90" aria-label="History"><i class="fas fa-history text-xl"></i></button>
+                <button onclick="openSettings()" class="text-gray-300 hover:text-saffron transition transform active:scale-90" aria-label="Settings"><i class="fas fa-cog text-xl"></i></button>
+            </div>
+        </header>
+
+        <!-- MAIN DASHBOARD -->
+        <main class="flex-1 flex flex-col items-center justify-center relative w-full p-4 z-10">
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 gap-3 w-full mb-6">
+                <!-- Round Counter -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center shadow-lg">
+                    <span class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Rounds Today</span>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span id="roundsDisplay" class="text-3xl font-bold text-white">0</span>
+                        <span id="targetDisplay" class="text-sm font-bold text-saffron opacity-80">/ 16</span>
+                    </div>
+                </div>
+                
+                <!-- Timer Card -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center relative shadow-lg group">
+                    <span class="text-[9px] text-gray-400 uppercase tracking-widest font-bold z-10">Time</span>
+                    <div id="timerDisplay" class="text-2xl font-mono text-saffron font-bold z-10 mt-1">00:00</div>
+                    <button onclick="toggleTimer()" class="absolute inset-0 z-20 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300">
+                        <i id="timerIcon" class="fas fa-pause text-white"></i>
+                    </button>
+                    <div id="timerDot" class="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-green-500 hidden animate-pulse"></div>
+                </div>
+            </div>
+
+            <!-- DIGITAL BEAD COUNTER -->
+            <div class="relative w-[280px] h-[280px] flex items-center justify-center mb-6">
+                <!-- SVG Ring -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_0_15px_rgba(255,153,51,0.2)]">
+                    <circle class="text-white/5" stroke-width="12" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
+                    <circle id="progressRing" class="ring-progress text-saffron" stroke-width="12" stroke-dasharray="785" stroke-dashoffset="785" stroke-linecap="round" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
+                </svg>
+
+                <!-- Tap Button (Core Interaction) -->
+                <button id="tapBtn" onmousedown="handleTap()" ontouchstart="handleTap(event)" 
+                    class="relative w-[215px] h-[215px] rounded-full border-[6px] border-[#222] shadow-2xl flex flex-col items-center justify-center z-20 transition-all duration-75 overflow-hidden bg-cover bg-center group active:scale-95"
+                    style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7gXfbHOlV_6XouK6kyFNhyVnbvbCJigrbTLKg5V8Kqrn7Qkq8C3-m-lCLSwy7U3K92G5-uCDJ_dwWkXWEx8uAgGlwbXAsXJqAgikyeqck7JVeocEqP3M3JlqCXrClXqJ7IkKCK_z_E9E7Y7V0_6PryqLfqOkZCNKDPlaQDrx-P_Jz/s1600/bead.jpg');">
+                    
+                    <div class="absolute inset-0 bg-black/60 group-active:bg-black/50 transition duration-200"></div>
+                    <span id="beadCount" class="relative z-10 text-[4.5rem] font-bold leading-none text-white drop-shadow-lg select-none">0</span>
+                    <span class="relative z-10 text-[10px] text-gray-300 tracking-[3px] font-bold mt-1 select-none">MANTRA</span>
+                </button>
+            </div>
+
+            <!-- Mantra Text -->
+            <div class="text-center space-y-1 opacity-70">
+                <h3 class="text-saffron font-bold text-sm font-serif uppercase tracking-wider">Hare Krishna Hare Krishna</h3>
+                <p class="text-[10px] text-gray-400 font-sans tracking-wide">Krishna Krishna Hare Hare • Hare Rama Hare Rama • Rama Rama Hare Hare</p>
+            </div>
+
+        </main>
+
+        <!-- FOOTER MENU -->
+        <footer class="bg-[#080808] border-t border-white/5 p-3 pb-6 z-20">
+            <div class="flex justify-around items-center max-w-sm mx-auto">
+                <button onclick="toggleAudio()" id="audioBtn" class="flex flex-col items-center gap-1 group w-16">
+                    <i class="fas fa-music text-lg text-gray-500 group-hover:text-saffron transition"></i>
+                    <span class="text-[9px] text-gray-500">Audio</span>
+                </button>
+                <button onclick="resetBeads()" class="flex flex-col items-center gap-1 group w-16">
+                    <i class="fas fa-undo text-lg text-gray-500 group-hover:text-red-500 transition"></i>
+                    <span class="text-[9px] text-gray-500">Reset</span>
+                </button>
+                <button onclick="shareProgress()" class="flex flex-col items-center gap-1 group w-16">
+                    <i class="fas fa-share-alt text-lg text-gray-500 group-hover:text-blue-500 transition"></i>
+                    <span class="text-[9px] text-gray-500">Share</span>
+                </button>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- SETTINGS -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-darkCard w-full max-w-sm rounded-2xl border border-white/10 p-6 shadow-2xl relative">
+            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <h2 class="text-saffron font-serif text-xl mb-6">Settings</h2>
+
+            <div class="mb-6">
+                <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2 block">Set Daily Goal</label>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    <button onclick="setTargetInput(16)" class="py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10">16</button>
+                    <button onclick="setTargetInput(32)" class="py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10">32</button>
+                    <button onclick="setTargetInput(64)" class="py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10">64</button>
+                </div>
+                <input type="number" id="customTargetInput" placeholder="Custom Target" class="w-full bg-black border border-white/20 rounded-lg py-3 px-4 text-sm text-white focus:border-saffron outline-none">
+            </div>
+
+            <div class="space-y-4 border-t border-white/10 pt-5">
+                <!-- Toggles -->
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">Click Sound</span>
+                    <input type="checkbox" id="soundToggle" class="w-5 h-5 accent-saffron">
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">Haptic Vibration</span>
+                    <input type="checkbox" id="vibToggle" class="w-5 h-5 accent-saffron">
+                </div>
+                
+                <!-- FIX: Notification Button Logic -->
+                <div class="bg-white/5 p-3 rounded-lg border border-white/5">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-300">Daily Reminders</span>
+                            <span class="text-[9px] text-gray-500">Notifications if inactive</span>
+                        </div>
+                        <input type="checkbox" id="notifyToggle" onchange="requestNotificationPermission()" class="w-5 h-5 accent-saffron">
+                    </div>
+                    <button onclick="triggerTestNotification()" class="w-full py-1.5 bg-gray-800 text-saffron text-[10px] rounded hover:bg-gray-700 transition">
+                        <i class="fas fa-bell mr-1"></i> Send Test Alert
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="saveSettings()" class="w-full mt-6 bg-saffron text-black font-bold py-3.5 rounded-xl hover:bg-orange-500 transition">Save & Close</button>
+        </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="historyModal" class="hidden fixed inset-0 z-50 bg-black/95 flex items-end sm:items-center justify-center animate-fade-in">
+        <div class="bg-darkCard w-full sm:w-[400px] h-[85vh] sm:h-[600px] sm:rounded-2xl rounded-t-2xl border-t sm:border border-white/10 flex flex-col shadow-2xl">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-[#222] rounded-t-2xl">
+                <h2 class="text-saffron font-serif text-lg">My Sadhana</h2>
+                <button onclick="closeModal('historyModal')" class="text-gray-400 text-xl hover:text-white">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 p-4 bg-[#181818] border-b border-white/5">
+                <div class="text-center">
+                    <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Total Rounds</div>
+                    <div id="histTotalRounds" class="text-2xl font-bold text-white mt-1">0</div>
+                </div>
+                <div class="text-center border-l border-white/10">
+                    <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Best Score</div>
+                    <div id="histBestDay" class="text-2xl font-bold text-white mt-1">0</div>
+                </div>
+            </div>
+            
+            <div id="historyList" class="flex-1 overflow-y-auto p-4 space-y-3 hide-scroll bg-[#111]">
+                <!-- History Items JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CELEBRATION (Round Complete) -->
+    <div id="celebrationModal" class="hidden fixed inset-0 z-[60] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+        <div class="bg-darkCard border-2 border-saffron w-full max-w-xs rounded-2xl p-8 text-center relative shadow-[0_0_50px_rgba(255,153,51,0.2)] transform scale-100">
+            <i class="fas fa-check-circle text-5xl text-saffron mb-4 animate-bounce"></i>
+            <h2 class="text-2xl text-white font-serif font-bold mb-1">Round Complete!</h2>
+            <p class="text-xs text-gray-400 mb-6 italic">"Chant Hare Krishna and be Happy"</p>
+            
+            <div class="bg-black/50 rounded-xl p-4 mb-6 border border-white/5">
+                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>Completed</span><span id="celRoundNum" class="text-saffron font-bold">1</span></div>
+                <div class="flex justify-between text-xs text-gray-400"><span>Time Taken</span><span id="celTime" class="text-white font-mono">00:00</span></div>
+            </div>
+            <button onclick="startNextRound()" class="w-full bg-saffron text-black font-bold py-3 rounded-xl hover:scale-105 transition shadow-lg">Start Next Round</button>
+        </div>
+    </div>
+
+    <!-- SOUND ASSETS -->
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+    <audio id="bgAudio" loop src="https://archive.org/download/SrilaPrabhupadaJapa/SrilaPrabhupadaJapa_64kb.mp3"></audio>
+
+    <script>
+        /* ========================
+           APP STATE MANAGEMENT
+           ======================== */
+        const MAX_BEADS = 108;
+        const RING_CIRCUMFERENCE = 785; 
+        
+        let state = {
+            beads: 0,
+            roundsToday: 0,
+            target: 16,
+            timer: { running: false, elapsed: 0 },
+            history: {}, 
+            settings: { sound: true, vib: true, notify: false },
+            streak: 0,
+            lastActivity: Date.now()
+        };
+
+        let timerInterval = null;
+        let notificationInterval = null;
+
+        // Initialization
+        window.onload = () => {
+            loadData();
+            updateUI();
+            checkNotificationPermissionOnLoad();
+            
+            // Background Interval for Smart Notifications
+            notificationInterval = setInterval(checkInactivity, 300000); // Check every 5 mins
+            
+            // Resume Timer if it was running (e.g. reload)
+            if(state.timer.running) toggleTimer(true);
+        };
+
+        /* ========================
+           CHANTING LOGIC
+           ======================== */
+        function handleTap(e) {
+            if(e && e.type === 'touchstart') e.preventDefault(); // Prevent double fire on touch
+            
+            state.beads++;
+            state.lastActivity = Date.now();
+            
+            // Auto-start timer on first bead
+            if(state.beads === 1 && !state.timer.running) toggleTimer(true);
+
+            // Visual Tap Effect
+            const btn = document.getElementById('tapBtn');
+            btn.classList.add('tap-active');
+            setTimeout(() => btn.classList.remove('tap-active'), 80);
+
+            // Sound & Haptic
+            if(state.settings.vib && navigator.vibrate) navigator.vibrate(15);
+            if(state.settings.sound) {
+                const click = document.getElementById('clickSound');
+                click.currentTime = 0;
+                click.play().catch(e => console.log('Audio Blocked:', e));
+            }
+
+            // Logic: Complete Round vs Count
+            if(state.beads >= MAX_BEADS) {
+                completeRound();
+            } else { 
+                updateUI(); 
+                saveData(); 
+            }
+        }
+
+        function completeRound() {
+            toggleTimer(false);
+            state.roundsToday++;
+            
+            // Log to History
+            const today = new Date().toISOString().split('T')[0];
+            if(!state.history[today]) state.history[today] = [];
+            state.history[today].push({
+                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                duration: formatTime(state.timer.elapsed),
+                roundNum: state.roundsToday
+            });
+
+            // Update Modal Data
+            document.getElementById('celRoundNum').innerText = `#${state.roundsToday}`;
+            document.getElementById('celTime').innerText = formatTime(state.timer.elapsed);
+            document.getElementById('celebrationModal').classList.remove('hidden');
+            
+            // Confetti Blast
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FF9933', '#ffffff'] });
+            
+            saveData();
+            updateUI();
+        }
+
+        function startNextRound() {
+            document.getElementById('celebrationModal').classList.add('hidden');
+            state.beads = 0;
+            state.timer.elapsed = 0; // Reset timer for new round
+            // Don't auto-start timer here, wait for first tap
+            if(state.timer.running) toggleTimer(false);
+            
+            updateUI();
+            saveData();
+            document.getElementById('timerDisplay').innerText = "00:00";
+        }
+
+        /* ========================
+           NOTIFICATION LOGIC (FIXED)
+           ======================== */
+        function checkNotificationPermissionOnLoad() {
+            if ("Notification" in window) {
+                if (Notification.permission === "granted") {
+                    state.settings.notify = true;
+                    document.getElementById('notifyToggle').checked = true;
+                }
+            }
+        }
+
+        function requestNotificationPermission() {
+            const toggle = document.getElementById('notifyToggle');
+            if (toggle.checked) {
+                if (!("Notification" in window)) {
+                    alert("Your browser does not support notifications.");
+                    toggle.checked = false;
+                    return;
+                }
+                
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        state.settings.notify = true;
+                        new Notification("Japa Sadhana", { body: "Hari Bol! Notifications Enabled.", icon: "https://cdn-icons-png.flaticon.com/512/3663/3663335.png" });
+                    } else {
+                        alert("Notifications blocked by browser settings.");
+                        toggle.checked = false;
+                        state.settings.notify = false;
+                    }
+                    saveData();
+                });
+            } else {
+                state.settings.notify = false;
+                saveData();
+            }
+        }
+
+        function checkInactivity() {
+            if(!state.settings.notify) return;
+            // 2 Hours inactivity = Remind if goal not met
+            const inactivityLimit = 7200000; 
+            if ((Date.now() - state.lastActivity) > inactivityLimit && state.roundsToday < state.target) {
+                triggerNativeNotification(`You have ${state.target - state.roundsToday} rounds left today!`);
+                state.lastActivity = Date.now(); // Reset trigger
+            }
+        }
+
+        function triggerTestNotification() {
+            if(Notification.permission === "granted") {
+                alert("Testing... minimize app. Notification arriving in 3s.");
+                setTimeout(() => {
+                    triggerNativeNotification("Test: Hare Krishna! Chant & Be Happy.");
+                }, 3000);
+            } else {
+                alert("Permission not granted. Please enable the toggle above first.");
+            }
+        }
+
+        function triggerNativeNotification(msg) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("ISKCON Japa", {
+                    body: msg,
+                    icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh89ueri3DvWfVUmM76dyYJSTCLcDC6oYuAT3j-ezAKl5iDeJ97q28vt2MR39RJwL8BGI91we6F4DRj-u7j1EE2NPyQRwFs0HfYcB4HjxZ9VoeUQWGR7GdARSdow00uHqEehsr6gOVDFG15mntfIdNuOrQ_fxAZHCjMWU9kEjzaUMhuN52vsKMA6Tb9Dtx3/s256/1000096788.png",
+                    vibrate: [200, 100, 200]
+                });
+            } else {
+                // Fallback for non-compliant browsers or user settings
+                alert("🔔 " + msg);
+            }
+        }
+
+        /* ========================
+           HISTORY RENDERER
+           ======================== */
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = "";
+            const dates = Object.keys(state.history).sort((a,b) => new Date(b) - new Date(a));
+            
+            let totalLifetimeRounds = 0;
+            let bestDay = 0;
+
+            if(dates.length === 0) {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center h-40 text-gray-600 opacity-60">
+                    <i class="fas fa-scroll text-3xl mb-2"></i>
+                    <p class="text-xs">No History Found</p>
+                </div>`;
+            } else {
+                dates.forEach(date => {
+                    const rounds = state.history[date];
+                    const count = rounds.length;
+                    totalLifetimeRounds += count;
+                    if(count > bestDay) bestDay = count;
+
+                    const dateObj = new Date(date);
+                    const dateDisplay = dateObj.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+                    // Accordion Card
+                    const item = document.createElement('div');
+                    item.className = "history-card bg-[#222] rounded-lg border border-white/5 mb-2 overflow-hidden transition-all";
+                    
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center p-3 cursor-pointer hover:bg-white/5" onclick="this.parentElement.classList.toggle('active')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron text-xs font-bold">${count}</div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">${dateDisplay}</div>
+                                    <div class="text-[10px] text-gray-500">Beads chanted: ${(count * 108).toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-down text-xs text-gray-600 chevron transition-transform"></i>
+                        </div>
+                        <div class="history-details bg-[#151515] text-xs">
+                            <div class="p-2 space-y-1">
+                                ${rounds.map((r, i) => `
+                                    <div class="flex justify-between p-2 rounded bg-black border border-white/5">
+                                        <span class="text-saffron">Round ${i+1}</span>
+                                        <span class="text-gray-400">${r.time}</span>
+                                        <span class="font-mono text-gray-300">${r.duration}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+
+            document.getElementById('histTotalRounds').innerText = totalLifetimeRounds.toLocaleString();
+            document.getElementById('histBestDay').innerText = bestDay;
+        }
+
+        /* ========================
+           DATA PERSISTENCE
+           ======================== */
+        function saveData() { 
+            localStorage.setItem('iskcon_japa_v2', JSON.stringify(state)); 
+        }
+        
+        function loadData() {
+            // Attempt V2 load, else null
+            const raw = localStorage.getItem('iskcon_japa_v2');
+            if(raw) {
+                const data = JSON.parse(raw);
+                // Merge loaded data with default structure to prevent missing key errors
+                state = { ...state, ...data, timer: { running:false, elapsed:0 } };
+                
+                // Get today's progress
+                const today = new Date().toISOString().split('T')[0];
+                if(state.history[today]) {
+                    state.roundsToday = state.history[today].length;
+                } else {
+                    state.roundsToday = 0; // New Day
+                }
+            }
+        }
+
+        /* ========================
+           UTILITIES
+           ======================== */
+        function updateUI() {
+            document.getElementById('beadCount').innerText = state.beads;
+            document.getElementById('roundsDisplay').innerText = state.roundsToday;
+            document.getElementById('targetDisplay').innerText = `/ ${state.target}`;
+            document.getElementById('streakDisplay').innerText = "Day " + Object.keys(state.history).length; // Simple streak count
+            
+            const timerTxt = formatTime(state.timer.elapsed);
+            if(state.timer.running) document.getElementById('timerDisplay').innerText = timerTxt;
+            else if(state.timer.elapsed === 0) document.getElementById('timerDisplay').innerText = "00:00";
+            
+            // SVG Progress Logic
+            const offset = RING_CIRCUMFERENCE - (state.beads / MAX_BEADS) * RING_CIRCUMFERENCE;
+            document.getElementById('progressRing').style.strokeDashoffset = offset;
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s/60).toString().padStart(2,'0');
+            const sec = (s%60).toString().padStart(2,'0');
+            return `${m}:${sec}`;
+        }
+
+        function toggleTimer(force) {
+            const run = force !== undefined ? force : !state.timer.running;
+            
+            if(run) {
+                if(timerInterval) clearInterval(timerInterval);
+                state.timer.running = true;
+                timerInterval = setInterval(() => {
+                    state.timer.elapsed++;
+                    document.getElementById('timerDisplay').innerText = formatTime(state.timer.elapsed);
+                }, 1000);
+                document.getElementById('timerIcon').className = "fas fa-pause";
+                document.getElementById('timerDot').classList.remove('hidden');
+            } else {
+                clearInterval(timerInterval);
+                state.timer.running = false;
+                document.getElementById('timerIcon').className = "fas fa-play pl-1"; // adjust centering icon
+                document.getElementById('timerDot').classList.add('hidden');
+            }
+            saveData();
+        }
+
+        function setTargetInput(val) { document.getElementById('customTargetInput').value = val; }
+        
+        function saveSettings() {
+            const val = document.getElementById('customTargetInput').value;
+            if(val > 0) state.target = parseInt(val);
+            state.settings.sound = document.getElementById('soundToggle').checked;
+            state.settings.vib = document.getElementById('vibToggle').checked;
+            saveData();
+            updateUI();
+            closeModal('settingsModal');
+        }
+
+        // Modal Helpers
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openModal(id) { 
+            document.getElementById(id).classList.remove('hidden'); 
+            if(id === 'settingsModal') {
+                document.getElementById('customTargetInput').value = state.target;
+                document.getElementById('soundToggle').checked = state.settings.sound;
+                document.getElementById('vibToggle').checked = state.settings.vib;
+                document.getElementById('notifyToggle').checked = state.settings.notify;
+            }
+            if(id === 'historyModal') renderHistory();
+        }
+        function openSettings() { openModal('settingsModal'); }
+        function openHistory() { openModal('historyModal'); }
+
+        // Controls
+        function resetBeads() {
+            if(confirm("Reset the current mantra count to 0?")) {
+                state.beads = 0;
+                toggleTimer(false);
+                state.timer.elapsed = 0;
+                updateUI();
+                saveData();
+                document.getElementById('timerDisplay').innerText = "00:00";
+            }
+        }
+
+        function shareProgress() {
+            const txt = `📿 ISKCON Japa Sadhana\nCompleted ${state.roundsToday} Rounds today!`;
+            if (navigator.share) {
+                navigator.share({ title: 'My Japa Progress', text: txt });
+            } else {
+                navigator.clipboard.writeText(txt);
+                alert("Text copied to clipboard!");
+            }
+        }
+
+        // Audio Toggle
+        let isPlaying = false;
+        function toggleAudio() {
+            const aud = document.getElementById('bgAudio');
+            const icon = document.getElementById('audioBtn').querySelector('i');
+            const txt = document.getElementById('audioBtn').querySelector('span');
+            
+            if(isPlaying) {
+                aud.pause();
+                icon.className="fas fa-music text-lg text-gray-500 transition";
+                txt.className="text-[9px] text-gray-500";
+            } else {
+                aud.play().then(() => {
+                    icon.className="fas fa-pause text-lg text-saffron transition animate-pulse";
+                    txt.className="text-[9px] text-saffron font-bold";
+                }).catch(e => {
+                    alert("Autoplay Blocked. Tap the page once first!");
+                });
+            }
+            isPlaying = !isPlaying;
+        }
+
+    </script>
+</body>
+</html>
