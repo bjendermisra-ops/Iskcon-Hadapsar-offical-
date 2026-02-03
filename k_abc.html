@@ -1,1 +1,695 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Optimized Viewport for Smart Devices -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>Vedic Alphabet | ISKCON Kids | Instant Load Edition</title>
+<meta name="theme-color" content="#FF9933">
+
+<!-- External Icons & Fonts -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Using Baloo 2 for Hindi/Marathi/English nicely -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Canvas Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+    /* --- VEDIC THEME VARIABLES --- */
+    :root {
+        --saffron: #FF9933;
+        --deep-orange: #E65100;
+        --gold: #FFD700;
+        --tulsi: #2E7D32;
+        --cream: #FFF8E1;
+        --card-bg: #FFFFFF;
+        --text-dark: #3E2723;
+        --shadow-card: 0 15px 40px rgba(0,0,0,0.18);
+        --btn-grad-idle: linear-gradient(135deg, #FF9800, #EF6C00);
+        --btn-grad-play: linear-gradient(135deg, #FF5252, #D32F2F);
+    }
+
+    /* GLOBAL RESETS */
+    * { box-sizing: border-box; tap-highlight-color: transparent; outline: none; user-select: none; }
+    
+    html, body {
+        width: 100%; height: 100%; margin: 0; padding: 0;
+        overflow: hidden; /* App-like feel */
+    }
+
+    body {
+        font-family: 'Fredoka', 'Baloo 2', sans-serif; /* Fallback for English */
+        background: radial-gradient(circle at center, #FFFDE7 0%, #FFECB3 100%);
+        display: flex; flex-direction: column; 
+    }
+
+    /* Language Specific Font Override */
+    body.lang-hi, body.lang-mr { font-family: 'Baloo 2', sans-serif; }
+
+    /* BACKGROUND PATTERN */
+    .bg-deco {
+        position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 0;
+        background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+        opacity: 0.3;
+    }
+
+    /* HEADER */
+    .header {
+        position: absolute; top: 0; left: 0; right: 0; height: 70px;
+        padding: 0 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        /* Safe Area for Mobile Notch */
+        padding-top: max(10px, env(safe-area-inset-top)); 
+    }
+    
+    .home-btn {
+        background: white; border: 3px solid var(--saffron);
+        color: var(--deep-orange); padding: 8px 18px; border-radius: 50px;
+        font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;
+    }
+    .home-btn:active { transform: scale(0.95); }
+    
+    .header-logo { 
+        font-family: 'Baloo 2', sans-serif; font-weight: 800; color: var(--deep-orange); 
+        font-size: 24px; text-shadow: 2px 2px 0px white; letter-spacing: 0.5px;
+    }
+
+    /* SCENE CONTAINER */
+    .scene {
+        flex: 1; width: 100%; display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        perspective: 1200px; position: relative; z-index: 10;
+        padding-bottom: 20px;
+    }
+
+    /* THE CARD */
+    .card {
+        background: var(--card-bg);
+        border-radius: 40px;
+        /* Dynamic Size: Logic to fit perfectly on phones and huge monitors */
+        width: clamp(300px, 90vw, 480px);
+        height: clamp(500px, 75vh, 750px);
+        
+        position: relative;
+        box-shadow: var(--shadow-card), inset 0 0 0 4px var(--gold);
+        display: flex; flex-direction: column; align-items: center; 
+        
+        /* Orange Bars Top/Bottom */
+        border-top: 18px solid var(--saffron);
+        border-bottom: 18px solid var(--saffron);
+        
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        cursor: grab;
+        padding-bottom: 0; 
+        will-change: transform;
+    }
+    .card:active { cursor: grabbing; }
+
+    /* LAYOUT INSIDE CARD */
+    .card-content {
+        flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center;
+        padding: 10px 20px;
+        position: relative;
+        overflow: hidden; 
+    }
+
+    /* 1. BACKGROUND LETTER (Faded A, B, C) */
+    .bg-letter {
+        position: absolute; top: 0px; 
+        font-size: clamp(140px, 30vh, 220px); 
+        color: rgba(255, 153, 51, 0.08); 
+        font-weight: 900; z-index: 0;
+        line-height: 0.8;
+    }
+
+    /* 2. IMAGE CONTAINER & IMAGE BOX 
+       PopIn applied to Wrapper, Float applied to ImgBox */
+    .img-wrapper {
+        z-index: 5; margin-top: clamp(20px, 4vh, 40px);
+        flex: 1; display: flex; align-items: center; justify-content: center;
+        width: 100%; max-height: 50%;
+        opacity: 0; 
+        transform: scale(0.9);
+    }
+    
+    .pop-anim {
+        animation: popIn 0.5s ease forwards;
+    }
+
+    .img-box {
+        width: auto; height: auto;
+        max-width: 90%; max-height: 100%;
+        object-fit: contain; 
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+        transition: transform 0.3s ease;
+    }
+    
+    @keyframes popIn { 
+        0% { opacity: 0; transform: scale(0.8); } 
+        100% { opacity: 1; transform: scale(1); } 
+    }
+    
+    .floating { animation: floatImg 3s ease-in-out infinite; }
+    @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+    /* 3. TEXT INFO SECTION */
+    .info-section {
+        z-index: 10; width: 100%;
+        display: flex; flex-direction: column; align-items: center;
+        margin-top: 10px;
+        padding-bottom: 50px; /* Space for the floating button */
+    }
+
+    .word-title { 
+        font-size: clamp(32px, 5vh, 48px); 
+        color: var(--deep-orange); font-weight: 800; 
+        text-shadow: 2px 2px 0 #FFF; 
+        text-align: center; line-height: 1.2;
+        margin: 0;
+    }
+
+    .meaning-badge {
+        background: var(--tulsi); color: white;
+        padding: 5px 20px; border-radius: 50px;
+        font-weight: 700; font-size: clamp(16px, 2.5vh, 20px);
+        margin: 8px 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .desc-box {
+        background: var(--cream);
+        color: #4E342E;
+        font-size: clamp(15px, 2.2vh, 18px);
+        font-weight: 600; text-align: center;
+        padding: 12px 15px;
+        border-radius: 15px;
+        border: 2px dashed rgba(230, 81, 0, 0.4);
+        width: 90%;
+        line-height: 1.3;
+    }
+
+    /* 4. THE ACTION BUTTON (Audio) */
+    .audio-wrapper {
+        position: absolute; bottom: -30px; 
+        left: 50%; transform: translateX(-50%);
+        z-index: 50;
+    }
+
+    .speaker-btn {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        color: white; border: 5px solid white;
+        font-size: 32px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        cursor: pointer;
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Audio States */
+    .btn-idle { background: var(--btn-grad-idle); }
+    .btn-play { background: var(--btn-grad-play); transform: scale(1.15); animation: heartbeat 1.5s infinite; }
+    
+    @keyframes heartbeat { 0% { transform: scale(1.15); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { transform: scale(1.2); box-shadow: 0 0 0 20px rgba(211, 47, 47, 0); } 100% { transform: scale(1.15); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
+
+    /* NAVIGATION (Arrows) */
+    .nav-row {
+        position: absolute; bottom: 20px; 
+        width: 100%; max-width: 600px;
+        display: flex; justify-content: space-between; padding: 0 20px;
+        pointer-events: none; z-index: 100;
+    }
+
+    .nav-arrow {
+        pointer-events: auto;
+        width: 60px; height: 60px;
+        background: white; border-radius: 50%;
+        color: var(--deep-orange);
+        border: 3px solid var(--saffron);
+        font-size: 24px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        cursor: pointer; transition: 0.2s;
+    }
+    .nav-arrow:active { transform: scale(0.9); background: var(--cream); }
+
+    /* MEDIA QUERY: DESKTOP TWEAKS */
+    @media (min-width: 768px) {
+        .nav-row {
+            bottom: 50%; transform: translateY(50%);
+            max-width: 800px;
+        }
+    }
+
+    /* SLIDE ANIMATIONS (Layout Entrance) */
+    .slide-next { animation: slideInNext 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .slide-prev { animation: slideInPrev 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    @keyframes slideInNext { from { opacity: 0; transform: translateX(50px) rotate(2deg); } to { opacity: 1; transform: translateX(0) rotate(0deg); } }
+    @keyframes slideInPrev { from { opacity: 0; transform: translateX(-50px) rotate(-2deg); } to { opacity: 1; transform: translateX(0) rotate(0deg); } }
+
+</style>
+<link rel="me" href="https://www.blogger.com/profile/01175138611274063009" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+</head>
+<body>
+
+<div class="bg-deco"></div>
+
+<div class="header">
+    <button class="home-btn" onclick="goBack()">
+        <i class="fas fa-home"></i> <span id="homeText">HOME</span>
+    </button>
+    <div class="header-logo" id="logoText">ISKCON KIDS</div>
+</div>
+
+<div class="scene">
+    <div class="card" id="cardPanel">
+        <!-- 1. Inner Content (Includes Letter, Image, Text) -->
+        <div class="card-content">
+            <div class="bg-letter" id="bgLetter">A</div>
+            
+            <!-- Wrapper gets PopIn Animation. ImgBox gets Floating Animation. -->
+            <div class="img-wrapper" id="imgWrapper">
+                <!-- IMPORTANT: fetchpriority="high" ensures INSTANT Loading logic for current slide -->
+                <img src="" class="img-box" id="cardImg" alt="Main Image" decoding="sync" fetchpriority="high">
+            </div>
+
+            <div class="info-section">
+                <!-- Text Data populated dynamically -->
+                <div class="word-title" id="wordTitle"></div>
+                <div class="meaning-badge" id="wordMean"></div>
+                <div class="desc-box" id="wordDesc"></div>
+            </div>
+        </div>
+
+        <!-- 2. Audio Button - Floats over the border, pushed by layout -->
+        <div class="audio-wrapper">
+            <div class="speaker-btn btn-idle" id="playBtn" onclick="toggleSound()">
+                <i class="fas fa-volume-up" id="btnIcon"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Navigation Arrows -->
+    <div class="nav-row">
+        <div class="nav-arrow" onclick="navCard(-1)"><i class="fas fa-arrow-left"></i></div>
+        <div class="nav-arrow" onclick="navCard(1)"><i class="fas fa-arrow-right"></i></div>
+    </div>
+</div>
+
+<script>
+    /* =========================================================================
+       1. SETTINGS & AUDIO BASE CONFIG (MULTI-LANGUAGE SUPPORT)
+       ========================================================================= */
+    
+    // Set your base URL. 
+    // Logic will append: Letter + "_" + Lang + ".mp3"
+    // Example: A_en.mp3, A_hi.mp3, A_mr.mp3
+    const GITHUB_AUDIO_BASE = "https://raw.githubusercontent.com/iskconkids-assets/audio/main/"; 
+    
+    // Default Language Logic (en, hi, mr)
+    let appLang = localStorage.getItem('lang') || 'en'; 
+
+    /* =========================================================================
+       2. DATABASE (Full VEDIC Dictionary)
+       ========================================================================= */
+    const data = [
+        { 
+            l: "A", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhili-5HubUJGA96G6Z22OFhxeLX-RKd1_zs0Z9IvirX7chnM2gUxXbdKEidjy_HtYxOE5KltKRUrwJ6o6svrJV5Ssv_HxRI3zxnEJ0K5CCUoHlBONUa1IxizBPnB3nSi2tS4l5RnB9NDi1-NfiRQDePHzC3R8EVNxUT0CwWYuTWJEIk1jii4aohvooGhyphenhyphenS/s1024/1000139919.png", 
+            word: { en: "Arjuna", hi: "अर्जुन", mr: "अर्जुन" },
+            mean: { en: "Warrior", hi: "योद्धा", mr: "योद्धा" },
+            desc: { en: "Krishna's best friend and great warrior.", hi: "भगवान कृष्ण के सबसे प्रिय मित्र।", mr: "भगवान श्री कृष्णांचे परम मित्र आणि महान योद्धा." }
+        },
+        { 
+            l: "B", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcXuxkkXMin3z7ykOq0J75lqmqmqjOlmuzilRa33teX76Y2at_qfA2DfBBbyZpMNo-0DPVRuehHVBblelfS_mx6-Dard8Tl6J9KGwyRa2s_HbysI299Zys9q2JG2_co0eSDdgtXd7SdJLuqQjARTb81bQO3M5tPAzcROyUVEWeQPO11tqIVNP4SCdex59e/s500/1000139922.png", 
+            word: { en: "Balaram", hi: "बलराम", mr: "बलराम" },
+            mean: { en: "Brother", hi: "दाऊ भैया", mr: "दाऊ भैय्या" },
+            desc: { en: "Krishna's strong elder brother.", hi: "कृष्ण के शक्तिशाली बड़े भाई।", mr: "कृष्णाचे शक्तिमान मोठे भाऊ." }
+        },
+        { 
+            l: "C", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyICyYlC7ZT2lo1vqi0F8CtYuPE0QAnKy-gmr9OpI6mq7-myipeE55xO8-4UvpfBs3n591wk4y1CJx9qTTWTxTjJ-ejXD8r0yKHfPtXnX0lYl_TFRc2HrV9GAjymi_jrnUZcQuKODVyUIZZGGAFW0oWJIkhWe_N7VPv21m-3zpe7neJ7ndtC_gKCLfZRpC/s500/1000139923.png", 
+            word: { en: "Cow", hi: "गौ माता", mr: "गोमाता" },
+            mean: { en: "Mother", hi: "माता", mr: "माता" },
+            desc: { en: "Krishna loves cows very much.", hi: "कृष्ण अपनी गौ-माता से बहुत प्यार करते हैं।", mr: "कृष्णाचे गाईंवर खूप प्रेम आहे." }
+        },
+        { 
+            l: "D", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh4TXp_6sFooq5ENKV7-JnjsB2sk4GxY7Xj1e-tKhqfT4f1NtINaoZzZog4IVdIq5thsEMDolvzH5pFO-g5FC_hDhtwL83r4XyKZ7RM075oclatTIy1rmUJCo815RA6l6VJM5Vv4cMe0L8VZmBkbgGk9oPKahxaViw5DG8OZsumnBY_wQBGBDt5Fh2Te7O2/s500/1000139925.png", 
+            word: { en: "Damodar", hi: "दामोदर", mr: "दामोदर" },
+            mean: { en: "Rope", hi: "ऊखल बंधन", mr: "दाम-उदर" },
+            desc: { en: "Mother Yashoda tied Him with love.", hi: "मैया यशोदा ने कृष्ण को प्रेम से बांधा।", mr: "यशोदा मातेने कृष्णाला प्रेमाने बांधले." }
+        },
+        { 
+            l: "E", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcRBqgMQg42BBLWHTy1-F5mNcCKhvJwfzVCzFBSVw8qMH1ONfrf9MPQekFR9bbYB1cVP7D6JuEirLn6lR-_aCZ8s55TStRJ0rAa7jduP6Q9b_EerMbI_9uIeDUvvawgNk-_unA6CzWfkMmfqlXMA5AL_dJ2OzaYAMIzMqyh-gpM8tmxdPAHbwAL8TyXV7b/s500/1000139924.png", 
+            word: { en: "Ekadashi", hi: "एकादशी", mr: "एकादशी" },
+            mean: { en: "Fasting", hi: "उपवास", mr: "उपवास" },
+            desc: { en: "Special fasting day for Lord Hari.", hi: "श्री हरि को प्रसन्न करने का व्रत।", mr: "हरिंना प्रसन्न करण्यासाठीचे खास व्रत." }
+        },
+        { 
+            l: "F", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEikIvmniPW_YIzmeiF5bQsXSOpGAWUVOtqDxtbr3oAef3ilIAubftExrlLrdlVHOI1OtbFuKf4obdYxbShSLcG-5pPETy7IUTpuukg6a736XhbmHWBankopDocDKopzkqSiuQoUPwPsc-4DV682vHR62snRG3QsnOOjEb3jedOhGa8AP7Mhi7g0jdIqfW5f/s500/1000139926.png", 
+            word: { en: "Flute", hi: "बांसुरी", mr: "बासरी" },
+            mean: { en: "Music", hi: "वंशी", mr: "पावा" },
+            desc: { en: "Krishna plays magical music on flute.", hi: "कृष्ण बहुत मीठी और मधुर बांसुरी बजाते हैं।", mr: "कृष्ण खूप सुंदर बासरी वाजवतात." }
+        },
+        { 
+            l: "G", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjB_JFIX-eKMYNbrSPTGp6zLmF8129Pd5LnKxvnPBniW1lhbj7O9FdQ8iljps9gU0PtkFA-HkEWNaWZosGH2Z6na8OD4VaC9X8wJllQCzTqioLF9kRJFds9uVYXQ08EFD_0mG75PoSZR73_r_FlbcqCdQjAYDqtLLvJXuBcBbAiwQXz_639mEH5qvX6wrp2/s500/1000139927.png", 
+            word: { en: "Govardhan", hi: "गोवर्धन", mr: "गोवर्धन" },
+            mean: { en: "Mountain", hi: "पर्वत", mr: "पर्वत" },
+            desc: { en: "Krishna lifted this hill with pinky finger.", hi: "कृष्ण ने छोटी उंगली पर पर्वत उठाया।", mr: "कृष्णाने करंगळीवर पर्वत उचलला होता." }
+        },
+        { 
+            l: "H", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcl5NS1DtfD_wEtzOyEoumhJtQvmJwpMIgkGwgP0AEjhj4Nn4WP71UTXbsAFIWlS2P6uPGIi3rg2fyOX8RNmjy624s34QExbLs75-06Q-pSMyhIOr_qJS5X0Eld1Vt7UOPl0mmPHdC8YnLtlJnMV-EjNrcSnc6Yjxu-l1FEyGwwRuXLTghDpohaSNQD5Kf/s500/1000139928.png", 
+            word: { en: "Hanuman", hi: "हनुमान", mr: "हनुमान" },
+            mean: { en: "Devotee", hi: "भक्त", mr: "राम भक्त" },
+            desc: { en: "Great servant of Lord Rama.", hi: "भगवान राम के परम भक्त।", mr: "प्रभू श्री रामांचे परम सेवक." }
+        },
+        { 
+            l: "I", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh08EwzBf3p7RNFSdv7c3zwRFZUlPsdjmHiUKxD0rCCLfaUOLK3D6EpxOqZHdAKiG_MTTb3P8AS3LXa-nYMPppKQ0C2drYi4V1YdHr2B_93B9hthfmIuOAzPu3liYq7c2Hrhua2G5KTzeIOkAMVhl-VJCaDQ8SVf9cNWA2VlNOQYGonuWt7OLODaSLy-XjR/s500/1000139929.png", 
+            word: { en: "Indra", hi: "इन्द्र", mr: "इंद्र" },
+            mean: { en: "Demi-god", hi: "देवराज", mr: "देवराज" },
+            desc: { en: "The King of Heaven.", hi: "स्वर्ग लोक के राजा।", mr: "स्वर्गाचे राजा." }
+        },
+        { 
+            l: "J", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiYV27rVN2a86osLme8cCkG_Z6T_CtX_R98yKCbSEJg2qbsahVQpQfg5I1cNN5W1y2aFYqAS_uwyT8Inb4GmmcsQeuvPL9ENM7TgtQ2G4Q5iY3IZLyryPfydoO4WyZOY2DrQfN6uL9irzuUVLFncVyHCt7sYl5aO1wI8I3dccuDaVl2HTV2dJgjC1jTEDq0/s500/1000139930.png", 
+            word: { en: "Jagannath", hi: "जगन्नाथ", mr: "जगन्नाथ" },
+            mean: { en: "Lord", hi: "नाथों के नाथ", mr: "जगताचे नाथ" },
+            desc: { en: "Lord of the Universe with big eyes.", hi: "जगत के स्वामी (पुरी वाले)।", mr: "विश्वाचे स्वामी (पुरी)." }
+        },
+        { 
+            l: "K", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhuGRp-5YpD8Gmt9D8cBIYwuPzq8ica2B1YEJz5mjwG37OxC1GJSYnEo9ypx0fQPJoDZfhbK7dUwigDPO2oivVD6zYUZT8hcbeSdeRJIGVk_nDwrvqQGp6hNogvDzJgUtabysLvcSt-jwb3ncW0HxTHmhVZOGmS2QU6X7dZ_Wu_ulyrz4j_rsinZN7_b17F/s756/1000139825.jpg", 
+            word: { en: "Krishna", hi: "कृष्ण", mr: "कृष्ण" },
+            mean: { en: "God", hi: "भगवान", mr: "भगवान" },
+            desc: { en: "The Supreme Personality of Godhead.", hi: "स्वयं भगवान।", mr: "स्वतः भगवान." }
+        },
+        { 
+            l: "L", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEisws6GWYyg2i1C3ZoUz9H6GYStQrUtuuSo8PuZs7fGbzAQ-kiQg2wsIx6QuBj_j0gvqlnixY6JVfDOfQ0EYaYuWG3gGemfQz-nQNw4AOeCK-lZb6BwJvzZihupA5WxvLP1zDbxXeouBLNkx9RLe08oA_MVkYDZnb6EnKOcuo60kAsGEwPvgtMINpwqb-ll/s500/1000139932.png", 
+            word: { en: "Laddoo", hi: "लड्डू", mr: "लाडू" },
+            mean: { en: "Sweet", hi: "मिठाई", mr: "गोड" },
+            desc: { en: "Little Gopal loves Laddoos.", hi: "गोपाल को लड्डू बहुत पसंद हैं।", mr: "गोपाळला लाडू खूप आवडतात." }
+        },
+        { 
+            l: "M", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBOzPGI3CXIwcYKCNCDGBvjkwsoWRhHp23FZjcG9tQco-Lrg1Volj1CkhBd4xyFo3nWjI7T7ItT4Z86Cz8UY5qWm5DwiMlyCQJqlnqs3QeSDHO4yMAEJLmRhRphLvcIPs8IL8W2daBZHg5nXKukqIikUmOZ0pDdADlpXAFipkFGi8PNsbbiqK-MW2ZDIs7/s500/1000139934.png", 
+            word: { en: "Mridanga", hi: "मृदंग", mr: "मृदंग" },
+            mean: { en: "Drum", hi: "ढोल", mr: "वाद्य" },
+            desc: { en: "Instrument played in Kirtan.", hi: "हरि नाम संकीर्तन में बजने वाला वाद्य।", mr: "कीर्तनात वाजवला जाणारा ढोल." }
+        },
+        { 
+            l: "N", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTNpv5ZfJy59xDTrSuvFGBdhNRWd3HIB1S6Je3sr7KW7gYZ7S9icwrRSCJ-oRaLnZu_y1vOBzl6FUTV4cYHfCYZF_pIUik5UbMuoRCegodcAhfU0ICy3_H_gE8G6zx9BLIOxlx5SxcOL_yQU1xPJLRlGbXgPdn8S7dguI8cJO7kghmyEhDyMxY3dKm_raP/s500/1000139935.png", 
+            word: { en: "Narasimha", hi: "नरसिंह", mr: "नरसिंह" },
+            mean: { en: "Avatar", hi: "उग्र अवतार", mr: "अवतार" },
+            desc: { en: "Half Lion and Half Man form of God.", hi: "आधा शेर, आधा इंसान (भगवान का रूप)।", mr: "भगवान विष्णूंचा उग्र अवतार." }
+        },
+        { 
+            l: "O", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhjGrI9xCYnb5MfPsXBVLljuRs_5XOd_W9T7380SbDfBobUOHw7JLNgv0vTf6fzpjA5DjtcC0MOWdp2G33IblEGCRKDc179zqOhDRddpXvHatG6LHdSZ1So-q0y00NO0pplgWlB7vEaWUcnzQxP1__sXlwKALAD4JImriPFLgTKn7VPERuB8TnixeqLf0y1/s500/1000139936.png", 
+            word: { en: "Om", hi: "ॐ", mr: "ॐ" },
+            mean: { en: "Vibration", hi: "ध्वनि", mr: "ध्वनी" },
+            desc: { en: "The sound representation of God.", hi: "परमात्मा की दिव्य ध्वनि।", mr: "ईश्वराची दिव्य ध्वनी." }
+        },
+        { 
+            l: "P", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7S9M-cPzrYXVzV3r4rGiNrEni9GDSXCEOZ0AZUAHlKwQWsJ9yMPLufTEC6Su3inB3OL-D3IxU3fGceVGnXovn5jrIQun0y2BX6tW5znBFJUtGhOx79jJz9PkA4_0olFYqT7X-lfofuVmiTDCS3fj3ZFi70yk8wyiGooP1_y8LpbpuN0ilpqrDG21fmrtl/s500/1000139937.png", 
+            word: { en: "Peacock", hi: "मोर पंख", mr: "मोर पीस" },
+            mean: { en: "Feather", hi: "पंख", mr: "पीस" },
+            desc: { en: "Krishna always wears a feather.", hi: "कृष्ण इसे मुकुट पर धारण करते हैं।", mr: "कृष्ण नेहमी मुकुटावर मोरपीस लावतात." }
+        },
+        { 
+            l: "Q", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiA3ZMkHmoGuezG-nNsPYIQchHRaWoriXnZR2eBsdtNQT3By0lnJ0_4ViBPe2CuD_fJ3-XhzjL2PhdJpXN-HjQ46JyIK9_eFgR_hiu2FKi6X-TJX4RPH6asFM7Q1f4jlCG2P1_CAu6SE4qDCNKQDL2yDBHW_d9-Kz62L5TCPeqDkrXURwwl1ogCkAdYuRVB/s500/1000139939.png", 
+            word: { en: "Queen Kunti", hi: "कुंती महारानी", mr: "राणी कुंती" },
+            mean: { en: "Mother", hi: "माता", mr: "आई" },
+            desc: { en: "Devotee mother of the Pandavas.", hi: "पांडवों की माता और कृष्ण की बुआ।", mr: "पांडवांची आई." }
+        },
+        { 
+            l: "R", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhgd51EID9t2ECjYSVy85pUKVYL_t3oc59GYsxP6OCraAd2OpSiBd6Q7wVAb29AvvvQYzw52-9syBzXbEujjLetG1Fwl8b3Yvc3Se3q53WdA81qfodrDYdi7BiViUzgNNOeyuiveX01gd4kyoAjTdKl9BMy5uogWdhOj2voP_rll_r5FAJaV5Lzc_oraI38/s500/1000139946.png", 
+            word: { en: "Radharani", hi: "राधारानी", mr: "राधारानी" },
+            mean: { en: "Goddess", hi: "किशोरी जी", mr: "किशोरी जी" },
+            desc: { en: "The Queen of Vrindavan.", hi: "वृंदावन की महारानी।", mr: "वृंदावनची राणी." }
+        },
+        { 
+            l: "S", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhDi1aiPMA6ICvettnfNiw35dNZ_qCr6FOGW_1o4kkmHVVNgaaPZ_3Ezc1TJPSehmvPKg-TKG9hIiugtdiOWkdKVGDjU7NLg8IvtkE5XqOx7ZdGvDu5L5GJ4ydQS-SR_Wxl3t5qJpGHjR_SSYEO8CXMDwH-Vk4UW85BE3Fk2zZarh6wjDLHyF2omF8YhmsE/s1024/1000139947.png", 
+            word: { en: "Sudarshan", hi: "सुदर्शन", mr: "सुदर्शन" },
+            mean: { en: "Disc", hi: "चक्र", mr: "चक्र" },
+            desc: { en: "Weapon of Lord Vishnu.", hi: "विष्णु जी का शस्त्र।", mr: "विष्णूंचे शस्त्र." }
+        },
+        { 
+            l: "T", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5mSepD8ZJi4ZDzRTA5m8JIwhCLctHI03tI2eiWpaA_2TD9gb6BV6WCPwAQhsi3v-WW_jsuB7Z3vAlAj9tNMILh_ttWM55c0O_49RSaw-mptWeeC7_tcvuhiyxuApkBgoU8J0Yg1DWIKa4D2Lbgr6epLzokf12Z5_Kdxp8ojvxU9IJxgZBiEgldlhLw532/s500/1000139940.png", 
+            word: { en: "Tulsi", hi: "तुलसी", mr: "तुळशी" },
+            mean: { en: "Plant", hi: "देवी", mr: "देवी" },
+            desc: { en: "Very dear to Lord Krishna.", hi: "कृष्ण को अति प्रिय (वृंदा)।", mr: "कृष्णाला अति प्रिय (वृंदा देवी)." }
+        },
+        { 
+            l: "U", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgMXkM2cxSu9eaRSucikpKqFOw1xiHoW-jfuoYn5L6xwuCrua5J0-PsPgzETruCxN-TkRz7_uJYTQk2rgNJ68DcRxHmLovHV9o5osDWytP1mJrRlXgSz7mr5VyCOreajrwLIolFQ_Oxuo8MbAq1z-x02Vt23AVoQGNRDn6RiPFR4IHtYxL2SNQQaA4rUoZi/s500/1000139941.png", 
+            word: { en: "Universe", hi: "ब्रह्मांड", mr: "ब्रह्मांड" },
+            mean: { en: "Creation", hi: "जगत", mr: "जग" },
+            desc: { en: "Present inside Krishna's mouth.", hi: "बाल कृष्ण के मुख के अंदर।", mr: "कृष्णाच्या मुखात संपूर्ण विश्व आहे." }
+        },
+        { 
+            l: "V", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6xZ-zsvYwMJZgLt6P53_8o5iA-jjWFOjLVxi5-HcrNnc97a8z2K3qe5Mdai-Y59KReIqP5e_jyQVvZoDh7uAGfi7Jc2pBEvqkXEeGMLEBc1vXfz0CfiMOumPIcpEsvwGIxitAvp_FqtpHlXt_NB1z6xIjeqJYdr_dsyxf2OYm-MtTlSg4a7Pcilo65SA-/s1024/1000139826.jpg", 
+            word: { en: "Vrindavan", hi: "वृंदावन", mr: "वृंदावन" },
+            mean: { en: "Holy Place", hi: "धाम", mr: "धाम" },
+            desc: { en: "Eternal home of Krishna.", hi: "कृष्ण का नित्य धाम।", mr: "जिथे कृष्ण राहतात." }
+        },
+        { 
+            l: "W", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYHYeONXSys5DHEks9bgb-x3USFBO6j7XDwRhkd2wtiAIr6N1vjMGRsaE6Om0wzn8yysolPrmwqVF33SErkkh6f8bwkprgGFLSSoIcLn8cyS9tqIwjFZoCc-AWAqRx-e1E7i6xNv-QHrGRy3hHxX7gm4uS93kgJHJr2Tt63YLuYotT8r5achJjA-4GirSK/s500/1000139942.png", 
+            word: { en: "Wisdom", hi: "ज्ञान", mr: "ज्ञान" },
+            mean: { en: "Knowledge", hi: "गीता ज्ञान", mr: "गीता" },
+            desc: { en: "Bhagavad Gita gives true wisdom.", hi: "गीता से हमें दिव्य ज्ञान मिलता है।", mr: "श्रीमद्भगवद्गीता ज्ञान देते." }
+        },
+        { 
+            l: "X", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1uopyGNMz67yRpW3w40nxMdcpLlUKmjpBU-gGCQMnuh6rOvfp9iyi-f54hgQueOI86BqOgHVepvkP7pqNiLoXs5ACzHXMlqoEP4Y7YrtCW42pyr_lfuZarPrgYhN69vv3-x7NA4AMshAdakRU7LZR4EFkCIxxBhB2d0TPltou9UL5IX82bVhN8XINN2wL/s500/1000139943.png", 
+            word: { en: "Xylophone", hi: "कीर्तन", mr: "कीर्तन" },
+            mean: { en: "Music", hi: "धुन", mr: "धुन" },
+            desc: { en: "Playing music for Krishna.", hi: "कृष्ण के लिए मीठी धुन बजाना।", mr: "कृष्णासाठी गोड संगीत." }
+        },
+        { 
+            l: "Y", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGGgz-UjpHdl6QNL6qswkWVc5PJu70lfssFBHCQBmvO2r6cmR4eQrGB7OXR_cpuu5VnvT-HGP6YnqCWGCUyaOSJn18Ymq3k3fsgr5_f4IZcn3XZlzwyX8aO4MbHSe9swKZLbPpFI5ici5R6YSliWCvt5MJKEmtk5b6jG8PXgAi1NBiFKqvhSxv_om_KFfC/s500/1000139945.png", 
+            word: { en: "Yashoda", hi: "यशोदा", mr: "यशोदा" },
+            mean: { en: "Mom", hi: "मैया", mr: "आई" },
+            desc: { en: "Lovable Mother of Krishna.", hi: "कृष्ण की प्यारी मैया।", mr: "कृष्णाची प्रेमळ आई." }
+        },
+        { 
+            l: "Z", 
+            img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiUnpgHFcBaUMexKYmXJHnFf6fzM0aHyYGopTxt0JsipSJOhiGyq7aE4ncJIwRuzaY23FI8IqFsHIzr27eAiX_SK10-dLjH157NUAe4Q-1XGErYt29IqJbewlKTtb3QIUmECgMGMcIzoF57sAn2YutrWUpqY6_TgHPgIMyDMrVGsgvS0VyWapozQoDa18Ka/s500/1000139944.png", 
+            word: { en: "Zero", hi: "शून्य", mr: "शून्य" },
+            mean: { en: "Empty", hi: "कुछ नहीं", mr: "काहीच नाही" },
+            desc: { en: "Life is Zero without Krishna.", hi: "कृष्ण के बिना जीवन शून्य (खाली) है।", mr: "कृष्णाविना जीवन शून्य आहे." }
+        }
+    ];
+
+    // --- LOGIC VARIABLES ---
+    let idx = 0;
+    let isPlaying = false; 
+    let currentAudio = null; 
+    let synthesisRef = window.speechSynthesis; 
+
+    // DOM ELEMENTS
+    const cardDiv = document.getElementById('cardPanel');
+    const imgWrapper = document.getElementById('imgWrapper');
+    const cardImg = document.getElementById('cardImg');
+
+    // --- 3. ZERO LATENCY ENGINE (Background Preloader) ---
+    // Runs immediately when script parses to force download everything into RAM
+    function forcePreloadAll() {
+        data.forEach(item => {
+            const preloadImg = new Image();
+            preloadImg.decoding = "async"; // Load in background
+            preloadImg.src = item.img;
+        });
+        console.log("All 26 Images Preloaded in Background");
+    }
+
+    // --- INIT UI TRANSLATIONS ---
+    function initLanguage() {
+        document.body.className = "lang-" + appLang; 
+        const homeTxt = { en: "HOME", hi: "होम", mr: "मुख्य पृष्ठ" };
+        document.getElementById('homeText').innerText = homeTxt[appLang] || "HOME";
+    }
+
+    // --- NAVIGATION ENGINE ---
+    function renderCard(animateDir) {
+        stopEverything(); 
+
+        const item = data[idx];
+        const uiText = item.word[appLang] || item.word['en']; 
+        const uiMean = item.mean[appLang] || item.mean['en'];
+        const uiDesc = item.desc[appLang] || item.desc['en'];
+        
+        // 1. Text Update
+        document.getElementById('bgLetter').innerText = item.l;
+        
+        if(appLang === 'en') {
+             document.getElementById('wordTitle').innerText = `${item.l} for ${uiText}`;
+        } else {
+             document.getElementById('wordTitle').innerText = `${item.l} : ${uiText}`;
+        }
+
+        document.getElementById('wordMean').innerText = uiMean;
+        document.getElementById('wordDesc').innerText = uiDesc;
+
+        // 2. Instant Image Update (Preloaded via forcePreloadAll)
+        cardImg.src = item.img;
+        
+        // Reset Entrance Animation
+        imgWrapper.classList.remove('pop-anim');
+        void imgWrapper.offsetWidth; // Force Reflow
+        imgWrapper.classList.add('pop-anim');
+
+        // 3. Slide Transition for Card
+        if (animateDir) {
+            cardDiv.classList.remove('slide-next', 'slide-prev');
+            void cardDiv.offsetWidth;
+            if (animateDir > 0) cardDiv.classList.add('slide-next');
+            else cardDiv.classList.add('slide-prev');
+        }
+
+        // Ensure float is gone
+        cardImg.classList.remove('floating');
+    }
+
+    function navCard(dir) {
+        idx += dir;
+        if(idx >= data.length) idx = 0;
+        if(idx < 0) idx = data.length - 1;
+        renderCard(dir);
+    }
+
+    // --- ADVANCED AUDIO ENGINE ---
+    function toggleSound() {
+        if (isPlaying) stopEverything();
+        else playContent();
+    }
+
+    function stopEverything() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+        if (synthesisRef.speaking || synthesisRef.pending) {
+            synthesisRef.cancel();
+        }
+        isPlaying = false;
+        updateBtn(false);
+        cardImg.classList.remove('floating');
+    }
+
+    function playContent() {
+        isPlaying = true;
+        updateBtn(true);
+        // Floating applies to img tag now
+        cardImg.classList.add('floating');
+
+        const item = data[idx];
+        // Pattern: BASE_URL + "A_en.mp3" or "A_hi.mp3" or "A_mr.mp3"
+        const audioUrl = `${GITHUB_AUDIO_BASE}${item.l}_${appLang}.mp3`;
+        
+        currentAudio = new Audio(audioUrl);
+        
+        currentAudio.onerror = () => {
+            console.warn(`Missing Audio: ${audioUrl}. Using TTS.`);
+            playTTS(item); 
+        };
+
+        currentAudio.onended = () => {
+            stopEverything();
+        };
+
+        // Attempt Play
+        currentAudio.play().catch(e => {
+            playTTS(item); 
+        });
+    }
+
+    function playTTS(item) {
+        const txtWord = item.word[appLang];
+        const txtDesc = item.desc[appLang];
+        
+        const speakText = `${item.l}. ${txtWord}. ${txtDesc}`;
+        const utter = new SpeechSynthesisUtterance(speakText);
+        
+        if(appLang === 'hi' || appLang === 'mr') {
+            utter.lang = 'hi-IN'; 
+        } else {
+            utter.lang = 'en-US';
+        }
+        
+        utter.rate = 0.9;
+        utter.onend = () => stopEverything();
+        
+        synthesisRef.cancel();
+        synthesisRef.speak(utter);
+    }
+
+    function updateBtn(isActiv) {
+        const btn = document.getElementById('playBtn');
+        const icon = document.getElementById('btnIcon');
+        if(isActiv) {
+            btn.className = "speaker-btn btn-play";
+            icon.className = "fas fa-stop";
+        } else {
+            btn.className = "speaker-btn btn-idle";
+            icon.className = "fas fa-volume-up";
+        }
+    }
+
+    function goBack() {
+        stopEverything();
+        window.location.href = "go:home";
+    }
+
+    // --- GESTURE & KEYBOARD ---
+    let tsX = 0;
+    const thresh = 50;
+    
+    cardDiv.addEventListener('touchstart', e => tsX = e.changedTouches[0].screenX, {passive: true});
+    cardDiv.addEventListener('touchend', e => {
+        let teX = e.changedTouches[0].screenX;
+        if(Math.abs(teX - tsX) > thresh) {
+            navCard(teX < tsX ? 1 : -1);
+        }
+    }, {passive: true});
+
+    window.addEventListener('keydown', e => {
+        if(e.key === "ArrowRight") navCard(1);
+        if(e.key === "ArrowLeft") navCard(-1);
+    });
+
+    // --- BOOTSTRAP ---
+    initLanguage();
+    
+    // EXECUTE BACKGROUND PRELOAD
+    forcePreloadAll();
+    
+    // Initial Render
+    renderCard();
+    window.onload = () => confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+
+</script>
+</body>
+</html>
