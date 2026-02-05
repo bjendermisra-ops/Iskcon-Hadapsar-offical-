@@ -4,84 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#FF9933">
-    <meta name="description" content="Daily Temple Schedule - Real time darshan timings and aarti status in Hindi, English, and Marathi.">
-    <meta name="robots" content="index, follow">
-    <title>Temple Schedule - Daily Program</title>
+    <title>Daily Temple Schedule</title>
 
-    <!-- Core Libraries Preserved from App Architecture -->
+    <!-- BOOTSTRAP & FONTS PRESERVED -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-    
-    <!-- FONTS: Added 'Mukta' for beautiful Marathi/Hindi rendering -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Tiro+Devanagari+Hindi&family=Mukta:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Added Mukta for better Marathi support -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Tiro+Devanagari+Hindi&family=Mukta:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         /* =========================================
-           UX/UI VARIABLES (Material Design 3.0 Sync)
+           CORE THEME VARIABLES (APP LOOK 1:1)
            ========================================= */
         :root { 
             --primary: #FF9933; 
-            --primary-dark: #d84315;
-            --bg-outer: #f0f2f5;
-            --bg-app: #fcf5e5; 
-            --card-surface: #ffffff; 
-            --text-main: #333333;
-            --text-sub: #666666;
-            --header-gradient: linear-gradient(135deg, #FF9933, #FF5722);
-            --shadow-soft: 0 5px 20px rgba(0,0,0,0.08);
-            --shadow-highlight: 0 8px 30px rgba(255, 153, 51, 0.25);
-            --app-max-width: 600px; /* Constrained for Native App feel on Desktop */
-            --font-main: 'Poppins', sans-serif;
-            --font-regional: 'Mukta', 'Tiro Devanagari Hindi', sans-serif;
+            --bg-outer: #f4f4f4; /* Desktop Outer BG */
+            --bg-app: #fcf5e5;   /* App Inner BG */
+            --card: #ffffff; 
+            --text: #333333;
+            --muted: #666666;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --header-gradient: linear-gradient(135deg, #FF9933, #e64a19);
+            --container-width: 650px; /* Constrained for App Feel */
         }
 
-        /* Dark Mode Protocol */
+        /* DARK MODE */
         [data-theme="dark"] { 
             --primary: #FF9933; 
-            --bg-outer: #000000;
+            --bg-outer: #000;
             --bg-app: #121212; 
-            --card-surface: #1e1e1e; 
-            --text-main: #e0e0e0; 
-            --text-sub: #a0a0a0;
-            --header-gradient: linear-gradient(135deg, #2c2c2c, #1a1a1a);
-            --shadow-soft: 0 5px 20px rgba(0,0,0,0.5);
+            --card: #1e1e1e; 
+            --text: #e0e0e0; 
+            --muted: #aaaaaa;
+            --header-gradient: linear-gradient(135deg, #2d2d2d, #1a1a1a);
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
             background-color: var(--bg-outer); 
-            font-family: var(--font-main); 
-            color: var(--text-main); 
-            padding: 0;
-            margin: 0;
+            font-family: 'Poppins', sans-serif; 
+            color: var(--text); 
+            margin: 0; padding: 0;
             min-height: 100vh;
-            /* Flex center for device-agnostic centering */
             display: flex;
             justify-content: center;
         }
 
-        /* Regional Font Application */
-        body[data-lang="hi"] { font-family: var(--font-regional); }
-        body[data-lang="mr"] { font-family: var(--font-regional); }
+        /* Regional Font Override for Marathi/Hindi */
+        body.lang-regional { font-family: 'Mukta', 'Tiro Devanagari Hindi', sans-serif; }
 
-        /* =========================================
-           APP CONTAINER (The Virtual Mobile Screen)
-           ========================================= */
+        /* DEVICE AGNOSTIC APP WRAPPER */
         .app-container {
             width: 100%;
-            max-width: var(--app-max-width);
+            max-width: var(--container-width);
             background: var(--bg-app);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            box-shadow: 0 0 50px rgba(0,0,0,0.15);
         }
 
-        /* =========================================
-           HEADER NAVIGATION
-           ========================================= */
+        /* HEADER NAVIGATION */
         .app-header {
             background: var(--header-gradient);
             padding: 15px 20px;
@@ -94,12 +79,12 @@
             z-index: 1000;
             border-bottom-left-radius: 25px;
             border-bottom-right-radius: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             height: 70px;
         }
 
         .back-btn {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.2);
             width: 40px;
             height: 40px;
             display: flex;
@@ -109,512 +94,382 @@
             color: white;
             text-decoration: none;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.25);
-            transition: transform 0.2s, background 0.2s;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: 0.2s;
         }
-        .back-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+        .back-btn:active { transform: scale(0.9); }
 
         .header-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Language Toggle Button */
-        .lang-switch {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.2);
+        /* Language Toggle Button (Visible for manual override) */
+        .lang-btn {
+            background: rgba(255,255,255,0.1);
             color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: bold;
-            font-size: 0.85rem;
-            border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.4);
             cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-        }
-        .lang-switch:hover { background: rgba(255,255,255,0.3); }
-
-        /* =========================================
-           MAIN CONTENT
-           ========================================= */
-        .content-body {
-            padding: 25px 20px 40px 20px;
-            flex: 1;
         }
 
-        /* PULSING STATUS CARD */
+        /* CONTENT */
+        .content-body { padding: 25px 20px 40px 20px; flex: 1; }
+
+        /* LIVE STATUS CARD */
         .status-card { 
             background: var(--header-gradient); 
             color: white; 
             padding: 30px 20px; 
             border-radius: 24px; 
             text-align: center; 
-            box-shadow: var(--shadow-highlight); 
+            box-shadow: 0 8px 25px rgba(255, 153, 51, 0.25);
             margin-bottom: 30px; 
             position: relative;
             overflow: hidden;
-            transition: background 0.4s ease;
+            transition: all 0.3s;
         }
         
-        /* Animated Radial Shine */
+        .status-card.closed {
+            background: linear-gradient(135deg, #333, #111);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Rotating Background Effect */
         .status-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 60%);
-            animation: rotateBg 12s linear infinite;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotateBg 15s linear infinite;
         }
         @keyframes rotateBg { 100% { transform: rotate(360deg); } }
 
         .status-text { 
-            font-size: clamp(1.6rem, 5vw, 2rem); 
-            font-weight: 700; 
+            font-size: 1.8rem; 
+            font-weight: 800; 
             font-family: 'Cinzel', serif; 
             position: relative; 
-            z-index: 2;
-            line-height: 1.1;
-            margin-bottom: 6px;
+            z-index: 2; 
+            line-height: 1.2;
+            margin-bottom: 5px;
         }
-        
-        .status-sub { 
-            font-size: 1rem; 
-            opacity: 0.95; 
-            position: relative; 
-            z-index: 2;
-            letter-spacing: 0.5px;
-        }
+        .status-sub { font-size: 1rem; opacity: 0.9; position: relative; z-index: 2; }
 
         .live-dot {
-            height: 12px;
-            width: 12px;
-            background-color: #76ff03;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-            box-shadow: 0 0 10px #76ff03;
-            animation: pulse 1.5s infinite;
+            height: 12px; width: 12px; 
+            background-color: #00ff00; 
+            border-radius: 50%; display: inline-block; 
+            box-shadow: 0 0 10px #00ff00;
+            margin-right: 8px;
+            animation: pulse 1s infinite alternate;
         }
         .closed-dot {
-            height: 12px;
-            width: 12px;
-            background-color: #ff3d00;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-            box-shadow: 0 0 10px #ff3d00;
+            height: 12px; width: 12px; 
+            background-color: #ff3333; 
+            border-radius: 50%; display: inline-block; 
+            margin-right: 8px;
         }
-        @keyframes pulse { 0% {opacity:1;} 50%{opacity:0.6;} 100%{opacity:1;} }
+        @keyframes pulse { from {opacity: 1;} to {opacity: 0.5;} }
 
-        /* =========================================
-           TIMELINE UI
-           ========================================= */
-        .section-header {
-            font-family: 'Cinzel', serif; 
-            color: var(--primary); 
-            margin-bottom: 25px;
+        /* TIMELINE STYLES */
+        .section-heading {
+            color: var(--primary);
+            font-family: 'Cinzel', serif;
             font-size: 1.5rem;
-            padding-left: 12px;
-            border-left: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+            margin-bottom: 25px;
         }
 
-        .timeline-container { 
+        .timeline-box { 
             position: relative; 
             padding-left: 20px; 
             margin-left: 10px;
         }
         
-        /* Continuous Vertical Line */
-        .timeline-container::after {
+        /* Line */
+        .timeline-box::after {
             content: '';
             position: absolute;
-            left: 0;
-            top: 5px;
-            bottom: 20px;
-            width: 3px;
-            background: #e0e0e0;
-            border-radius: 2px;
+            left: 0; top: 10px; bottom: 10px;
+            width: 3px; background: #ddd;
+            border-radius: 5px;
         }
-        [data-theme="dark"] .timeline-container::after { background: #333; }
+        [data-theme="dark"] .timeline-box::after { background: #444; }
 
-        .event-card { 
+        .event-item { 
             position: relative; 
-            margin-bottom: 22px; 
-            background: var(--card-surface);
-            padding: 16px 20px;
-            border-radius: 16px;
-            margin-left: 18px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.03);
+            margin-bottom: 25px; 
+            background: var(--card);
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-left: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border: 1px solid rgba(0,0,0,0.05);
         }
+        .event-item:hover { transform: scale(1.02); }
 
-        /* Connector Dot */
-        .event-card::before { 
-            content: ''; 
-            position: absolute; 
-            left: -33px; 
-            top: 24px; 
-            width: 15px; 
-            height: 15px; 
+        .event-item::before { 
+            content: ''; position: absolute; 
+            left: -32px; top: 22px; 
+            width: 15px; height: 15px; 
             background: var(--bg-app); 
-            border: 3px solid #bdbdbd; 
+            border: 3px solid #ccc; 
             border-radius: 50%; 
             z-index: 5;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
 
-        /* Hover Effect for Desktop */
-        @media(hover: hover) {
-            .event-card:hover {
-                transform: translateX(4px);
-                background: linear-gradient(to right, var(--card-surface), rgba(255, 153, 51, 0.02));
-            }
-        }
+        /* Active Logic */
+        .event-item.active { border-left: 4px solid var(--primary); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .event-item.active::before { background: var(--primary); border-color: var(--primary); transform: scale(1.3); }
+        .event-item.active .time { color: var(--primary); font-weight: 800; }
 
-        .time-tag { font-size: 0.9rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
-        .event-name { font-size: 1.15rem; font-weight: 600; color: var(--text-main); margin: 3px 0 2px; line-height: 1.3; }
-        .event-desc { font-size: 0.85rem; color: var(--text-sub); opacity: 0.9; }
+        .time { font-size: 0.9rem; font-weight: 700; color: var(--primary); }
+        .name { font-size: 1.2rem; font-weight: 600; margin: 4px 0; color: var(--text); }
+        .desc { font-size: 0.85rem; color: var(--muted); }
 
-        /* ACTIVE / LIVE EVENT STYLE */
-        .event-card.active { 
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 8px 25px rgba(255, 153, 51, 0.15);
-            background: var(--card-surface);
+        .note { 
+            text-align: center; padding: 15px; background: rgba(0,0,0,0.05); 
+            border-radius: 12px; color: var(--muted); font-size: 0.85rem; margin-top: 20px; 
         }
-        .event-card.active::before { 
-            background: var(--primary); 
-            border-color: var(--primary);
-            box-shadow: 0 0 12px var(--primary); 
-            transform: scale(1.3);
-        }
-        .event-card.active .time-tag { text-decoration: underline; text-underline-offset: 3px; }
-
-        .footer-note { 
-            font-size: 0.85rem; 
-            text-align: center; 
-            padding: 18px;
-            background: rgba(0,0,0,0.04);
-            border-radius: 14px;
-            color: var(--text-sub); 
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        [data-theme="dark"] .footer-note { background: rgba(255,255,255,0.05); }
 
     </style>
 </head>
-<!-- Initial call to load data immediately -->
-<body onload="initializeApp()">
+<body>
 
 <div class="app-container">
     
-    <!-- HEADER -->
     <header class="app-header">
-        <!-- Back returns to Home (Index) -->
-        <a href="index.html" class="back-btn" aria-label="Go Back">
+        <!-- Replaced link with window.history.back() to respect app flow better -->
+        <a href="index.html" class="back-btn" onclick="goHome(event)">
             <i class="fas fa-chevron-left"></i>
         </a>
         
-        <h1 class="header-title" id="ui-title">SCHEDULE</h1>
+        <h1 class="header-title" id="txt_title">SCHEDULE</h1>
         
-        <!-- Language Switcher: Visible control, also updates Storage -->
-        <button class="lang-switch" onclick="rotateLanguage()" id="lang-btn">En</button>
+        <button class="lang-btn" id="btn_lang" onclick="cycleLang()">EN</button>
     </header>
 
     <div class="content-body">
         
-        <!-- DYNAMIC STATUS CARD -->
-        <div class="status-card" id="status-card">
-            <div class="status-text" id="status-main">
-                <span class="live-dot"></span> Loading
-            </div>
-            <div class="status-sub" id="status-sub">Checking time...</div>
+        <!-- Status Card -->
+        <div class="status-card" id="card_status">
+            <div class="status-text" id="txt_status">Loading...</div>
+            <div class="status-sub" id="txt_next">Please wait...</div>
         </div>
 
-        <!-- TIMELINE SECTION -->
-        <h4 class="section-header" id="ui-program-title">Daily Program</h4>
+        <h2 class="section-heading" id="txt_heading">Daily Program</h2>
 
-        <div class="timeline-container" id="schedule-list">
-            <!-- Events injected via JS -->
+        <div class="timeline-box" id="list_container">
+            <!-- Items injected by JS -->
         </div>
 
-        <!-- FOOTER INFO -->
-        <div class="footer-note">
-            <i class="fas fa-info-circle"></i> 
-            <span id="ui-note">Schedule changes on Festival days.</span>
+        <div class="note">
+            <i class="fas fa-info-circle"></i> <span id="txt_note">Note: Timings change on festivals.</span>
         </div>
     
     </div>
 </div>
 
 <script>
-    /* =========================================
-       ADVANCED FULL-STACK LOGIC 
-       (Syncs with Home Page via LocalStorage)
-       ========================================= */
+    /* ==============================================
+       ADVANCED LANGUAGE SYNC ENGINE (LOCALSTORAGE)
+       ============================================== */
 
-    // 1. DATA DICTIONARY (English / Hindi / Marathi)
-    const DICTIONARY = {
-        'en': {
-            langName: 'En',
-            title: "Schedule",
-            programTitle: "Daily Program",
+    // 1. DATASETS (English, Hindi, Marathi)
+    const DICT = {
+        en: {
+            title: "SCHEDULE",
+            heading: "Daily Program",
             statusOpen: "TEMPLE OPEN",
             statusClosed: "TEMPLE CLOSED",
-            statusAvail: "Darshan is Available",
-            nextMorn: "Opens: 4:30 AM",
-            nextEve: "Opens: 4:15 PM",
-            note: "Schedule may vary on Festival days & Ekadashi."
+            statusSubOpen: "Darshan Available",
+            nextMorn: "Opens Tomorrow 4:30 AM",
+            nextEve: "Opens Today 4:15 PM",
+            note: "Schedule changes on festivals & Ekadashi.",
+            lbl: "EN"
         },
-        'hi': {
-            langName: 'Hi',
-            title: "दैनिक दर्शन",
-            programTitle: "दैनिक कार्यक्रम",
+        hi: {
+            title: "दर्शन समय",
+            heading: "दैनिक कार्यक्रम",
             statusOpen: "मंदिर खुला है",
             statusClosed: "मंदिर बंद है",
-            statusAvail: "दर्शन अभी उपलब्ध हैं",
-            nextMorn: "खुलने का समय: 4:30 AM",
-            nextEve: "खुलने का समय: 4:15 PM",
-            note: "त्योहार और एकादशी पर समय बदल सकता है।"
+            statusSubOpen: "दर्शन उपलब्ध हैं",
+            nextMorn: "कल सुबह 4:30 बजे खुलेगा",
+            nextEve: "आज शाम 4:15 बजे खुलेगा",
+            note: "त्योहार और एकादशी पर समय बदल सकता है।",
+            lbl: "HI"
         },
-        'mr': {
-            langName: 'Mr',
+        mr: {
             title: "दर्शन वेळापत्रक",
-            programTitle: "दैनंदिन कार्यक्रम",
+            heading: "दैनंदिन कार्यक्रम",
             statusOpen: "मंदिर उघडे आहे",
             statusClosed: "मंदिर बंद आहे",
-            statusAvail: "दर्शन चालू आहे",
-            nextMorn: "उघडेल: 4:30 AM",
-            nextEve: "उघडेल: 4:15 PM",
-            note: "सण आणि एकादशीच्या दिवशी वेळा बदलू शकतात."
+            statusSubOpen: "दर्शन चालू आहे",
+            nextMorn: "उद्या पहाटे 4:30 ला उघडेल",
+            nextEve: "आज संध्याकाळी 4:15 ला उघडेल",
+            note: "सण आणि एकादशीच्या दिवशी वेळा बदलू शकतात.",
+            lbl: "MR"
         }
     };
 
-    // 2. SCHEDULE DATA (With translations for Titles & Descriptions)
-    const SCHEDULE = [
-        { t: "04:30 AM", 
-          title: { en: "Mangal Aarti", hi: "मंगल आरती", mr: "मंगल आरती" }, 
-          desc: { en: "First Darshan of Day", hi: "दिन का पहला दर्शन", mr: "दिवसाचे पहिले दर्शन" },
-          h: 4, m: 30 }, // 4.5
-        
-        { t: "05:15 AM", 
-          title: { en: "Tulasi Aarti", hi: "तुलसी आरती", mr: "तुळशी आरती" }, 
-          desc: { en: "Worship Service", hi: "तुलसी पूजन", mr: "तुळशी पूजा" },
-          h: 5, m: 15 },
-        
-        { t: "07:15 AM", 
-          title: { en: "Shringar Darshan", hi: "शृंगार दर्शन", mr: "शृंगार दर्शन" }, 
-          desc: { en: "Main Deity Dressing", hi: "मुख्य श्रृंगार", mr: "मुख्य शृंगार" },
-          h: 7, m: 15 },
-
-        { t: "07:30 AM", 
-          title: { en: "Guru Puja", hi: "गुरु पूजा", mr: "गुरू पूजा" }, 
-          desc: { en: "Spiritual Master", hi: "गुरु वंदना", mr: "गुरू वंदना" },
-          h: 7, m: 30 },
-
-        { t: "08:00 AM", 
-          title: { en: "Bhagavatam Class", hi: "श्रीमद् भागवतम्", mr: "श्रीमद् भागवतम् कथा" }, 
-          desc: { en: "Scriptural Discourse", hi: "सुबह की कथा", mr: "सकाळी कथा" },
-          h: 8, m: 0 },
-
-        { t: "12:30 PM", 
-          title: { en: "Raj Bhoga Aarti", hi: "राज भोग आरती", mr: "राज भोग आरती" }, 
-          desc: { en: "Noon Offering", hi: "दोपहर का भोग", mr: "दुपारची आरती" },
-          h: 12, m: 30 }, // 12.5
-
-        { t: "01:00 PM", 
-          title: { en: "Temple Closes", hi: "मंदिर बंद (विश्राम)", mr: "मंदिर बंद (विश्राम)" }, 
-          desc: { en: "Afternoon Rest", hi: "दोपहर विश्राम", mr: "दुपारची विश्रांती" },
-          h: 13, m: 0 },
-
-        { t: "04:15 PM", 
-          title: { en: "Utthapana Aarti", hi: "उत्थापन आरती", mr: "उत्थापन आरती" }, 
-          desc: { en: "Temple Re-opens", hi: "संध्या दर्शन शुरु", mr: "मंदिर उघडते" },
-          h: 16, m: 15 }, // 16.25
-
-        { t: "07:00 PM", 
-          title: { en: "Sandhya Aarti", hi: "संध्या आरती (गौरा)", mr: "संध्या आरती" }, 
-          desc: { en: "Gaura Aarti", hi: "कीर्तन समय", mr: "गौर आरती आणि कीर्तन" },
-          h: 19, m: 0 },
-
-        { t: "08:30 PM", 
-          title: { en: "Shayana Aarti", hi: "शयन आरती", mr: "शयन आरती" }, 
-          desc: { en: "Final Darshan", hi: "अंतिम दर्शन", mr: "शेवटचे दर्शन" },
-          h: 20, m: 30 },
-          
-        { t: "09:00 PM", 
-          title: { en: "Temple Closes", hi: "मंदिर बंद", mr: "मंदिर बंद" }, 
-          desc: { en: "Good Night", hi: "रात्रि विश्राम", mr: "शुभ रात्री" },
-          h: 21, m: 0 }
+    const SCHEDULE_DATA = [
+        { t: "04:30 AM", h:4.5, en_n:"Mangal Aarti", en_d:"First Darshan", hi_n:"मंगल आरती", hi_d:"पहला दर्शन", mr_n:"मंगल आरती", mr_d:"पहिले दर्शन" },
+        { t: "05:15 AM", h:5.25, en_n:"Tulasi Aarti", en_d:"Worship", hi_n:"तुलसी आरती", hi_d:"तुलसी पूजन", mr_n:"तुळशी आरती", mr_d:"तुळशी पूजा" },
+        { t: "07:15 AM", h:7.25, en_n:"Shringar Darshan", en_d:"Main Decoration", hi_n:"शृंगार दर्शन", hi_d:"मुख्य शृंगार", mr_n:"शृंगार दर्शन", mr_d:"मुख्य शृंगार" },
+        { t: "07:30 AM", h:7.5, en_n:"Guru Puja", en_d:"Spiritual Master", hi_n:"गुरु पूजा", hi_d:"गुरु वंदना", mr_n:"गुरू पूजा", mr_d:"गुरू वंदना" },
+        { t: "08:00 AM", h:8.0, en_n:"Bhagavatam", en_d:"Morning Class", hi_n:"श्रीमद् भागवतम्", hi_d:"कथा और कीर्तन", mr_n:"श्रीमद् भागवतम्", mr_d:"सकाळी कथा" },
+        { t: "08:30 AM", h:8.5, en_n:"Darshan Aarti", en_d:"Full View", hi_n:"दर्शन आरती", hi_d:"दर्शन आरती", mr_n:"दर्शन आरती", mr_d:"दर्शन आरती" },
+        { t: "12:00 PM", h:12.0, en_n:"Raj Bhoga Aarti", en_d:"Noon Offering", hi_n:"राज भोग आरती", hi_d:"दोपहर भोग", mr_n:"राज भोग आरती", mr_d:"दुपारची आरती" },
+        { t: "01:00 PM", h:13.0, en_n:"Temple Closes", en_d:"Rest Time", hi_n:"मंदिर बंद (विश्राम)", hi_d:"विश्राम समय", mr_n:"मंदिर बंद (विश्राम)", mr_d:"विश्रांतीची वेळ" },
+        { t: "04:15 PM", h:16.25, en_n:"Utthapana Aarti", en_d:"Re-opens", hi_n:"उत्थापन आरती", hi_d:"पुन: दर्शन", mr_n:"उत्थापन आरती", mr_d:"पुन्हा उघडते" },
+        { t: "07:00 PM", h:19.0, en_n:"Sandhya Aarti", en_d:"Gaura Aarti", hi_n:"संध्या आरती", hi_d:"गौरा आरती", mr_n:"संध्या आरती", mr_d:"गौर आरती" },
+        { t: "08:30 PM", h:20.5, en_n:"Shayana Aarti", en_d:"Final Darshan", hi_n:"शयन आरती", hi_d:"अंतिम दर्शन", mr_n:"शयन आरती", mr_d:"शेवटचे दर्शन" },
+        { t: "09:00 PM", h:21.0, en_n:"Temple Closes", en_d:"Good Night", hi_n:"मंदिर बंद", hi_d:"रात्रि विश्राम", mr_n:"मंदिर बंद", mr_d:"शुभ रात्री" }
     ];
 
-    // Current state variable
+    // Global Language Variable
     let currentLang = 'en';
 
-    // 3. INITIALIZATION ENGINE
-    function initializeApp() {
-        // Theme Persistence
+    // 2. IMMEDIATE EXECUTION (Auto-Sync)
+    (function autoSyncLanguage() {
+        // We check MULTIPLE keys just in case the home page uses a different name
+        // Prioritizes: 'language' -> 'app_language' -> 'lang'
+        let saved = localStorage.getItem('language') || localStorage.getItem('app_language') || localStorage.getItem('lang');
+        
+        console.log("Found LocalStorage Language:", saved); // Debugging
+
+        if(saved === 'hi' || saved === 'Hindi' || saved === 'hindi') currentLang = 'hi';
+        else if(saved === 'mr' || saved === 'Marathi' || saved === 'marathi') currentLang = 'mr';
+        else if(saved === 'en' || saved === 'English' || saved === 'english') currentLang = 'en';
+        
+        // Dark Mode Check
         if(localStorage.getItem('theme') === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
         }
+    })();
 
-        // AUTO-SYNC LANGUAGE: Check 'app_language' in localStorage
-        const storedLang = localStorage.getItem('app_language');
-        
-        // Validate and apply logic
-        if (storedLang && (storedLang === 'en' || storedLang === 'hi' || storedLang === 'mr')) {
-            currentLang = storedLang;
-        } else {
-            // Default to 'en' if nothing found, but preserve strict type
-            currentLang = 'en'; 
-        }
-        
-        // Render
-        renderUI();
-        
-        // Start Time Loop
-        updateStatusLogic();
-        setInterval(updateStatusLogic, 10000); // Check every 10 seconds for efficiency
+    // 3. MAIN APP INITIALIZER
+    window.onload = function() {
+        renderAll();
+        setInterval(checkTime, 1000); // 1-second accurate clock
+        checkTime(); // Run immediately
+    };
+
+    function goHome(e) {
+        // Fallback if index.html is the goal
+        e.preventDefault();
+        window.location.href = 'index.html';
     }
 
-    // 4. RENDERING LOGIC
-    function renderUI() {
-        const data = DICTIONARY[currentLang];
-        
-        // Set Typography attribute for correct rendering of Hi/Mr scripts
-        document.body.setAttribute('data-lang', currentLang);
-
-        // Update Static Texts
-        document.getElementById('ui-title').innerText = data.title;
-        document.getElementById('lang-btn').innerText = data.langName;
-        document.getElementById('ui-program-title').innerText = data.programTitle;
-        document.getElementById('ui-note').innerText = data.note;
-
-        // Render List
-        const list = document.getElementById('schedule-list');
-        list.innerHTML = ''; // Clear existing
-
-        SCHEDULE.forEach((item, index) => {
-            const el = document.createElement('div');
-            el.className = 'event-card';
-            el.id = `event-${index}`; // Needed for active highlighting
-            
-            el.innerHTML = `
-                <div class="time-tag">${item.t}</div>
-                <h5 class="event-name">${item.title[currentLang]}</h5>
-                <div class="event-desc">${item.desc[currentLang]}</div>
-            `;
-            list.appendChild(el);
-        });
-
-        // Trigger Status update to ensure text inside card matches new language
-        updateStatusLogic();
-    }
-
-    // 5. CHANGE LANGUAGE (User Interaction)
-    function rotateLanguage() {
-        // Cycle: EN -> HI -> MR -> EN
+    function cycleLang() {
         if(currentLang === 'en') currentLang = 'hi';
         else if(currentLang === 'hi') currentLang = 'mr';
         else currentLang = 'en';
-
-        // Update Global LocalStorage (Affects other pages if they listen, or next load)
-        localStorage.setItem('app_language', currentLang);
         
-        // Re-render immediately
-        renderUI();
+        // SAVE for other pages
+        localStorage.setItem('language', currentLang); // Save to generic 'language'
+        localStorage.setItem('app_language', currentLang); // Save backup
+        
+        renderAll();
+        checkTime(); // Refresh text inside status card
     }
 
-    // 6. REAL-TIME STATUS ENGINE
-    function updateStatusLogic() {
+    // 4. RENDERING UI
+    function renderAll() {
+        const d = DICT[currentLang];
+
+        // Apply Font for Marathi/Hindi
+        if(currentLang !== 'en') document.body.classList.add('lang-regional');
+        else document.body.classList.remove('lang-regional');
+
+        document.getElementById('txt_title').innerText = d.title;
+        document.getElementById('txt_heading').innerText = d.heading;
+        document.getElementById('txt_note').innerText = d.note;
+        document.getElementById('btn_lang').innerText = d.lbl;
+
+        // Render List
+        const box = document.getElementById('list_container');
+        box.innerHTML = '';
+
+        SCHEDULE_DATA.forEach((item, i) => {
+            let name, desc;
+            
+            // Selecting Language Text safely
+            if(currentLang === 'hi') { name = item.hi_n; desc = item.hi_d; }
+            else if(currentLang === 'mr') { name = item.mr_n; desc = item.mr_d; }
+            else { name = item.en_n; desc = item.en_d; }
+
+            const div = document.createElement('div');
+            div.className = 'event-item';
+            div.id = 'evt_' + i;
+            div.innerHTML = `
+                <div class="time">${item.t}</div>
+                <div class="name">${name}</div>
+                <div class="desc">${desc}</div>
+            `;
+            box.appendChild(div);
+        });
+    }
+
+    // 5. LOGIC FOR OPEN/CLOSE (Real-time)
+    function checkTime() {
         const now = new Date();
-        const H = now.getHours(); // 0-23
-        const M = now.getMinutes(); // 0-59
-        const currentTime = H + (M / 60); // Decimal time for easy comparison
+        const t = now.getHours() + (now.getMinutes() / 60);
 
-        // Temple Hours Configuration
-        // Morning Slot: 4:30 AM (4.5) to 1:00 PM (13.0)
-        // Evening Slot: 4:15 PM (16.25) to 9:00 PM (21.0)
-        
+        const d = DICT[currentLang];
+        const card = document.getElementById('card_status');
+        const main = document.getElementById('txt_status');
+        const sub = document.getElementById('txt_next');
+
+        // Logic: 
+        // Morning: 4.5 (4:30) -> 13.0 (1:00)
+        // Evening: 16.25 (4:15) -> 21.0 (9:00)
+
         let isOpen = false;
-        
-        if (currentTime >= 4.5 && currentTime < 13.0) isOpen = true;
-        if (currentTime >= 16.25 && currentTime < 21.0) isOpen = true;
+        let isMorn = (t >= 4.5 && t < 13);
+        let isEve = (t >= 16.25 && t < 21);
 
-        const uiDict = DICTIONARY[currentLang];
-        const mainText = document.getElementById('status-main');
-        const subText = document.getElementById('status-sub');
-        const card = document.getElementById('status-card');
+        if(isMorn || isEve) isOpen = true;
 
         if(isOpen) {
-            mainText.innerHTML = `<span class="live-dot"></span> ${uiDict.statusOpen}`;
-            subText.innerText = uiDict.statusAvail;
-            
-            // Standard Orange Gradient
-            card.style.background = "var(--header-gradient)";
+            card.classList.remove('closed');
+            main.innerHTML = `<span class="live-dot"></span> ${d.statusOpen}`;
+            sub.innerText = d.statusSubOpen;
         } else {
-            mainText.innerHTML = `<span class="closed-dot"></span> ${uiDict.statusClosed}`;
+            card.classList.add('closed');
+            main.innerHTML = `<span class="closed-dot"></span> ${d.statusClosed}`;
             
-            // Determine "Next Opening" logic
-            if (currentTime >= 13.0 && currentTime < 16.25) {
-                // It is afternoon, next is 4:15 PM
-                subText.innerText = uiDict.nextEve;
-            } else {
-                // It is night or early morning, next is 4:30 AM
-                subText.innerText = uiDict.nextMorn;
-            }
-
-            // Dark Grey Gradient for Closed
-            card.style.background = "linear-gradient(135deg, #424242, #212121)";
+            // Deciding "Next Open" Text
+            if(t >= 13 && t < 16.25) sub.innerText = d.nextEve; // It's afternoon
+            else sub.innerText = d.nextMorn; // It's night
         }
 
-        // ACTIVE HIGHLIGHT LOGIC
-        // Identify which event "segment" we are currently in
+        // Active Event Highlighting
         let activeIdx = -1;
+        SCHEDULE_DATA.forEach((item, i) => {
+            if(t >= item.h) activeIdx = i;
+        });
         
-        // Logic: Find the latest event that has already started
-        for (let i = 0; i < SCHEDULE.length; i++) {
-            const evTime = SCHEDULE[i].h + (SCHEDULE[i].m / 60);
-            if(currentTime >= evTime) {
-                activeIdx = i;
-            }
-        }
-
-        // Cap check: If it's past 9:00 PM, technically last event is "Temple Closes", 
-        // we can leave it active or remove. Let's keep it active to show it's closed.
-
-        // Remove old actives
-        document.querySelectorAll('.event-card').forEach(e => e.classList.remove('active'));
-
-        // Apply new active
-        if (activeIdx > -1) {
-            const activeEl = document.getElementById(`event-${activeIdx}`);
-            if (activeEl) {
-                activeEl.classList.add('active');
-                
-                // Optional: Auto-scroll only if needed? 
-                // Generally avoid auto-scroll on mobile unless requested, triggers shift.
-            }
+        // Remove all actives
+        document.querySelectorAll('.event-item').forEach(el => el.classList.remove('active'));
+        
+        // Add to current
+        if(activeIdx !== -1) {
+            let target = document.getElementById('evt_' + activeIdx);
+            if(target) target.classList.add('active');
         }
     }
-</script>
 
+</script>
 </body>
 </html>
