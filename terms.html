@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Terms and Conditions - ISKCON Hadapsar Official Website">
+    <meta name="theme-color" content="#FF9933">
+    <title>Terms & Legal | ISKCON Hadapsar</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Bootstrap 5 Grid System (CSS Only) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        
+        :root {
+   
+            --primary: #FF9933;    
+            --primary-dark: #d35400;
+            --accent-gold: #FFD700;
+            
+            /* Light Theme (Default) */
+            --bg-page: #FFFDF5;         /* Creamy Vedic Paper */
+            --bg-card: #FFFFFF;
+            --text-main: #2d3436;
+            --text-light: #636e72;
+            --border-color: rgba(230, 126, 34, 0.15);
+            --shadow: 0 10px 40px rgba(0,0,0,0.06);
+            --header-glass: rgba(255, 255, 255, 0.92);
+        }
+
+        /* Dark Theme Variables */
+        [data-theme="dark"] {
+            --bg-page: #121212;
+            --bg-card: #1E1E1E;
+            --text-main: #dfe6e9;
+            --text-light: #b2bec3;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 15px 50px rgba(0,0,0,0.5);
+            --header-glass: rgba(18, 18, 18, 0.95);
+        }
+
+    
+        body {
+            font-family: 'Outfit', 'Noto Sans Devanagari', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-image: radial-gradient(var(--primary) 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            opacity: 0.99;
+            padding-top: 80px;
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 70px;
+            background: var(--header-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+        }
+
+        .brand-logo {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home {
+            text-decoration: none;
+            color: var(--text-main);
+            background: rgba(0,0,0,0.04);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-home:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateX(-3px);
+            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);
+        }
+
+        
+        .main-wrapper {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        /* Title Area */
+        .page-intro {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        h1.page-title {
+            font-family: 'Cinzel', serif;
+            color: var(--primary);
+            font-size: clamp(2rem, 5vw, 3rem); /* Fluid typography */
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: rgba(255, 153, 51, 0.1);
+            color: var(--primary-dark);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        
+        .term-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .term-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .term-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 25px; bottom: 25px;
+            width: 5px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent-gold));
+            border-radius: 0 5px 5px 0;
+        }
+
+ 
+        .term-heading {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        .icon-box {
+            width: 45px; height: 45px;
+            background: rgba(255, 153, 51, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .term-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-light);
+            text-align: justify;
+        }
+
+
+
+
+
+
+        .site-footer {
+            margin-top: 60px;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px dashed var(--border-color);
+        }
+
+        .mantra-footer {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.7;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .dev-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #2d3436;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .dev-badge:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .page-intro { margin-bottom: 30px; }
+            .term-card { padding: 25px; }
+            h1.page-title { font-size: 1.8rem; }
+            .site-header { padding: 0 20px; }
+            .btn-home span { display: none; } /* Show icon only on mobile nav */
+        }
+
+    </style>
+<link rel="me" href="https://www.blogger.com/profile/18035977914919880974" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+</head>
+<body>
+
+
+    <header class="site-header">
+        <div class="brand-logo">
+            <i class="fas fa-om fa-lg"></i>
+            <span>ISKCON CONNECT</span>
+        </div>
+        <nav>
+            <a href="index.html" class="btn-home">
+                <i class="fas fa-arrow-left"></i> <span>Home / मुखपृष्ठ</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-wrapper">
+
+        <!-- Title Header -->
+        <div class="page-intro animate__animated animate__fadeIn">
+            <h1 class="page-title" data-key="title">Website Terms of Use</h1>
+            <div class="last-updated">
+                <i class="far fa-clock"></i> <span data-key="last_updated">Last Updated: Oct 2024</span>
+            </div>
+            <p data-key="intro" style="margin-top:15px; color:var(--text-light); max-width:600px; margin-left:auto; margin-right:auto;">
+                Please read these terms carefully before accessing ISKCON Hadapsar digital services.
+            </p>
+        </div>
+
+
+        <div class="term-card">
+            <div class="term-heading">
+                <div class="icon-box"><i class="fas fa-globe"></i></div>
+                <span data-key="h1">Acceptance & Scope</span>
+            </div>
+            <p class="term-content" data-key="t1">
+                By accessing this website, you agree to these Terms. This platform is designed for devotional service, community updates, and educational purposes under ISKCON Hadapsar. Unauthorized commercial use is strictly prohibited.
+            </p>
+        </div>
+
+
+        <div class="term-card">
+            <div class="term-heading">
+                <div class="icon-box"><i class="fas fa-code-branch"></i></div>
+                <span data-key="h2">Intellectual Property</span>
+            </div>
+            <p class="term-content" data-key="t2">
+                All spiritual content (images, audio) belongs to ISKCON Hadapsar. The website source code, UI architecture, and technical implementation are intellectual properties developed by Santosh (Principal Engineer). Copying or reverse-engineering this platform is a violation of copyright laws.
+            </p>
+        </div>
+
+        <div class="term-card">
+            <div class="term-heading">
+                <div class="icon-box"><i class="fas fa-server"></i></div>
+                <span data-key="h3">Technical Architecture & Data</span>
+            </div>
+            <p class="term-content" data-key="t3">
+                This website is powered by a robust cloud architecture (Firebase) designed to support 50,000+ users. While we strive for 100% uptime, ISKCON Hadapsar is not liable for temporary service interruptions. No personal banking data is stored on our servers.
+            </p>
+        </div>
+
+
+        <div class="term-card" style="border-left-color: var(--primary);">
+            <div class="term-heading">
+                <div class="icon-box"><i class="fas fa-map-marked-alt"></i></div>
+                <span data-key="h4">Legal Jurisdiction & Contact</span>
+            </div>
+            <p class="term-content">
+                <strong style="color:var(--primary);" data-key="contact_label">Registered Address:</strong><br>
+                ISKCON Hadapsar,<br>
+                GW2M+X5J, Pune - Solapur Rd, near Kanyadan Mangal Karyalaya,<br>
+                Aru Nagar, Bhosale Nagar, Hadapsar, Pune, Maharashtra 411028
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="mantra-footer">
+                HARE KRISHNA HARE KRISHNA KRISHNA KRISHNA HARE HARE<br>
+                HARE RAMA HARE RAMA RAMA RAMA HARE HARE
+            </div>
+            
+            <a href="#" class="dev-badge">
+                <i class="fas fa-laptop-code"></i>
+                <span data-key="dev_credit">Platform Engineered by Santosh</span>
+            </a>
+            
+            <div style="margin-top:20px; font-size:0.8rem; color:var(--text-light);">
+                &copy; 2025 ISKCON Hadapsar Official Website
+            </div>
+        </footer>
+
+    </main>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+
+
+            const translations = {
+                en: {
+                    title: "Terms & Conditions",
+                    last_updated: "Last Updated: Oct 2024",
+                    intro: "Please read these terms carefully before accessing ISKCON Hadapsar website services.",
+                    h1: "1. Acceptance & Usage",
+                    t1: "By accessing this website URL, you agree to be bound by these terms. This website is for devotional (Seva) and educational use only. Commercial exploitation of temple data or digital assets is prohibited.",
+                    h2: "2. Intellectual Property",
+                    t2: "Content rights belong to ISKCON Hadapsar. The technical framework, source code, and design architecture are engineered by Santosh. Unauthorized scraping or replication is legally actionable.",
+                    h3: "3. System & Privacy",
+                    t3: "Our platform uses secure cloud infrastructure (Firebase) scaling for high traffic. We prioritize user privacy and do not sell data to third parties.",
+                    h4: "4. Contact & Jurisdiction",
+                    contact_label: "Official Temple Address:",
+                    dev_credit: "Platform Engineered by Santosh"
+                },
+                hi: {
+                    title: "नियम और शर्तें",
+                    last_updated: "अंतिम अपडेट: अक्टूबर 2024",
+                    intro: "कृपया इस्कॉन हडपसर वेबसाइट सेवाओं का उपयोग करने से पहले इन शर्तों को ध्यान से पढ़ें।",
+                    h1: "1. स्वीकृति और उपयोग",
+                    t1: "इस वेबसाइट URL तक पहुँचने पर, आप इन शर्तों से बंधे होने के लिए सहमत हैं। यह वेबसाइट केवल भक्ति (सेवा) और शैक्षिक उपयोग के लिए है। मंदिर के डेटा का व्यावसायिक उपयोग निषिद्ध है।",
+                    h2: "2. बौद्धिक संपदा (Intellectual Property)",
+                    t2: "सामग्री का अधिकार इस्कॉन हडपसर का है। वेबसाइट का सोर्स कोड, तकनीकी ढांचा और डिजाइन आर्किटेक्चर संतोष द्वारा विकसित किया गया है। इसकी नकल करना कानूनी अपराध है।",
+                    h3: "3. सिस्टम और गोपनीयता",
+                    t3: "हमारा प्लेटफ़ॉर्म सुरक्षित क्लाउड इन्फ्रास्ट्रक्चर (Firebase) का उपयोग करता है। हम उपयोगकर्ता की गोपनीयता को प्राथमिकता देते हैं और किसी भी तीसरे पक्ष को डेटा नहीं बेचते हैं।",
+                    h4: "4. संपर्क और न्यायक्षेत्र",
+                    contact_label: "आधिकारिक मंदिर का पता:",
+                    dev_credit: "प्लेटफ़ॉर्म विकासकर्ता: संतोष"
+                },
+                mr: {
+                    title: "वेबसाइट नियम आणि अटी",
+                    last_updated: "अंतिम अपडेट: ऑक्टोबर 2024",
+                    intro: "इस्कॉन हडपसर वेबसाइट वापरण्यापूर्वी कृपया हे नियम काळजीपूर्वक वाचा.",
+                    h1: "1. नियम आणि वापर",
+                    t1: "या वेबसाइटवर प्रवेश करून, आपण या अटींचे पालन करण्यास सहमत आहात. ही वेबसाइट फक्त भक्ती (सेवा) आणि शिक्षणासाठी आहे. मंदिर डेटाचा व्यावसायिक वापर करण्यास सक्त मनाई आहे.",
+                    h2: "2. बौद्धिक संपदा अधिकार",
+                    t2: "सर्व अध्यात्मिक सामग्री इस्कॉन हडपसरच्या मालकीची आहे. वेबसाइटचे सोर्स कोड, डिझाइन आणि तांत्रिक रचना संतोष यांनी विकसित केली आहे. त्याची अनधिकृत कॉपी करणे कायद्याने गुन्हा आहे.",
+                    h3: "3. तांत्रिक माहिती आणि गोपनीयता",
+                    t3: "आमचे व्यासपीठ सुरक्षित क्लाउड तंत्रज्ञानावर (Firebase) आधारित आहे. आम्ही वापरकर्त्याची गोपनीयता जपतो आणि तुमचा डेटा कोणालाही विकला जात नाही.",
+                    h4: "4. संपर्क आणि पत्ता",
+                    contact_label: "मंदिर अधिकृत पत्ता:",
+                    dev_credit: "प्लॅटफॉर्म डेव्हलपर: संतोष"
+                }
+            };
+
+
+
+            const storedLang = localStorage.getItem('lang');
+            
+            // 2. Default to English if nothing found
+            const currentLang = storedLang && translations[storedLang] ? storedLang : 'en';
+            
+            // 3. Update DOM Elements
+            // We use specific Fonts for Hindi/Marathi to ensure readability
+            if(currentLang === 'hi' || currentLang === 'mr') {
+                document.body.style.fontFamily = "'Noto Sans Devanagari', sans-serif";
+            }
+
+            const data = translations[currentLang];
+            
+            // Loop through keys and update text
+            Object.keys(data).forEach(key => {
+                const element = document.querySelector(`[data-key="${key}"]`);
+                if (element) {
+                    element.textContent = data[key];
+                    // Add fade-in effect to show it worked
+                    element.style.animation = "none";
+                    element.offsetHeight; /* trigger reflow */
+                    element.style.animation = "fadeIn 0.5s forwards"; 
+                }
+            });
+
+            // Log for debugging
+            console.log(`Terms Page Loaded. Theme: ${savedTheme}, Language: ${currentLang}`);
+        });
+    </script>
+</body>
+</html>
