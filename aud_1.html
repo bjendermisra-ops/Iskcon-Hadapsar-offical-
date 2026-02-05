@@ -205,12 +205,6 @@
         .singer-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); margin-bottom: 5px; display: block; margin: 0 auto 6px auto;}
         .singer-name { font-size: 0.7rem; font-weight: 600; color: var(--text-main); line-height: 1.2;}
 
-        /* --- OFF CANVAS --- */
-        .offcanvas { background: var(--bg-color); color: var(--text-main); width: 260px !important;}
-        .menu-item { padding: 12px 15px; display: block; color: var(--text-main); text-decoration: none; font-weight: 500; font-size: 1rem; border-bottom: 1px dashed rgba(128,128,128,0.1);}
-        .menu-item:active { background: rgba(0,0,0,0.05); }
-        .menu-item i { width: 25px; color: var(--primary); }
-
         /* LANDSCAPE FIX for Short Screens (Laptop/1024x600) */
         @media (max-height: 600px) {
             :root { --art-size: 150px; } 
@@ -226,19 +220,7 @@
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <div class="offcanvas offcanvas-start" id="appSidebar">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" style="font-family:'Cinzel';color:var(--primary);">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" style="filter:invert(0.5)"></button>
-        </div>
-        <div class="offcanvas-body pt-2 px-0">
-            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Home</a>
-            <a href="schedule.html" class="menu-item"><i class="fas fa-clock"></i> Schedule</a>
-            <a href="about.html" class="menu-item"><i class="fas fa-info-circle"></i> About</a>
-            <div class="menu-item border-0" onclick="toggleTheme()"><i class="fas fa-moon"></i> Dark Mode</div>
-        </div>
-    </div>
+    <!-- SIDEBAR HTML REMOVED -->
 
     <!-- NAVBAR -->
     <nav class="navbar sticky-top">
@@ -252,9 +234,7 @@
                     Divine Player
                 </a>
             </div>
-            <button class="btn shadow-none text-white p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar">
-                <i class="fas fa-bars fa-lg"></i>
-            </button>
+            <!-- Sidebar Trigger Button REMOVED -->
         </div>
     </nav>
 
