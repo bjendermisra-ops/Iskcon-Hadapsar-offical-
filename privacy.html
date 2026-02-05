@@ -1,1 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Privacy Policy & Data Support - ISKCON Hadapsar Official Website">
+    <meta name="author" content="Santosh - Principal Full-Stack Engineer">
+    <meta name="theme-color" content="#FF9933">
+    
+    <title>Privacy Policy | ISKCON Hadapsar Official Website</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;800&family=Outfit:wght@300;400;500;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <style>
+        /* ==================== CORE THEME ==================== */
+        :root {
+            --primary: #FF9933;         
+            --primary-dark: #e67e22;
+            --accent: #f1c40f;          
+            --bg-body: #FFFDF5;         
+            --bg-card: #FFFFFF;
+            --text-head: #2D3436;
+            --text-body: #636e72;
+            --border: rgba(0,0,0,0.08);
+            --shadow: 0 10px 40px rgba(0,0,0,0.06);
+            --nav-glass: rgba(255, 255, 255, 0.95);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1E1E1E;
+            --text-head: #dfe6e9;
+            --text-body: #b2bec3;
+            --border: rgba(255,255,255,0.1);
+            --shadow: 0 15px 50px rgba(0,0,0,0.5);
+            --nav-glass: rgba(18, 18, 18, 0.95);
+        }
+
+        /* ==================== RESET & TYPOGRAPHY ==================== */
+        body {
+            font-family: 'Outfit', 'Noto Sans Devanagari', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            margin: 0; padding: 0;
+            line-height: 1.7;
+            padding-top: 80px;
+            background-image: radial-gradient(var(--primary) 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            transition: all 0.3s ease;
+        }
+
+        h1, h2, h3 { color: var(--text-head); margin-top: 0; }
+        .brand-font { font-family: 'Cinzel', serif; }
+
+        /* ==================== HEADER ==================== */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            height: 70px;
+            background: var(--nav-glass);
+            backdrop-filter: blur(15px);
+            z-index: 999;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .brand-text h1 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 800;
+            margin: 0;
+        }
+        .brand-text span {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--text-body);
+            text-transform: uppercase;
+        }
+
+        .nav-back-btn {
+            padding: 8px 20px;
+            border-radius: 80px;
+            background: rgba(0,0,0,0.05);
+            color: var(--text-head);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 3px solid var(--border);
+            transition: all 0.2s;
+        }
+        .nav-back-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateX(-3px);
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Area */
+        .doc-intro {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            border: 1px solid rgba(39, 174, 96, 0.2);
+        }
+
+        /* Cards */
+        .policy-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Orange Line Accent */
+        .policy-section::before {
+            content:''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 5px;
+            background: var(--primary); border-top-right-radius: 4px; border-bottom-right-radius: 4px;
+        }
+
+        .sec-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .sec-icon {
+            width: 45px; height: 45px;
+            background: rgba(255, 153, 51, 0.1);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        p { text-align: justify; margin-bottom: 15px; }
+
+        /* ==================== NEW: CONNECT GRID (Integrated) ==================== */
+        .contact-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-connect {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-call { background: #f1f2f6; color: #2d3436; }
+        .btn-call:hover { background: #dfe4ea; transform: translateY(-2px); }
+
+        .btn-wa { background: #25D366; color: white; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .btn-wa:hover { background: #20bf5b; transform: translateY(-2px); }
+
+        .address-box {
+            background: rgba(0,0,0,0.02);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        .site-footer {
+            margin-top: 50px;
+            border-top: 1px solid var(--border);
+            padding-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .dev-tag {
+            display: inline-block;
+            margin-top: 15px;
+            background: var(--text-head);
+            color: var(--bg-card);
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+
+        @media(max-width:768px){
+            .nav-back-btn span { display:none; }
+            .policy-section { padding: 25px; }
+            .contact-actions { grid-template-columns: 1fr; }
+        }
+    </style>
+<link rel="me" href="https://www.blogger.com/profile/18035977914919880974" />
+<meta name='google-adsense-platform-account' content='ca-host-pub-1556223355139109'/>
+<meta name='google-adsense-platform-domain' content='blogspot.com'/>
+</head>
+<body>
+
+    <!-- NAV HEADER -->
+    <header class="site-header">
+        <a href="index.html" class="brand">
+          
+            
+          
+            <div class="brand-text brand-font">
+                <h1>ISKCON HADAPSAR</h1>
+                <span>Official Website</span>
+            </div>
+        </a>
+        <a href="index.html" class="nav-back-btn">
+            <i class="fas fa-arrow-left"></i> <span>Return Home</span>
+        </a>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="wrapper">
+
+        <!-- INTRO -->
+        <div class="doc-intro animate__animated animate__fadeIn">
+            <div class="doc-badge">
+                <i class="fas fa-check-circle"></i> <span data-key="badge">Compliant & Secure</span>
+            </div>
+            <h1 style="font-size: 2.5rem; font-family:'Cinzel', serif;" data-key="title">Privacy Policy</h1>
+            <p style="opacity:0.7; font-size:0.9rem;">
+                <span data-key="update">Effective Date:</span> Feb 5, 2025
+            </p>
+        </div>
+
+        <!-- 1. INTRO SECTION -->
+        <section class="policy-section">
+            <div class="sec-header">
+                <div class="sec-icon"><i class="fas fa-info-circle"></i></div>
+                <h2 class="brand-font" data-key="h1">Overview & Purpose</h2>
+            </div>
+            <p data-key="p1">
+                This Privacy Policy governs the manner in which the ISKCON Hadapsar official website collects, uses, maintains, and discloses information. We are committed to ensuring that your privacy is protected while using our digital devotional services.
+            </p>
+        </section>
+
+        <!-- 2. TECHNOLOGY & DATA -->
+        <section class="policy-section">
+            <div class="sec-header">
+                <div class="sec-icon"><i class="fas fa-server"></i></div>
+                <h2 class="brand-font" data-key="h2">Data Tech & Security</h2>
+            </div>
+            <p data-key="p2">
+                <strong>Platform Architecture:</strong> This website is engineered using <strong>Google Firebase</strong> scalable infrastructure. We collect minimal operational data (cookies for language/theme settings) to ensure the site runs smoothly on your browser.
+            </p>
+            <p data-key="p3">
+                Any future user data (for donations or profiles) will be encrypted and stored on secure cloud servers. We do not sell data to advertisers.
+            </p>
+        </section>
+
+        <!-- 3. COOKIES & TRACKING -->
+        <section class="policy-section">
+            <div class="sec-header">
+                <div class="sec-icon"><i class="fas fa-cookie-bite"></i></div>
+                <h2 class="brand-font" data-key="h3">Cookies & Integrations</h2>
+            </div>
+            <p data-key="p4">
+                We use local browser storage (Cookies) strictly to save your preferences (Dark Mode, Hindi/Marathi Language). External services like <strong>Google Maps</strong> (Locations) and <strong>YouTube</strong> (Live Darshan) may process data under their own policies when used.
+            </p>
+        </section>
+
+        <!-- 4. CONTACT & CONNECT (INTEGRATED) -->
+        <section class="policy-section" style="border-left: none; border-bottom: 4px solid var(--primary);">
+            <div class="sec-header">
+                <div class="sec-icon"><i class="fas fa-headset"></i></div>
+                <h2 class="brand-font" data-key="h4">Privacy Concerns & Support</h2>
+            </div>
+            
+            <p data-key="p5">
+                If you have any questions regarding this Privacy Policy, wish to request data removal, or want to contact the temple administration regarding website usage, please connect with us directly:
+            </p>
+
+            <!-- Embedded Address Box -->
+            <div class="address-box">
+                <strong style="display:block; margin-bottom:5px;">
+                    <i class="fas fa-map-marker-alt text-danger"></i> &nbsp; ISKCON Hadapsar (Temple Office)
+                </strong>
+                <span style="font-size:0.95rem; color:var(--text-body);">
+                    GW2M+X5J, Pune - Solapur Rd, near Kanyadan Mangal Karyalaya, Aru Nagar, Bhosale Nagar, Hadapsar, Pune, Maharashtra 411028
+                </span>
+            </div>
+
+            <!-- CONNECT BUTTONS -->
+            <div class="contact-actions">
+                <a href="tel:+919209551462" class="btn-connect btn-call">
+                    <i class="fas fa-phone-alt"></i> <span data-key="btn_call">Call Office</span>
+                </a>
+                
+                <a href="https://wa.me/919978984699?text=Hare+Krishna.+I+have+a+question+regarding+Privacy/Website." class="btn-connect btn-wa">
+                    <i class="fab fa-whatsapp"></i> <span data-key="btn_wa">Chat on WhatsApp</span>
+                </a>
+                
+                <a href="https://maps.google.com?q=ISKCON+Hadapsar" target="_blank" class="btn-connect" style="background:var(--text-head); color:#fff;">
+                    <i class="fas fa-map-marked-alt"></i> <span data-key="btn_map">Get Directions</span>
+                </a>
+            </div>
+
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="site-footer brand-font">
+            <div style="font-weight:700; color:var(--primary); letter-spacing:1px; margin-bottom:20px;">
+                HARE KRISHNA HARE KRISHNA KRISHNA KRISHNA HARE HARE<br>
+                HARE RAMA HARE RAMA RAMA RAMA HARE HARE
+            </div>
+            <p>&copy; 2025 ISKCON Hadapsar. All Rights Reserved.</p>
+            
+         
+            <a href="#" class="dev-tag">
+                <i class="fas fa-code"></i> &nbsp; made by 🥰Santosh🥰
+            </a>
+        </footer>
+
+    </div>
+
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. Sync Theme
+            if(localStorage.getItem('theme') === 'dark'){
+                document.body.setAttribute('data-theme', 'dark');
+            }
+
+            // 2. Language Dictionary
+            const dictionary = {
+                en: {
+                    badge: "Compliant & Secure",
+                    title: "Privacy Policy",
+                    update: "Effective Date:",
+                    h1: "Overview & Purpose",
+                    p1: "This Privacy Policy governs how ISKCON Hadapsar collects, uses, and protects data on this website. We respect your privacy in accordance with global digital standards.",
+                    h2: "Data Tech & Security",
+                    p2: "This website uses scalable Google Firebase infrastructure. We collect minimal functional data to ensure smooth performance on your specific device.",
+                    p3: "User data is treated with sanctity. We do not sell information to advertisers. Connections are secured via SSL.",
+                    h3: "Cookies & Integrations",
+                    p4: "We use essential cookies for website preferences (like Language & Theme). YouTube and Google Maps are integrated for better user experience.",
+                    h4: "Privacy Concerns & Support",
+                    p5: "For privacy inquiries, data removal requests, or general support, connect with the temple administration:",
+                    btn_call: "Call Office",
+                    btn_wa: "Chat Support",
+                    btn_map: "Directions"
+                },
+                hi: {
+                    badge: "सुरक्षित और प्रमाणित",
+                    title: "गोपनीयता नीति",
+                    update: "प्रभावी तिथि:",
+                    h1: "परिचय और उद्देश्य",
+                    p1: "यह गोपनीयता नीति बताती है कि इस्कॉन हडपसर इस वेबसाइट पर डेटा कैसे सुरक्षित रखता है। हम वैश्विक मानकों के अनुसार आपकी गोपनीयता का सम्मान करते हैं।",
+                    h2: "डेटा तकनीक और सुरक्षा",
+                    p2: "यह वेबसाइट Google Firebase इंफ्रास्ट्रक्चर का उपयोग करती है। हम केवल सुचारू प्रदर्शन के लिए न्यूनतम तकनीकी डेटा एकत्र करते हैं।",
+                    p3: "हम उपयोगकर्ता डेटा विज्ञापनदाताओं को नहीं बेचते हैं। आपकी सुरक्षा हमारे लिए सर्वोपरि है।",
+                    h3: "कुकीज़ और सेवाएं",
+                    p4: "हम आपकी भाषा और थीम सेटिंग के लिए कुकीज़ का उपयोग करते हैं। YouTube और Google Maps जैसी सेवाएं एकीकृत हैं।",
+                    h4: "संपर्क और सहायता",
+                    p5: "गोपनीयता संबंधी पूछताछ, डेटा हटाने के अनुरोध, या मंदिर प्रशासन से संपर्क करने के लिए हमसे जुड़ें:",
+                    btn_call: "कॉल करें",
+                    btn_wa: "व्हाट्सएप चैट",
+                    btn_map: "दिशा - निर्देश"
+                },
+                mr: {
+                    badge: "सुरक्षित आणि अधिकृत",
+                    title: "गोपनीयता धोरण",
+                    update: "तारीख:",
+                    h1: "उद्देश आणि नियम",
+                    p1: "इस्कॉन हडपसर वेबसाइटवर आपला डेटा कसा सुरक्षित ठेवला जातो याचे हे धोरण आहे. आम्ही आपल्या गोपनीयतेचा आदर करतो.",
+                    h2: "तंत्रज्ञान आणि सुरक्षा",
+                    p2: "ही वेबसाइट Google Firebase वर आधारित आहे. मोबाइलवर वेबसाइट व्यवस्थित चालण्यासाठी आम्ही कमीत कमी डेटा वापरतो.",
+                    p3: "आम्ही कोणालाही डेटा विकत नाही. वेबसाइट SSL द्वारे सुरक्षित आहे.",
+                    h3: "कुकीज आणि सेवा",
+                    p4: "तुमची भाषा सेटिंग जतन करण्यासाठी कुकीज वापरल्या जातात. व्हिडिओसाठी YouTube आणि नकाशासाठी Google Maps जोडले आहेत.",
+                    h4: "गोपनीयता आणि संपर्क",
+                    p5: "गोपनीयतेबाबत काही प्रश्न असल्यास किंवा मंदिर कार्यालयाशी संपर्क साधण्यासाठी खालील पर्यायांचा वापर करा:",
+                    btn_call: "कॉल करा",
+                    btn_wa: "व्हाट्सॲप",
+                    btn_map: "पत्ता पहा"
+                }
+            };
+
+            // 3. Apply Language
+            const lang = localStorage.getItem('lang') || 'en';
+            
+            // Font Adjustment for Hindi/Marathi
+            if(lang === 'hi' || lang === 'mr') {
+                document.body.style.fontFamily = "'Noto Sans Devanagari', sans-serif";
+            }
+
+            const data = dictionary[lang] || dictionary['en'];
+
+            // Replace Text Keys
+            Object.keys(data).forEach(key => {
+                const el = document.querySelector(`[data-key="${key}"]`);
+                if(el) {
+                    el.innerText = data[key];
+                    el.style.opacity = '1';
+                }
+            });
+            
+            console.log("Privacy Page Loaded with Connect Module. Mode:", lang);
+        });
+    </script>
+</body>
+</html>
