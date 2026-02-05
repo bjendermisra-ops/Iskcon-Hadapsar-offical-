@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#FF9933">
+    <meta name="description" content="Daily Temple Schedule - Real time darshan timings and aarti status.">
+    <title>Daily Temple Schedule</title>
+
+    <!-- External Assets Preserved -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           PRINCIPAL ARCHITECT: CSS VARIABLES
+           ========================================= */
+        :root { 
+            --primary: #FF9933; 
+            --bg: #fcf5e5; 
+            --card: #ffffff; 
+            --text: #333333;
+            --muted: #666666;
+            --shadow: 0 8px 25px rgba(255, 153, 51, 0.25);
+            --header-bg: linear-gradient(135deg, #FF9933, #d84315);
+            --app-max-width: 768px; /* App layout width cap */
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Mode */
+        [data-theme="dark"] { 
+            --primary: #FF9933; 
+            --bg: #121212; 
+            --card: #1e1e1e; 
+            --text: #e0e0e0; 
+            --muted: #aaaaaa;
+            --header-bg: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+            --shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            background-color: #eee; /* Outer Desktop BG */
+            font-family: 'Poppins', 'Tiro Devanagari Hindi', sans-serif; 
+            color: var(--text); 
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* DEVICE AGNOSTIC WRAPPER 
+           Centers the app experience on monitors, 
+           Full width on mobile.
+        */
+        .app-container {
+            width: 100%;
+            max-width: var(--app-max-width);
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* =========================================
+           NAVIGATION HEADER
+           ========================================= */
+        .app-header {
+            background: var(--header-bg);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            height: 70px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.2s;
+        }
+        .back-btn:active { transform: scale(0.9); }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .lang-switch {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lang-switch:hover { background: rgba(255,255,255,0.1); }
+
+        /* =========================================
+           CONTENT BODY
+           ========================================= */
+        .content-body {
+            padding: 25px;
+            flex: 1;
+        }
+
+        /* LIVE STATUS CARD (The "Pulse" of the page) */
+        .status-card { 
+            background: var(--header-bg); 
+            color: white; 
+            padding: 30px 20px; 
+            border-radius: 22px; 
+            text-align: center; 
+            box-shadow: var(--shadow); 
+            margin-bottom: 35px; 
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+        
+        /* Animated radial sheen */
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            animation: rotateBg 12s linear infinite;
+        }
+        @keyframes rotateBg { 100% { transform: rotate(360deg); } }
+
+        .status-text { 
+            font-size: clamp(1.5rem, 5vw, 2rem); 
+            font-weight: 800; 
+            font-family: 'Cinzel', serif; 
+            position: relative; 
+            z-index: 2;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        
+        .status-sub { 
+            font-size: 1rem; 
+            opacity: 0.9; 
+            position: relative; 
+            z-index: 2; 
+        }
+
+        /* Pulse Indicator */
+        .live-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 10px #4ade80;
+            animation: blink 1.5s infinite;
+        }
+        .closed .live-dot { background: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; }
+
+        @keyframes blink { 0% {opacity:1;} 50%{opacity:0.4;} 100%{opacity:1;} }
+
+        /* TIMELINE STYLES */
+        .section-title {
+            font-family: 'Cinzel', serif; 
+            color: var(--primary); 
+            margin-bottom: 30px;
+            font-size: 1.6rem;
+            padding-left: 15px;
+            border-left: 5px solid var(--primary);
+            line-height: 1;
+        }
+
+        .timeline { 
+            position: relative; 
+            padding-left: 20px; 
+            margin-left: 10px;
+        }
+        /* Continuous Vertical Line */
+        .timeline::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 0;
+            width: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+        }
+        [data-theme="dark"] .timeline::after { background: #333; }
+
+        .event { 
+            position: relative; 
+            margin-bottom: 25px; 
+            background: var(--card);
+            padding: 18px 22px 18px 22px;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            margin-left: 15px; /* Spacing from line */
+        }
+
+        .event:last-child { margin-bottom: 100px; /* Safe space */ }
+
+        /* Timeline Dot */
+        .event::before { 
+            content: ''; 
+            position: absolute; 
+            left: -32px; /* Centers on timeline */
+            top: 25px; 
+            width: 18px; 
+            height: 18px; 
+            background: var(--bg); 
+            border: 4px solid #bdbdbd; 
+            border-radius: 50%; 
+            z-index: 5;
+            transition: 0.3s;
+        }
+        
+        .time { font-size: 0.95rem; font-weight: 700; color: var(--primary); display: block; margin-bottom: 2px; }
+        .name { font-size: 1.25rem; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+        .desc { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+
+        /* ACTIVE STATE LOGIC */
+        .event.active { 
+            border-left: 5px solid var(--primary);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: var(--card); /* Ensures clear contrast */
+        }
+        [data-theme="dark"] .event.active { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        .event.active::before { 
+            background: var(--primary); 
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            transform: scale(1.3);
+        }
+        .event.active .time { text-decoration: underline; text-underline-offset: 4px; }
+
+        /* FOOTER INFO */
+        .note { 
+            font-size: 0.9rem; 
+            text-align: center; 
+            padding: 15px;
+            background: rgba(0,0,0,0.04);
+            border-radius: 12px;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+        [data-theme="dark"] .note { background: rgba(255,255,255,0.05); }
+
+    </style>
+</head>
+<body onload="initApp()">
+
+<div class="app-container">
+    
+    <!-- HEADER -->
+    <header class="app-header">
+        <a href="index.html" class="back-btn" aria-label="Back">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1 class="header-title" id="lbl_title">SCHEDULE</h1>
+        
+        <!-- Quick toggle to demonstrate changes if automatic sync fails/user wants override -->
+        <div class="lang-switch" onclick="cycleLanguage()" id="lang_icon">
+            En
+        </div>
+    </header>
+
+    <div class="content-body">
+        
+        <!-- STATUS CARD -->
+        <div class="status-card" id="status-card-bg">
+            <div class="status-text">
+                <span id="lbl_status">Loading...</span>
+            </div>
+            <div class="status-sub" id="lbl_next_event">Please wait...</div>
+        </div>
+
+        <h4 class="section-title" id="lbl_program">Daily Program</h4>
+
+        <!-- TIMELINE CONTAINER -->
+        <div class="timeline" id="schedule-container">
+            <!-- Events rendered by JS -->
+        </div>
+
+        <div class="note">
+            <i class="fas fa-info-circle"></i> <span id="lbl_note">Times may vary on festivals.</span>
+        </div>
+    
+    </div>
+</div>
+
+<script>
+    /* =========================================
+       CORE ENGINE: LANGUAGE & DATA & LOGIC
+       ========================================= */
+    
+    // 1. DATASETS (3 Languages)
+    const DICTIONARY = {
+        'en': {
+            title: "Schedule",
+            program: "Daily Program",
+            open: "TEMPLE OPEN",
+            closed: "TEMPLE CLOSED",
+            avail: "Darshan Available Now",
+            next_morn: "Opens: 4:30 AM",
+            next_eve: "Opens: 4:15 PM",
+            note: "Schedule may change on festival days.",
+            icon: "En"
+        },
+        'hi': {
+            title: "दैनिक समय सारिणी",
+            program: "दैनिक कार्यक्रम",
+            open: "मंदिर खुला है",
+            closed: "मंदिर बंद है",
+            avail: "दर्शन अभी उपलब्ध हैं",
+            next_morn: "खुलने का समय: 4:30 AM",
+            next_eve: "खुलने का समय: 4:15 PM",
+            note: "त्योहार के दिनों में समय बदल सकता है।",
+            icon: "Hi"
+        },
+        'gu': {
+            title: "દર્શન સમય",
+            program: "દૈનિક કાર્યક્રમ",
+            open: "મંદિર ખુલ્લું છે",
+            closed: "મંદિર બંધ છે",
+            avail: "દર્શન હવે ઉપલબ્ધ છે",
+            next_morn: "ખુલશે: 4:30 AM",
+            next_eve: "ખુલશે: 4:15 PM",
+            note: "તહેવારોના દિવસોમાં સમય બદલાઈ શકે છે.",
+            icon: "Gu"
+        }
+    };
+
+    const SCHEDULE_DATA = [
+        { t: "04:30 AM", 
+          names: { en: "Mangal Aarti", hi: "मंगल आरती", gu: "મંગલા આરતી" }, 
+          desc: { en: "First Darshan", hi: "पहला दर्शन", gu: "પ્રથમ દર્શન" },
+          h: 4, m: 30 },
+          
+        { t: "05:15 AM", 
+          names: { en: "Tulasi Aarti", hi: "तुलसी आरती", gu: "તુલસી આરતી" }, 
+          desc: { en: "Worship Service", hi: "तुलसी पूजन", gu: "પૂજા સેવા" },
+          h: 5, m: 15 },
+
+        { t: "07:30 AM", 
+          names: { en: "Guru Puja", hi: "गुरु पूजा", gu: "ગુરુ પૂજા" }, 
+          desc: { en: "Spriritual Master", hi: "गुरु वंदना", gu: "ગુરુ વંદના" },
+          h: 7, m: 30 },
+
+        { t: "08:00 AM", 
+          names: { en: "Bhagavatam Class", hi: "श्रीमद् भागवतम्", gu: "શ્રીમદ ભાગવત કથા" }, 
+          desc: { en: "Morning Class", hi: "प्रात: कालीन कक्षा", gu: "સત્સંગ" },
+          h: 8, m: 0 },
+
+        { t: "08:30 AM", 
+          names: { en: "Darshan Aarti", hi: "दर्शन आरती", gu: "શૃંગાર આરતી" }, 
+          desc: { en: "Main Darshan", hi: "शृंगार दर्शन", gu: "મુખ્ય દર્શન" },
+          h: 8, m: 30 },
+
+        { t: "12:30 PM", 
+          names: { en: "Raj Bhoga Aarti", hi: "राज भोग आरती", gu: "રાજભોગ આરતી" }, 
+          desc: { en: "Noon Offering", hi: "दोपहर की आरती", gu: "મધ્યાહન આરતી" },
+          h: 12, m: 30 },
+
+        { t: "01:00 PM", 
+          names: { en: "Temple Closes", hi: "विश्राम (मंदिर बंद)", gu: "મંદિર મંગલ" }, 
+          desc: { en: "Rest Time", hi: "विश्राम समय", gu: "વિશ્રામ સમય" },
+          h: 13, m: 0 },
+
+        { t: "04:15 PM", 
+          names: { en: "Utthapana Aarti", hi: "उत्थापन आरती", gu: "ઉત્થાપન આરતી" }, 
+          desc: { en: "Temple Re-opens", hi: "मंदिर खुलता है", gu: "મંદિર ખૂલે છે" },
+          h: 16, m: 15 },
+
+        { t: "07:00 PM", 
+          names: { en: "Sandhya Aarti", hi: "संध्या आरती (गौर)", gu: "સંધ્યા આરતી" }, 
+          desc: { en: "Gaura Aarti", hi: "कीर्तन और आरती", gu: "ગૌર આરતી" },
+          h: 19, m: 0 },
+
+        { t: "08:30 PM", 
+          names: { en: "Shayana Aarti", hi: "शयन आरती", gu: "શયન આરતી" }, 
+          desc: { en: "Final Darshan", hi: "अंतिम दर्शन", gu: "અંતિમ દર્શન" },
+          h: 20, m: 30 },
+          
+        { t: "09:00 PM", 
+          names: { en: "Temple Closes", hi: "मंदिर बंद", gu: "મંદિર બંધ" }, 
+          desc: { en: "Good Night", hi: "रात्री विश्राम", gu: "રાત્રિ વિશ્રામ" },
+          h: 21, m: 0 }
+    ];
+
+    // State
+    let currentLang = 'en'; 
+
+    // 2. INITIALIZATION
+    function initApp() {
+        // Theme Persistence
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+
+        // Language Persistence (AUTO SYNC)
+        const savedLang = localStorage.getItem('app_language');
+        if (savedLang && ['en','hi','gu'].includes(savedLang)) {
+            currentLang = savedLang;
+        }
+
+        renderUI();
+        
+        // Start "Real-Time" clock loop
+        updateTimeStatus();
+        setInterval(updateTimeStatus, 1000); // 1-second precision
+    }
+
+    // 3. RENDER LOGIC
+    function renderUI() {
+        const t = DICTIONARY[currentLang];
+        
+        // Static Texts
+        document.getElementById('lbl_title').innerText = t.title;
+        document.getElementById('lbl_program').innerText = t.program;
+        document.getElementById('lbl_note').innerText = t.note;
+        document.getElementById('lang_icon').innerText = t.icon;
+
+        // Dynamic List
+        const listContainer = document.getElementById('schedule-container');
+        listContainer.innerHTML = ''; // Clear
+
+        SCHEDULE_DATA.forEach((item, index) => {
+            let el = document.createElement('div');
+            el.className = 'event';
+            el.id = `event-${index}`; // Used for active tracking
+            
+            // Generate HTML
+            el.innerHTML = `
+                <div class="time">${item.t}</div>
+                <div class="name">${item.names[currentLang]}</div>
+                <div class="desc">${item.desc[currentLang]}</div>
+            `;
+            listContainer.appendChild(el);
+        });
+
+        // Trigger Status Text Update immediately
+        updateTimeStatus();
+    }
+
+    // 4. LANGUAGE CYCLE (Manual Override)
+    function cycleLanguage() {
+        if(currentLang === 'en') currentLang = 'hi';
+        else if(currentLang === 'hi') currentLang = 'gu';
+        else currentLang = 'en';
+
+        localStorage.setItem('app_language', currentLang);
+        renderUI();
+    }
+
+    // 5. POWERFUL TIME & STATUS ENGINE
+    function updateTimeStatus() {
+        const now = new Date();
+        const H = now.getHours();
+        const M = now.getMinutes();
+        const currentTimeVal = H + (M / 60);
+
+        const dict = DICTIONARY[currentLang];
+        const statusLbl = document.getElementById('lbl_status');
+        const nextLbl = document.getElementById('lbl_next_event');
+        const cardBg = document.getElementById('status-card-bg');
+
+        /* --- LOGIC FOR OPEN/CLOSED ---
+           Morning: 04:30 - 13:00 (1PM)
+           Evening: 16:15 - 21:00 (9PM)
+        */
+
+        let isOpen = false;
+
+        // Morning Logic
+        if (currentTimeVal >= 4.5 && currentTimeVal < 13.0) isOpen = true;
+        // Evening Logic
+        if (currentTimeVal >= 16.25 && currentTimeVal < 21.0) isOpen = true;
+
+        // Update UI Card
+        if(isOpen) {
+            statusLbl.innerHTML = `<span class="live-dot"></span>${dict.open}`;
+            nextLbl.innerText = dict.avail;
+            cardBg.classList.remove('closed');
+            // Gradient: Orange
+            cardBg.style.background = "linear-gradient(135deg, var(--primary), #d84315)";
+        } else {
+            statusLbl.innerHTML = `<span class="live-dot"></span>${dict.closed}`;
+            cardBg.classList.add('closed');
+            // Gradient: Grey/Dark
+            cardBg.style.background = "linear-gradient(135deg, #444, #222)";
+
+            // Logic for "Next Open"
+            if(currentTimeVal >= 13.0 && currentTimeVal < 16.25) {
+                // Currently afternoon break
+                nextLbl.innerText = dict.next_eve;
+            } else {
+                // Night time
+                nextLbl.innerText = dict.next_morn;
+            }
+        }
+
+        // --- HIGHLIGHT ACTIVE EVENT ---
+        // Find the event that is currently active or passed recently
+        // Simple logic: Highlight event closest to current time BUT not if it's way past
+        
+        // Remove all active classes first
+        document.querySelectorAll('.event').forEach(e => e.classList.remove('active'));
+
+        let activeIndex = -1;
+        // Check array for the current segment
+        for(let i = 0; i < SCHEDULE_DATA.length; i++) {
+            let eventTime = SCHEDULE_DATA[i].h + (SCHEDULE_DATA[i].m / 60);
+            
+            // Logic: if current time is >= event time, it's the current segment (until the next one hits)
+            if (currentTimeVal >= eventTime) {
+                activeIndex = i;
+            }
+        }
+        
+        // Safety: If after 9 PM, no event is active or highlight the "Closing" event
+        if(currentTimeVal > 21) activeIndex = SCHEDULE_DATA.length - 1; 
+
+        if (activeIndex > -1) {
+            const el = document.getElementById(`event-${activeIndex}`);
+            if(el) el.classList.add('active');
+        }
+    }
+
+</script>
+</body>
+</html>
