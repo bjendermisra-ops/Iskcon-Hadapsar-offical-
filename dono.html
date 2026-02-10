@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
     <title>ISKCON Donation - Seva & Relief</title>
+    <meta name="description" content="Support ISKCON Hadapsar in Annadaan, Deity Worship and Vedic Education.">
     
     <!-- Fonts preserved -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* =========================================
@@ -15,22 +16,25 @@
         :root {
             /* Palette preserved perfectly */
             --primary: #D35400; 
+            --primary-dark: #A04000;
             --secondary: #FF8F00; 
-            --bg-color: #F4F6F8;
-            --text-dark: #202124;
+            --bg-color: #F8F9FA;
+            --text-dark: #1A1A1A;
             --text-light: #5F6368;
             --white: #ffffff;
-            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --card-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            --card-hover-shadow: 0 12px 28px rgba(211, 84, 0, 0.15);
             
-            /* Layout & Spacing Variables (New for Responsiveness) */
+            /* Layout & Spacing Variables */
             --container-width: 1200px;
-            --header-curve: 30px;
+            --header-curve: 24px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            outline: none;
         }
 
         body {
@@ -39,9 +43,10 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            padding-bottom: 120px; /* Space for sticky button */
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            line-height: 1.5;
+            padding-bottom: 140px; /* Increased space for sticky button */
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* Utility for centering content on large screens */
@@ -55,12 +60,12 @@
            HEADER SECTION (RESPONSIVE)
            ========================================= */
         .header {
-            background: linear-gradient(135deg, #D35400, #EF6C00);
-            padding: 20px 20px 50px 20px; /* Extra padding for tab overlap */
+            background: linear-gradient(135deg, #D35400, #E65100);
+            padding: 20px 20px 60px 20px; /* Extra padding for tab overlap */
             color: white;
             border-bottom-left-radius: var(--header-curve);
             border-bottom-right-radius: var(--header-curve);
-            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(211, 84, 0, 0.25);
             position: relative;
             z-index: 10;
         }
@@ -91,18 +96,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             text-decoration: none;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.3);
             transition: var(--transition);
         }
 
         .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.35);
             transform: translateY(-2px);
         }
 
@@ -111,70 +116,77 @@
         }
 
         .back-icon {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             fill: white;
         }
 
         .brand h1 {
-            /* Fluid typography using clamp */
-            font-size: clamp(19px, 2.5vw, 24px); 
+            font-size: clamp(20px, 4vw, 26px); 
             margin: 0;
             font-weight: 700;
             line-height: 1.2;
             letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Language Switcher */
+        /* Language Switcher Enhanced */
         .lang-switch {
-            background: rgba(255,255,255,0.25);
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 25px;
             padding: 4px;
             display: flex;
             gap: 2px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .lang-btn {
             background: transparent;
             border: none;
-            color: #fff;
-            font-size: 11px;
-            padding: 6px 12px;
-            border-radius: 18px;
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            font-family: inherit;
         }
 
         .lang-btn:hover {
             background: rgba(255,255,255,0.1);
+            color: #fff;
         }
 
         .lang-btn.active {
             background: #fff;
             color: var(--primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .quote-box {
             text-align: center;
-            max-width: 600px;
-            margin: 10px auto 0;
+            max-width: 700px;
+            margin: 8px auto 0;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .quote-text {
-            font-size: clamp(13px, 1.5vw, 15px);
+            font-size: clamp(12px, 1.5vw, 14px);
             font-style: italic;
-            opacity: 0.95;
-            margin-bottom: 5px;
-            line-height: 1.4;
+            margin: 0;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.95);
         }
 
         /* =========================================
            TABS SECTION
            ========================================= */
         .tabs-container {
-            margin-top: -30px; /* Overlap effect */
+            margin-top: -35px; /* Overlap effect */
             padding: 0 20px;
             position: relative;
             z-index: 20;
@@ -191,35 +203,33 @@
             padding: 6px;
             display: flex;
             box-shadow: var(--card-shadow);
-            max-width: 600px; /* Prevent too wide on desktop */
-            margin: 0 auto; /* Center tabs on desktop */
+            max-width: 600px; 
+            margin: 0 auto; 
         }
 
         .tab-btn {
             flex: 1;
-            padding: 14px;
+            padding: 12px 10px;
             border: none;
             background: transparent;
             color: var(--text-light);
             font-weight: 600;
-            font-size: clamp(14px, 1.2vw, 16px);
+            font-size: clamp(13px, 1.2vw, 16px);
             border-radius: 12px;
             cursor: pointer;
             transition: var(--transition);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-family: inherit;
         }
 
         .tab-btn:hover {
-            background: rgba(211, 84, 0, 0.05);
+            background: rgba(211, 84, 0, 0.04);
             color: var(--primary);
         }
 
         .tab-btn.active {
             background: #FFF3E0;
             color: var(--primary);
-            box-shadow: 0 2px 8px rgba(211, 84, 0, 0.15);
+            font-weight: 700;
         }
 
         /* =========================================
@@ -237,25 +247,24 @@
 
         .tab-content {
             display: none;
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             width: 100%;
         }
 
         .tab-content.active {
-            /* Layout Mode: Active logic controlled by Grid definition below */
             display: block; 
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* GRID DEFINITION FOR CARDS */
+        /* GRID DEFINITION */
         .card-grid {
             display: grid;
-            /* Auto-fit magic for device agnosticism */
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            /* Improved grid logic for mobile/desktop toggle */
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -265,27 +274,28 @@
            ========================================= */
         .card {
             background: white;
-            border-radius: 18px;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
             transition: var(--transition);
             display: flex;
             flex-direction: column;
-            height: 100%; /* Equal height columns */
+            height: 100%;
+            position: relative;
         }
 
-        /* Desktop Hover Effect for "Production Grade" feel */
         @media (hover: hover) {
             .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+                transform: translateY(-6px);
+                box-shadow: var(--card-hover-shadow);
+                border-color: rgba(211, 84, 0, 0.1);
             }
         }
 
         .card-image {
             width: 100%;
-            height: 200px; /* Slightly taller for desktop balance */
+            height: 190px;
             background-color: #f0f0f0;
             position: relative;
             overflow: hidden;
@@ -295,16 +305,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s ease;
         }
 
         .card:hover .card-image img {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
         .card-body {
             padding: 24px;
-            flex-grow: 1; /* Pushes content to fill height */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
@@ -312,57 +322,85 @@
         .badge {
             background-color: #E8F5E9;
             color: #2E7D32;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 8px;
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            align-self: flex-start; /* Prevent full width */
+            align-self: flex-start;
             margin-bottom: 12px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            display: inline-block;
         }
 
         .card-title {
             color: var(--primary);
-            font-size: clamp(18px, 1.2vw, 20px);
+            font-size: 18px;
             font-weight: 700;
-            margin: 0 0 12px 0;
-            line-height: 1.3;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+            font-family: 'Baloo 2', sans-serif;
         }
 
         .card-text {
-            font-size: clamp(14px, 1vw, 15px);
+            font-size: 14px;
             color: var(--text-light);
             line-height: 1.7;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .highlight-text {
+            color: var(--primary);
+            font-weight: 600;
+            background: #FFF3E0;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            font-size: 13px;
         }
 
         .card-list {
-            padding-left: 18px;
+            padding-left: 20px;
             margin: 0;
-            font-size: clamp(13px, 0.9vw, 14px);
+            font-size: 13px;
             color: #444;
             line-height: 1.8;
-            margin-top: auto; /* Push to bottom if content varies */
+            margin-top: auto;
+        }
+        
+        .card-list li {
+            margin-bottom: 4px;
         }
 
         /* =========================================
-           CONTACT SECTION
+           CONTACT SECTION (Enhanced)
            ========================================= */
         .contact-section {
             background: white;
-            border-radius: 16px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 25px;
             margin-top: 40px;
             box-shadow: var(--card-shadow);
-            border-left: 6px solid var(--primary);
+            border-left: 5px solid var(--primary);
             position: relative;
+            overflow: hidden;
         }
-        
-        /* Contact items layout adaptation */
+
+        .contact-section h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .contact-grid {
             display: flex;
             flex-direction: column;
+            gap: 12px;
         }
 
         @media (min-width: 768px) {
@@ -373,13 +411,11 @@
             }
             .contact-row {
                 flex: 1;
-                min-width: 280px;
+                min-width: 250px;
                 border-bottom: none !important;
-                border-right: 1px solid #f0f0f0;
-                padding: 0 15px !important;
-            }
-            .contact-row:last-child {
-                border-right: none;
+                background: #F9F9F9;
+                padding: 15px !important;
+                border-radius: 12px;
             }
         }
         
@@ -388,78 +424,108 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
         }
+        
         .contact-row:last-child { border-bottom: none; }
         
-        .contact-name { font-size: 15px; font-weight: 600; color: var(--text-dark); }
+        .contact-name { 
+            font-size: 15px; 
+            font-weight: 600; 
+            color: var(--text-dark); 
+        }
+        
         .contact-link { 
             color: var(--primary); 
             text-decoration: none; 
-            font-weight: bold;
+            font-weight: 600;
             font-size: 13px;
             background: #FFF3E0;
-            padding: 6px 16px;
-            border-radius: 20px;
+            padding: 8px 20px;
+            border-radius: 50px;
             transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .contact-link:hover {
             background: var(--primary);
             color: white;
-            box-shadow: 0 2px 8px rgba(211, 84, 0, 0.3);
+            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
+            transform: translateY(-1px);
         }
 
         /* =========================================
-           STICKY FOOTER (DEVICE AGNOSTIC)
+           STICKY FOOTER (POWERFUL CTA)
            ========================================= */
         .sticky-footer {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
             padding: 15px 20px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.06);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.08);
             z-index: 100;
             display: flex;
-            justify-content: center; /* Center on desktop */
+            justify-content: center;
+            border-top: 1px solid rgba(0,0,0,0.05);
         }
 
         .donate-btn-wrapper {
             width: 100%;
-            max-width: 600px; /* Constrain on large screens */
+            max-width: 600px;
         }
 
         .donate-btn {
-            display: block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            background: linear-gradient(to right, #D35400, #C0392B);
+            background: linear-gradient(135deg, #D35400, #C0392B);
             color: white;
-            text-align: center;
             text-decoration: none;
             font-weight: 700;
             font-size: 18px;
             padding: 16px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.4);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
             animation: pulse 2s infinite;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donate-btn:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s infinite;
         }
 
         .donate-btn:hover {
             animation: none;
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(211, 84, 0, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(211, 84, 0, 0.4);
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 84, 0, 0.7); }
-            50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(211, 84, 0, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 84, 0, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(211, 84, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(211, 84, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 84, 0, 0); }
+        }
+        
+        @keyframes shine {
+            100% { left: 100%; }
         }
 
         /* =========================================
@@ -468,19 +534,19 @@
         
         /* Tablet & Up */
         @media (min-width: 768px) {
-            .header { padding-bottom: 70px; }
-            .tabs-container { margin-top: -45px; }
-            .card-title { font-size: 20px; }
-            .header-top { justify-content: space-between; }
+            .header { padding-bottom: 80px; }
+            .tabs-container { margin-top: -50px; }
+            .card-title { font-size: 22px; }
+            .quote-box { margin-top: 15px; }
         }
 
         /* Large Desktop / TV */
-        @media (min-width: 1440px) {
+        @media (min-width: 1200px) {
             .card-grid { gap: 35px; }
             .card-body { padding: 30px; }
             .card-title { font-size: 24px; }
             .card-text { font-size: 16px; }
-            body { font-size: 18px; }
+            .badge { font-size: 12px; }
         }
 
     </style>
@@ -493,17 +559,11 @@
             <div class="header-top">
                 <!-- Left Side: Back Button + Title -->
                 <div class="header-left">
-                    
-                    <!-- 
-                       FIX: Replaced "go:home" with "index.html". 
-                       This creates a proper Standard Website Link to your Homepage.
-                    -->
                     <a href="index.html" class="back-btn" aria-label="Go Home">
                         <svg class="back-icon" viewBox="0 0 24 24">
                             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
                         </svg>
                     </a>
-                    
                     <div class="brand">
                         <h1>ISKCON</h1>
                     </div>
@@ -527,8 +587,8 @@
     <div class="tabs-container">
         <div class="tabs-wrapper">
             <div class="tabs" role="tablist">
-                <button class="tab-btn active" onclick="openTab('tabA')" id="btn-tabA" role="tab" aria-selected="true">A - Annadaan & Relief</button>
-                <button class="tab-btn" onclick="openTab('tabB')" id="btn-tabB" role="tab" aria-selected="false">B - Spiritual Sewa</button>
+                <button class="tab-btn active" onclick="openTab('tabA')" id="btn-tabA" role="tab" aria-selected="true">Annadaan & Relief</button>
+                <button class="tab-btn" onclick="openTab('tabB')" id="btn-tabB" role="tab" aria-selected="false">Spiritual Sewa</button>
             </div>
         </div>
     </div>
@@ -545,6 +605,7 @@
                     <!-- Food For Life -->
                     <div class="card">
                         <div class="card-image">
+                            <!-- Lazy loading for performance -->
                             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiGS6Hdoakb1fgaqs0OUu5ig52R3UL4Jm8TbRKH6bVBA3tyAU2fhcGA1w3WjQgvb5TQ-nyf0-9s-lDCY5fUaFDtbF6aegXxFMuboFQzzwGZD3060z3i7EZAQhSoJqIQi_wJlgaI5dJDqs27E9CjCI4eMs8V9uKZI_zT3wP25P5PMTKOmh6QX4MW7lLtpFsd/s640/1000140480.jpg" alt="Food Distribution" loading="lazy">
                         </div>
                         <div class="card-body">
@@ -571,7 +632,7 @@
                             <p class="card-text" id="brahman-text">
                                 Sponsor a complete Sattvic meal for Ashram Brahmacharis. As per Sastras, feeding Brahmans brings immense spiritual merit.
                             </p>
-                            <p class="card-text" style="font-weight:bold; color:var(--primary);">
+                            <p class="card-text highlight-text" id="brahman-menu">
                                 Menu: Rice, Chapati, 2 Sabjis, Dal, Sweet.
                             </p>
                         </div>
@@ -605,8 +666,9 @@
                         <div class="card-body">
                             <span class="badge">Daily Worship</span>
                             <h3 class="card-title" id="nitya-title">Nitya Sewa (Deity Worship)</h3>
+                            <!-- FIX: Changed 'opium' to 'opulent' -->
                             <p class="card-text" id="nitya-text">
-                                Support the opium standards of Sri Sri Radha Krishna worship. Your contribution supports:
+                                Support the <strong>opulent</strong> standards of Sri Sri Radha Krishna worship. Your contribution supports:
                             </p>
                             <ul class="card-list">
                                 <li id="ns-1">Mangala Aarti & Rajbhog Offering.</li>
@@ -648,7 +710,11 @@
 
             <!-- Contact Section (Adaptive Layout) -->
             <section class="contact-section">
-                <h3 style="margin-top:0; color:var(--primary);" id="contact-head">Contact for Seva</h3>
+                <h3 id="contact-head">
+                    <!-- Added simple icon -->
+                    <svg style="width:24px;height:24px;fill:var(--primary);" viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 00-1.02.24l-2.2 2.2a15.045 15.045 0 01-6.59-6.59l2.2-2.21a.96.96 0 00.25-1A11.36 11.36 0 018.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 3.03 16.63 17.37 3.03 17.37-1 0-.55-.45-1-1-1h-3.5z"/></svg>
+                    Contact for Seva
+                </h3>
                 
                 <div class="contact-grid">
                     <div class="contact-row">
@@ -692,10 +758,12 @@
                 ffl_p2: "Pure vegetarian sanitised food.",
                 brah_t: "Brahman Bhojan Seva",
                 brah_d: "Sponsor a complete Sattvic meal for Ashram Brahmacharis. As per Sastras, feeding Brahmans brings immense spiritual merit.",
+                brah_m: "Menu: Rice, Chapati, 2 Sabjis, Dal, Sweet.",
                 rel_t: "Disaster Relief",
                 rel_d: "ISKCON always stands first to provide food relief during natural calamities like Earthquakes, Floods, and Cyclones.",
                 nit_t: "Nitya Sewa (Deity Worship)",
-                nit_d: "Support the opium standards of Sri Sri Radha Krishna worship. Your contribution supports:",
+                // FIXED TYPO HERE AS WELL
+                nit_d: "Support the opulent standards of Sri Sri Radha Krishna worship. Your contribution supports:",
                 ns_1: "Mangala Aarti & Rajbhog Offering.",
                 ns_2: "Deity Haar (Flower Garlands).",
                 ns_3: "Milk & Fruit Sewa.",
@@ -716,10 +784,11 @@
                 ffl_p2: "शुद्ध शाकाहारी सात्विक भोजन।",
                 brah_t: "ब्राह्मण भोजन सेवा",
                 brah_d: "आश्रम के ब्रह्मचारियों के लिए सात्विक भोजन प्रायोजित करें। शास्त्रों के अनुसार ब्राह्मणों को भोजन कराना परम पुण्य है।",
+                brah_m: "मेनू: चावल, चपाती, 2 सब्जियां, दाल, मिठाई।",
                 rel_t: "आपदा राहत",
                 rel_d: "भूकंप, बाढ़ और चक्रवात जैसी प्राकृतिक आपदाओं में भोजन राहत पहुँचाने के लिए इस्कॉन सदैव तत्पर रहता है।",
                 nit_t: "नित्य सेवा (देव पूजा)",
-                nit_d: "श्री श्री राधा कृष्ण की पूजा के उच्च मानकों का समर्थन करें। आपका योगदान सहयोग करता है:",
+                nit_d: "श्री श्री राधा कृष्ण की पूजा के उच्च (भव्य) मानकों का समर्थन करें। आपका योगदान सहयोग करता है:",
                 ns_1: "मंगला आरती और राजभोग अर्पण।",
                 ns_2: "पुष्प हार सेवा।",
                 ns_3: "दूध और फल सेवा।",
@@ -740,10 +809,11 @@
                 ffl_p2: "शुद्ध शाकाहारी सात्विक भोजन.",
                 brah_t: "ब्राह्मण भोजन सेवा",
                 brah_d: "आश्रमातील ब्रह्मचारींसाठी सात्विक जेवण प्रायोजित करा. शास्त्रानुसार ब्राह्मणांना भोजन देणे हे मोठे पुण्य आहे.",
+                brah_m: "मेनू: भात, चपाती, 2 भाज्या, डाळ, मिठाई.",
                 rel_t: "आपत्ती निवारण",
                 rel_d: "भूकंप, पूर आणि चक्रीवादळ यांसारख्या नैसर्गिक आपत्तींमध्ये अन्न मदत देण्यासाठी इस्कॉन नेहमीच तत्पर असते.",
                 nit_t: "नित्य सेवा (देव पूजा)",
-                nit_d: "श्री श्री राधा कृष्ण पूजेच्या उच्च मानकांचे समर्थन करा. तुमचे योगदान यासाठी मदत करते:",
+                nit_d: "श्री श्री राधा कृष्ण पूजेच्या भव्य मानकांचे समर्थन करा. तुमचे योगदान यासाठी मदत करते:",
                 ns_1: "मंगला आरती आणि राजभोग अर्पण.",
                 ns_2: "देवांचे हार (फुलांच्या माळा).",
                 ns_3: "दूध आणि फळ सेवा.",
@@ -772,12 +842,16 @@
             document.getElementById('ffl-pt2').textContent = t.ffl_p2;
             document.getElementById('brahman-title').textContent = t.brah_t;
             document.getElementById('brahman-text').textContent = t.brah_d;
+            // Handle menu update safely
+            const menuEl = document.getElementById('brahman-menu');
+            if(menuEl) menuEl.textContent = t.brah_m;
+            
             document.getElementById('relief-title').textContent = t.rel_t;
             document.getElementById('relief-text').textContent = t.rel_d;
             
             // Tab B
             document.getElementById('nitya-title').textContent = t.nit_t;
-            document.getElementById('nitya-text').textContent = t.nit_d;
+            document.getElementById('nitya-text').innerHTML = t.nit_d.replace("opulent", "<strong>opulent</strong>").replace("उच्च", "<strong>उच्च</strong>").replace("भव्य", "<strong>भव्य</strong>");
             document.getElementById('ns-1').textContent = t.ns_1;
             document.getElementById('ns-2').textContent = t.ns_2;
             document.getElementById('ns-3').textContent = t.ns_3;
@@ -787,7 +861,14 @@
             document.getElementById('sam-text').textContent = t.sam_d;
             
             // Common
-            document.getElementById('contact-head').textContent = t.con_h;
+            const contactHead = document.getElementById('contact-head');
+            // Keep the SVG icon when updating text
+            if(contactHead) {
+                 const icon = contactHead.querySelector('svg');
+                 contactHead.textContent = t.con_h;
+                 if(icon) contactHead.prepend(icon);
+            }
+            
             document.getElementById('donate-btn').textContent = t.don_b;
 
             // Button State Updates
