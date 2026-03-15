@@ -3,239 +3,370 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premium App Testing Portal</title>
+<title>Premium App Testing Hub</title>
 
 <style>
     /* =========================================
-       PREMIUM UI/UX STYLES
+       PRO-LEVEL UI/UX DESIGN (MINIMAL & SLEEK)
        ========================================= */
+    :root {
+        --bg-main: #09090b;
+        --bg-card: #18181b;
+        --border-color: #27272a;
+        --text-primary: #f4f4f5;
+        --text-secondary: #a1a1aa;
+        --accent-blue: #3b82f6;
+        --accent-blue-hover: #2563eb;
+        --accent-green: #10b981;
+        --accent-green-hover: #059669;
+        --accent-orange: #f59e0b;
+        --accent-orange-hover: #d97706;
+    }
+
     * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
-        background-attachment: fixed;
-        color: white;
-        text-align: center;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
         padding: 40px 20px;
         min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-    /* Page Header */
-    .page-header {
-        margin-bottom: 50px;
-        animation: fadeInDown 0.8s ease-out;
+    /* Header Section */
+    .header-section {
+        text-align: center;
+        margin-bottom: 40px;
+        max-width: 700px;
+        animation: fadeDown 0.6s ease-out;
     }
 
-    .page-header h1 {
-        font-size: 42px;
+    .header-section h1 {
+        font-size: 38px;
         font-weight: 800;
-        background: -webkit-linear-gradient(45deg, #60a5fa, #a78bfa, #f472b6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
         margin-bottom: 15px;
-        letter-spacing: -1px;
+        letter-spacing: -0.5px;
     }
 
-    .page-header p {
-        color: #94a3b8;
-        font-size: 18px;
-        max-width: 600px;
-        margin: auto;
+    .header-section p {
+        color: var(--text-secondary);
+        font-size: 17px;
         line-height: 1.6;
     }
 
-    /* Grid Layout For Multiple Apps */
-    .apps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-        gap: 35px;
-        max-width: 1200px;
-        margin: 0 auto;
+    /* =========================================
+       NEW MASTER CARD (Based on Your Screenshot)
+       ========================================= */
+    .master-card-container {
+        width: 100%;
+        max-width: 550px;
+        background-color: var(--bg-card);
+        border-radius: 20px;
+        margin-bottom: 50px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        animation: fadeUp 0.6s ease-out;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
     }
 
-    /* Premium Glassmorphism Card */
-    .card {
-        background: rgba(17, 24, 39, 0.65);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        padding: 35px 30px;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
-        display: flex;
-        flex-direction: column;
-        animation: fadeInUp 0.8s ease-out backwards;
+    /* The glowing gradient top border from the screenshot */
+    .master-card-container::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #fbbf24, #10b981);
+        z-index: 10;
     }
 
-    .card:hover {
-        transform: translateY(-12px) scale(1.02);
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(96, 165, 250, 0.15);
-        border-color: rgba(96, 165, 250, 0.4);
+    /* Fake Play Store Error Mockup */
+    .play-store-mockup {
+        background-color: #ffffff;
+        padding: 30px 20px;
+        text-align: center;
+        border-bottom: 2px solid #10b981;
     }
 
-    /* Typography */
-    h2 {
-        color: #60a5fa;
-        font-size: 26px;
-        margin-bottom: 5px;
-        font-weight: 700;
-        text-shadow: 0 2px 15px rgba(96, 165, 250, 0.3);
+    .play-store-mockup svg {
+        width: 140px;
+        height: auto;
+        margin: 0 auto 15px auto;
+        display: block;
+        transform: rotate(-10deg);
     }
 
-    .app-title {
-        font-size: 20px;
-        color: #f8fafc;
+    .play-store-mockup h3 {
+        color: #5f6368;
+        font-size: 16px;
+        font-weight: 500;
         margin-bottom: 15px;
-        font-weight: 600;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 8px 15px;
-        border-radius: 10px;
-        display: inline-block;
-        margin-left: auto;
-        margin-right: auto;
     }
 
-    .card > p {
-        color: #cbd5e1;
-        font-size: 15px;
+    .play-store-mockup .fake-btn {
+        background-color: #0b57d0;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-block;
+        pointer-events: none; /* Just for visual */
+    }
+
+    /* Master Card Content */
+    .master-card-content {
+        padding: 30px 25px;
+        text-align: center;
+    }
+
+    .master-card-content h2 {
+        font-size: 26px;
+        color: #60a5fa; /* Matching screenshot blue */
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .master-card-content p {
+        color: #e2e8f0;
+        font-size: 16px;
+        line-height: 1.5;
         margin-bottom: 25px;
     }
 
-    /* Premium Buttons */
-    button {
-        width: 100%;
-        padding: 16px;
-        margin-top: 15px;
-        border: none;
-        border-radius: 14px;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
+    /* Custom Checkbox (Matching Screenshot) */
+    .checkbox-wrapper {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 12px;
-        letter-spacing: 0.5px;
-    }
-
-    button:active {
-        transform: scale(0.96);
-    }
-
-    .group {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
-    }
-    .group:hover {
-        background: linear-gradient(135deg, #34d399, #10b981);
-        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-    }
-
-    .testing {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: white;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
-    }
-    .testing:hover {
-        background: linear-gradient(135deg, #60a5fa, #3b82f6);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-    }
-
-    .install {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        color: white;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
-    }
-    .install:hover {
-        background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-    }
-
-    /* Custom Checkbox */
-    .checkbox-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin: 25px 0 10px 0;
-        background: rgba(255, 255, 255, 0.04);
-        padding: 18px;
-        border-radius: 14px;
+        margin: 0 auto 25px auto;
+        max-width: 400px;
         cursor: pointer;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        font-size: 15px;
-        font-weight: 500;
-        color: #e2e8f0;
+        padding: 10px;
+        border-radius: 10px;
+        transition: background 0.2s;
     }
 
-    .checkbox-container:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.15);
+    .checkbox-wrapper:hover {
+        background-color: rgba(255, 255, 255, 0.05);
     }
 
     input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
         width: 22px;
         height: 22px;
-        accent-color: #60a5fa;
+        border: 2px solid #ef4444; /* Red border when unchecked */
+        border-radius: 6px;
+        background-color: transparent;
         cursor: pointer;
-        transition: transform 0.2s ease;
-    }
-    input[type="checkbox"]:hover {
-        transform: scale(1.1);
+        position: relative;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
     }
 
-    /* Alert Note */
-    .note {
-        margin-top: 25px;
-        color: #fca5a5;
+    input[type="checkbox"]:checked {
+        border-color: var(--accent-green);
+        background-color: var(--accent-green);
+    }
+
+    input[type="checkbox"]:checked::after {
+        content: '✔';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
         font-size: 14px;
-        background: rgba(248, 113, 113, 0.1);
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(248, 113, 113, 0.2);
+        font-weight: bold;
+    }
+
+    .checkbox-label {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text-primary);
+        text-align: left;
+        user-select: none;
+    }
+
+    /* Dual Buttons Row */
+    .button-row {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .button-row button {
+        width: auto;
+        flex: 1;
+        padding: 14px;
+        margin-top: 0;
+        border: none;
+        border-radius: 25px; /* Pill shape matching screenshot */
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-open-group {
+        background-color: transparent;
+        color: #f8fafc;
+        border: 1px solid #475569;
+    }
+    .btn-open-group:hover {
+        background-color: #1e293b;
+        border-color: #64748b;
+    }
+
+    .btn-done {
+        background-color: #64748b;
+        color: white;
+    }
+    .btn-done:hover {
+        background-color: #94a3b8;
+    }
+
+    /* Warning Note */
+    .note {
+        color: #ef4444;
+        font-size: 14px;
         line-height: 1.5;
         font-weight: 500;
     }
 
-    /* Custom Premium Toast Notification (Overrides default alert) */
+    /* =========================================
+       DYNAMIC APPS GRID
+       ========================================= */
+    .apps-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+        width: 100%;
+        max-width: 1100px;
+    }
+
+    /* App Card (Step 2) */
+    .app-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 25px;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .app-card:hover {
+        transform: translateY(-5px);
+        border-color: #3f3f46;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+    }
+
+    .app-identity {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .app-logo {
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+        object-fit: cover;
+        background-color: #27272a; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .app-info {
+        text-align: left;
+    }
+
+    .app-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .app-subtitle {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .btn-testing {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: var(--accent-blue);
+        color: white;
+        margin-bottom: 12px;
+        transition: transform 0.1s ease, background 0.2s;
+    }
+    .btn-testing:hover { background-color: var(--accent-blue-hover); }
+    .btn-testing:active { transform: scale(0.97); }
+
+    .btn-install {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: var(--accent-orange);
+        color: white;
+        transition: transform 0.1s ease, background 0.2s;
+    }
+    .btn-install:hover { background-color: var(--accent-orange-hover); }
+    .btn-install:active { transform: scale(0.97); }
+
+    /* Premium Toast Alert */
     .toast-notification {
         position: fixed;
-        top: 30px;
+        top: 20px;
         left: 50%;
-        transform: translateX(-50%) translateY(-30px);
-        background: rgba(239, 68, 68, 0.95);
-        backdrop-filter: blur(15px);
+        transform: translateX(-50%) translateY(-20px);
+        background-color: #ef4444;
         color: white;
-        padding: 16px 30px;
-        border-radius: 50px;
-        box-shadow: 0 15px 35px rgba(239, 68, 68, 0.4);
-        font-size: 16px;
+        padding: 14px 25px;
+        border-radius: 100px;
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+        font-size: 15px;
         font-weight: 600;
-        z-index: 9999;
+        z-index: 10000;
         opacity: 0;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         pointer-events: none;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
 
-    /* Keyframe Animations */
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-30px); }
+    /* Animations */
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(40px); }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
 </style>
@@ -243,20 +374,82 @@
 
 <body>
 
-    <div class="page-header">
-        <h1>🚀 Premium App Testing Hub</h1>
-        <p>Join our tester groups securely and get exclusive early access to our premium applications. Follow the steps below for each app.</p>
+    <!-- Header -->
+    <div class="header-section">
+        <h1>App Testing Portal</h1>
+        <p>Follow the master step once to whitelist your Google account, then choose any app below to start testing instantly.</p>
     </div>
 
-    <!-- This container will automatically hold all your apps -->
-    <div id="apps-container" class="apps-grid">
-        <!-- Cards injected dynamically by JS to preserve flawless functionality -->
+    <!-- NEW MASTER SETUP (Matching Screenshot UX) -->
+    <div class="master-card-container">
+        
+        <!-- Fake Play Store Error Mockup -->
+        <div class="play-store-mockup">
+            <!-- Custom SVG mimicking the Play Store Satellite Error -->
+            <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left Solar Panel -->
+                <rect x="25" y="45" width="45" height="55" fill="#0f766e" stroke="#ccfbf1" stroke-width="2"/>
+                <line x1="47.5" y1="45" x2="47.5" y2="100" stroke="#ccfbf1" stroke-width="2"/>
+                <line x1="25" y1="72.5" x2="70" y2="72.5" stroke="#ccfbf1" stroke-width="2"/>
+                
+                <!-- Right Solar Panel -->
+                <rect x="130" y="45" width="45" height="55" fill="#0f766e" stroke="#ccfbf1" stroke-width="2"/>
+                <line x1="152.5" y1="45" x2="152.5" y2="100" stroke="#ccfbf1" stroke-width="2"/>
+                <line x1="130" y1="72.5" x2="175" y2="72.5" stroke="#ccfbf1" stroke-width="2"/>
+                
+                <!-- Main Body -->
+                <rect x="75" y="30" width="50" height="85" fill="#94a3b8" rx="4"/>
+                <rect x="75" y="35" width="50" height="15" fill="#cbd5e1"/>
+                <rect x="75" y="95" width="50" height="15" fill="#cbd5e1"/>
+                
+                <!-- Antenna Base & Dish -->
+                <polygon points="90,30 110,30 100,15" fill="#64748b"/>
+                <path d="M 85 10 Q 100 20 115 10" fill="none" stroke="#64748b" stroke-width="3"/>
+                <line x1="100" y1="15" x2="100" y2="5" stroke="#64748b" stroke-width="2"/>
+                
+                <!-- Sleepy Face -->
+                <path d="M 88 65 Q 92 70 96 65" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M 104 65 Q 108 70 112 65" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M 97 78 Q 100 82 103 78" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+                
+                <!-- Drool drop -->
+                <path d="M 100 81 C 100 81, 103 85, 103 88 C 103 90, 100 90, 100 89 C 97 90, 97 85, 100 81" fill="#cbd5e1"/>
+            </svg>
+            <h3>Item not found.</h3>
+            <div class="fake-btn">Try again</div>
+        </div>
+
+        <!-- Master Card Action Area -->
+        <div class="master-card-content">
+            <h2>Google Group</h2>
+            <p>It's mandatory to join our google group to test apps of other developers, else you will see the above error.</p>
+            
+            <!-- ORIGINAL CHECKBOX LOGIC PRESERVED -->
+            <label class="checkbox-wrapper">
+                <input type="checkbox" id="confirm">
+                <span class="checkbox-label">I Confirm, that I have joined the group</span>
+            </label>
+
+            <!-- Original Open Group function preserved -->
+            <div class="button-row">
+                <button class="btn-open-group" onclick="openGroup()">Open Group</button>
+                <button class="btn-done" onclick="scrollToApps()">Done</button>
+            </div>
+
+            <p class="note">
+                Note: Make sure that primary email in your play store and email with you joined the group is exactly the same.
+            </p>
+        </div>
+    </div>
+
+    <!-- DYNAMIC APPS GRID -->
+    <div id="apps-container" class="apps-container">
+        <!-- Javascript will inject the exact functional cards here with logos -->
     </div>
 
 <script>
     /* =========================================
-       PREMIUM CUSTOM ALERT SYSTEM
-       (Keeps purana logic exactly same but looks premium)
+       PREMIUM CUSTOM ALERT (Replaces browser popup)
        ========================================= */
     window.alert = function(message) {
         const toast = document.createElement("div");
@@ -264,122 +457,115 @@
         toast.innerHTML = "⚠️ " + message;
         document.body.appendChild(toast);
         
-        // Animate In
         setTimeout(() => {
             toast.style.opacity = "1";
             toast.style.transform = "translateX(-50%) translateY(0)";
         }, 10);
 
-        // Animate Out & Remove
         setTimeout(() => {
             toast.style.opacity = "0";
-            toast.style.transform = "translateX(-50%) translateY(-30px)";
-            setTimeout(() => document.body.removeChild(toast), 400);
-        }, 3500);
+            toast.style.transform = "translateX(-50%) translateY(-20px)";
+            setTimeout(() => document.body.removeChild(toast), 300);
+        }, 3000);
     };
 
     /* =========================================
-       MULTIPLE APPS CONFIGURATION ARRAY
-       (Aap yaha infinite apps add kar sakte ho bina error ke)
+       UX FUNCTION FOR "DONE" BUTTON
+       ========================================= */
+    function scrollToApps() {
+        document.getElementById('apps-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* =========================================
+       MULTIPLE APPS CONFIGURATION (WITH LOGOS)
        ========================================= */
     const appConfig =[
         {
             title: "Neon Overtake",
             appId: "com.neon.orvertake.santoshgames.in",
-            // Bug fixed: Changed email ID to proper Google Groups web URL so it actually opens
-            groupUrl: "https://groups.google.com/g/iskcon-app-testers"
+            logo: "https://ui-avatars.com/api/?name=NO&background=27272a&color=3b82f6&size=150&font-size=0.4"
         },
         {
             title: "Pro Racing Simulator",
             appId: "com.proracing.santoshgames.in",
-            groupUrl: "https://groups.google.com/g/iskcon-app-testers"
+            logo: "https://ui-avatars.com/api/?name=PR&background=27272a&color=10b981&size=150&font-size=0.4"
         },
         {
             title: "Galaxy Defender 3D",
             appId: "com.galaxy.santoshgames.in",
-            groupUrl: "https://groups.google.com/g/iskcon-app-testers"
+            logo: "https://ui-avatars.com/api/?name=GD&background=27272a&color=f59e0b&size=150&font-size=0.4"
         }
     ];
 
     /* =========================================
-       CORE LOGIC FUNCTIONS (100% PRESERVED & ENHANCED)
+       CORE LOGIC FUNCTIONS (100% PRESERVED)
        ========================================= */
 
     function openGroup(groupUrl) {
-        // Fallback for strict compatibility with original call
+        // Fallback for original logic
         if(!groupUrl) groupUrl = "https://groups.google.com/g/iskcon-app-testers";
         window.open(groupUrl);
     }
 
-    function joinTest(appId, checkboxId) {
-        // Fallbacks matching exactly the original hardcoded state if called without arguments
+    function joinTest(appId) {
+        // Fallback matching original state exactly
         var finalAppId = appId || "com.neon.orvertake.santoshgames.in";
-        var finalCheckId = checkboxId || "confirm";
         
-        var check = document.getElementById(finalCheckId);
+        // Directly references the MASTER check box EXACTLY like the original logic
+        var check = document.getElementById("confirm");
 
-        // Null-safe check added to fix potential bugs, perfectly keeping original logic
         if(check && check.checked){
             window.open("https://play.google.com/apps/testing/" + finalAppId);
         } else {
-            // Original functionality preserved 100% (Calls the premium overridden alert)
-            alert("Please join the Google Group first");
+            // Original functionality preserved
+            alert("Please check the 'I Confirm' box in the Google Group section above.");
         }
     }
 
     function installApp(appId) {
-        // Fallback matching exactly the original state
+        // Fallback matching original state exactly
         var finalAppId = appId || "com.neon.orvertake.santoshgames.in";
         window.open("https://play.google.com/store/apps/details?id=" + finalAppId);
     }
 
     /* =========================================
-       DYNAMIC UI GENERATOR
+       DYNAMIC UI GENERATOR (APP STORE LAYOUT)
        ========================================= */
     function initializeAppsUI() {
         const container = document.getElementById("apps-container");
-        container.innerHTML = ""; // Ensure it's clean
+        container.innerHTML = ""; 
 
         appConfig.forEach((app, index) => {
-            const checkboxId = "confirm_" + index;
-            // Stagger animation timing for premium feel
-            const animationDelay = index * 0.15;
+            // Stagger animation timing for smooth rendering
+            const delay = (index * 0.1) + 0.3; 
             
             const cardHTML = `
-                <div class="card" style="animation-delay: ${animationDelay}s">
-                    <h2>Google Group</h2>
-                    <div class="app-title">📱 ${app.title}</div>
-                    <p>First join our tester group then install the app.</p>
+                <div class="app-card" style="animation: fadeUp 0.6s ease-out ${delay}s backwards;">
                     
-                    <button class="group" onclick="openGroup('${app.groupUrl}')">
-                        👥 Open Google Group
-                    </button>
+                    <div class="app-identity">
+                        <img src="${app.logo}" alt="${app.title}" class="app-logo">
+                        <div class="app-info">
+                            <div class="app-title">${app.title}</div>
+                            <div class="app-subtitle">Santosh Games</div>
+                        </div>
+                    </div>
                     
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="${checkboxId}">
-                        I confirm that I joined the group
-                    </label>
-                    
-                    <button class="testing" onclick="joinTest('${app.appId}', '${checkboxId}')">
+                    <button class="btn-testing" onclick="joinTest('${app.appId}')">
                         🧪 Join Testing
                     </button>
                     
-                    <button class="install" onclick="installApp('${app.appId}')">
+                    <button class="btn-install" onclick="installApp('${app.appId}')">
                         ⬇️ Open Play Store
                     </button>
                     
-                    <p class="note">
-                        ⚠️ Make sure the same Gmail is logged in your Play Store.
-                    </p>
                 </div>
             `;
             
-            // Insert smoothly into DOM
             container.insertAdjacentHTML('beforeend', cardHTML);
         });
     }
 
-    // Render automatically when window loads
+    // Auto-render when page loads
     window.onload = initializeAppsUI;
 
 </script>
