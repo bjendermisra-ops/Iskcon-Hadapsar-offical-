@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join App Testing</title>
+
+<style>
+
+body{
+font-family:sans-serif;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.card{
+background:#111827;
+padding:25px;
+border-radius:20px;
+max-width:400px;
+margin:auto;
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+h2{
+color:#60a5fa;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+.group{
+background:#10b981;
+color:white;
+}
+
+.testing{
+background:#3b82f6;
+color:white;
+}
+
+.install{
+background:#f59e0b;
+color:white;
+}
+
+.note{
+margin-top:20px;
+color:#f87171;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Google Group</h2>
+
+<p>First join our tester group then install the app.</p>
+
+<button class="group" onclick="openGroup()">
+Open Google Group
+</button>
+
+<br><br>
+
+<label>
+<input type="checkbox" id="confirm">
+I confirm that I joined the group
+</label>
+
+<button class="testing" onclick="joinTest()">
+Join Testing
+</button>
+
+<button class="install" onclick="installApp()">
+Open Play Store
+</button>
+
+<p class="note">
+Make sure the same Gmail is logged in your Play Store.
+</p>
+
+</div>
+
+<script>
+
+function openGroup(){
+window.open("iskcon-app-testers@googlegroups.com")
+}
+
+function joinTest(){
+
+var check = document.getElementById("confirm");
+
+if(check.checked){
+window.open("https://play.google.com/apps/testing/com.neon.orvertake.santoshgames.in")
+}else{
+alert("Please join the Google Group first")
+}
+
+}
+
+function installApp(){
+window.open("https://play.google.com/store/apps/details?id=com.neon.orvertake.santoshgames.in")
+}
+
+</script>
+
+</body>
+</html>
