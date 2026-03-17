@@ -13,7 +13,7 @@
 
     <style>
         /* =========================================
-           DESIGN SYSTEM (MATCHING YOUR SCREENSHOT 2)
+           DESIGN SYSTEM & CSS VARIABLES 
            ========================================= */
         :root { 
             --primary: #F37E1C; /* The Exact Orange */
@@ -22,8 +22,26 @@
             --card-white: #ffffff; 
             --text-dark: #333333;
             --text-gray: #7d7d7d;
+            --timeline-line: #E0E0E0;
+            --timeline-ring: #CECECE;
             --font-en: 'Poppins', sans-serif;
             --font-local: 'Mukta', 'Tiro Devanagari Hindi', sans-serif;
+            --card-shadow: 0 5px 20px rgba(0,0,0,0.04);
+            --toast-bg: #333333;
+            --toast-text: #ffffff;
+        }
+
+        /* DARK MODE OVERRIDES (Triggered by data-theme="dark") */
+        [data-theme="dark"] {
+            --bg-body: #121212; 
+            --card-white: #1e1e1e; 
+            --text-dark: #f5f5f5;
+            --text-gray: #aaaaaa;
+            --timeline-line: #333333;
+            --timeline-ring: #444444;
+            --card-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            --toast-bg: #ffffff;
+            --toast-text: #333333;
         }
 
         body { 
@@ -33,6 +51,7 @@
             display: flex; 
             justify-content: center;
             min-height: 100vh;
+            transition: background-color 0.4s ease;
         }
 
         .mobile-container {
@@ -42,6 +61,8 @@
             min-height: 100vh;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transition: background-color 0.4s ease;
+            overflow-x: hidden;
         }
 
         /* --- HEADER (ORANGE) --- */
@@ -65,7 +86,10 @@
             color: white; text-decoration: none;
             border: none;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
+        
+        .btn-back:active { transform: scale(0.95); }
 
         .header-title {
             font-family: 'Cinzel', serif;
@@ -74,6 +98,12 @@
             letter-spacing: 1px;
             margin: 0;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* Rounded Language Pill (EN/HI/MR) */
@@ -86,7 +116,23 @@
             font-weight: 700;
             color: white;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.6);
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle i { font-size: 0.9rem; }
+
+        .lang-badge:active, .theme-toggle:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
 
         /* --- BLACK STATUS CARD (As per Screenshot) --- */
         .hero-status {
@@ -124,6 +170,20 @@
             font-weight: 300;
         }
 
+        /* New Countdown UI in Status Card */
+        .status-countdown {
+            font-family: var(--font-en);
+            margin-top: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            color: #FFB74D;
+        }
+
         /* --- TIMELINE (Daily Program) --- */
         .section-title {
             color: var(--primary);
@@ -148,20 +208,43 @@
             top: 10px;
             bottom: 30px;
             width: 3px;
-            background: #E0E0E0;
+            background: var(--timeline-line);
             z-index: 1;
+            transition: background-color 0.4s ease;
         }
 
-        /* --- CARDS (White) --- */
+        /* --- CARDS (White/Dark Mode Adaptive) --- */
         .event-card {
-            background: white;
+            background: var(--card-white);
             border-radius: 16px;
             padding: 15px 20px;
             margin-bottom: 20px;
             position: relative;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+            box-shadow: var(--card-shadow);
             z-index: 2;
+            transition: all 0.4s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .event-card-content {
+            flex-grow: 1;
+        }
+
+        /* Reminder Bell Icon */
+        .btn-reminder {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+        .btn-reminder:hover { color: var(--primary); transform: scale(1.1); }
+        .btn-reminder:active { transform: scale(0.9); }
 
         /* The Dot on the Line */
         .timeline-point {
@@ -170,10 +253,10 @@
             top: 25px; /* Aligned with Time */
             width: 15px; height: 15px;
             border-radius: 50%;
-            background: white;
-            border: 4px solid #CECECE; /* Default Grey Ring */
+            background: var(--bg-body);
+            border: 4px solid var(--timeline-ring); /* Default Grey Ring */
             z-index: 3;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
         }
 
         /* Text Styles */
@@ -188,15 +271,56 @@
             font-weight: 600;
             color: var(--text-dark);
             margin-bottom: 2px;
+            transition: color 0.4s ease;
         }
         .t-desc {
             font-size: 0.9rem;
             color: var(--text-gray);
+            transition: color 0.4s ease;
         }
 
         /* Active State */
-        .event-card.active .timeline-point { border-color: var(--primary); background: var(--primary); }
-        .event-card.active { border-left: 4px solid var(--primary); }
+        .event-card.active .timeline-point { 
+            border-color: var(--primary); 
+            background: var(--primary); 
+            box-shadow: 0 0 0 0 rgba(243, 126, 28, 0.7);
+            animation: pulse-ring 1.5s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        .event-card.active { 
+            border-left: 4px solid var(--primary); 
+            transform: scale(1.02);
+        }
+
+        /* Pulse Animation for Live Event */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(243, 126, 28, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(243, 126, 28, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(243, 126, 28, 0); }
+        }
+
+        /* Toast Notification */
+        .toast-msg {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--toast-bg);
+            color: var(--toast-text);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast-msg.show {
+            bottom: 30px;
+            opacity: 1;
+        }
 
         /* Hide logic for regional fonts */
         body.font-hindi .t-name, body.font-hindi .status-main,
@@ -216,7 +340,12 @@
             <i class="fas fa-chevron-left"></i>
         </div>
         <div class="header-title" id="lbl_page_title">SCHEDULE</div>
-        <div class="lang-badge" id="btn_lang_toggle" onclick="manualLangSwitch()">EN</div>
+        <div class="header-actions">
+            <div class="theme-toggle" id="btn_theme_toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="icon_theme"></i>
+            </div>
+            <div class="lang-badge" id="btn_lang_toggle" onclick="manualLangSwitch()">EN</div>
+        </div>
     </header>
 
     <!-- BLACK STATUS CARD -->
@@ -225,6 +354,7 @@
             Loading...
         </div>
         <div class="status-sub" id="lbl_status_sub">Checking temple time...</div>
+        <div class="status-countdown" id="lbl_countdown" style="display: none;"></div>
     </div>
 
     <!-- DAILY PROGRAM TITLE -->
@@ -236,36 +366,38 @@
         <!-- Javascript Injects Cards Here -->
     </div>
 
+    <!-- Toast Notification Container -->
+    <div class="toast-msg" id="sys_toast">Notification</div>
+
 </div>
 
 <script>
 
     /* ========================================================
-       1. POWERFUL "OMNI" LANGUAGE DETECTOR (Fixes the issue)
+       1. POWERFUL "OMNI" LANGUAGE DETECTOR (Upgraded for Sync)
        ======================================================== */
     let appLang = 'en'; // Default
+    let isInitialLoad = true; // For auto-scroll
 
     function detectGlobalLanguage() {
-        // We look for ANY KEY that might store 'Marathi' or 'Hindi'
-        // Scan standard LocalStorage keys
-        const keysToScan = ['language', 'lang', 'app_language', 'selectedLang', 'googtrans', 'site_lang'];
+        const explicitLang = localStorage.getItem('lang');
+        if(explicitLang === 'en' || explicitLang === 'hi' || explicitLang === 'mr') {
+            return explicitLang;
+        }
+
+        const keysToScan =['language', 'app_language', 'selectedLang', 'googtrans', 'site_lang'];
         let foundValue = '';
 
-        // 1. Check known keys
         keysToScan.forEach(key => {
             let val = localStorage.getItem(key);
             if(val) foundValue += val.toLowerCase() + " ";
         });
 
-        // 2. Bruteforce scan ALL LocalStorage (If your theme uses random key ID)
         for(let i=0; i<localStorage.length; i++) {
             let val = localStorage.getItem(localStorage.key(i));
             if(val) foundValue += val.toLowerCase() + " ";
         }
 
-        console.log("Found Storage Content:", foundValue); // Debug for you
-
-        // 3. Logic to Match "Marathi" even if string is "Marathi (Marathi)"
         if(foundValue.includes('marathi') || foundValue.includes('mr-in') || foundValue.includes('mr')) {
             return 'mr';
         } 
@@ -278,28 +410,90 @@
     }
 
     /* ========================================================
+       1.5. THEME ENGINE (New Dark Mode Sync System)
+       ======================================================== */
+    let currentTheme = 'light';
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if(savedTheme === 'dark') {
+            currentTheme = 'dark';
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('icon_theme').className = 'fas fa-sun';
+        } else {
+            currentTheme = 'light';
+            document.body.removeAttribute('data-theme');
+            document.getElementById('icon_theme').className = 'fas fa-moon';
+        }
+    }
+
+    function toggleTheme() {
+        if(currentTheme === 'light') {
+            currentTheme = 'dark';
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('icon_theme').className = 'fas fa-sun';
+            localStorage.setItem('theme', 'dark');
+            showToast(appLang === 'hi' ? 'डार्क मोड चालू' : appLang === 'mr' ? 'डार्क मोड चालू' : 'Dark Mode Enabled');
+        } else {
+            currentTheme = 'light';
+            document.body.removeAttribute('data-theme');
+            document.getElementById('icon_theme').className = 'fas fa-moon';
+            localStorage.setItem('theme', 'light');
+            showToast(appLang === 'hi' ? 'लाइट मोड चालू' : appLang === 'mr' ? 'लाइट मोड चालू' : 'Light Mode Enabled');
+        }
+    }
+
+    /* ========================================================
+       1.8. REAL-TIME STORAGE SYNC (Cross-Tab Support)
+       ======================================================== */
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'lang') {
+            if(e.newValue === 'en' || e.newValue === 'hi' || e.newValue === 'mr') {
+                appLang = e.newValue;
+                applyLanguageFont();
+                renderUI();
+                updateTime();
+            }
+        } else if (e.key === 'theme') {
+            if(e.newValue === 'dark' || e.newValue === 'light') {
+                if(e.newValue === 'dark') {
+                    currentTheme = 'dark';
+                    document.body.setAttribute('data-theme', 'dark');
+                    document.getElementById('icon_theme').className = 'fas fa-sun';
+                } else {
+                    currentTheme = 'light';
+                    document.body.removeAttribute('data-theme');
+                    document.getElementById('icon_theme').className = 'fas fa-moon';
+                }
+            }
+        }
+    });
+
+    /* ========================================================
        2. DATA ENGINE (Dictionaries)
        ======================================================== */
     const UI_TEXT = {
         en: { 
             title: "SCHEDULE", program: "Daily Program", badge: "EN", 
             closed: "TEMPLE CLOSED", open: "TEMPLE OPEN", 
-            subOpen: "Darshan is Available", subClosedEve: "Opens Today 4:15 PM", subClosedMorn: "Opens Tomorrow 4:30 AM" 
+            subOpen: "Darshan is Available", subClosedEve: "Opens Today 4:15 PM", subClosedMorn: "Opens Tomorrow 4:30 AM",
+            nextEvent: "Next: "
         },
         hi: { 
             title: "दर्शन समय", program: "दैनिक कार्यक्रम", badge: "HI", 
             closed: "मंदिर बंद है", open: "मंदिर खुला है", 
-            subOpen: "दर्शन अभी उपलब्ध है", subClosedEve: "आज शाम 4:15 खुलेगा", subClosedMorn: "कल सुबह 4:30 खुलेगा" 
+            subOpen: "दर्शन अभी उपलब्ध है", subClosedEve: "आज शाम 4:15 खुलेगा", subClosedMorn: "कल सुबह 4:30 खुलेगा",
+            nextEvent: "अगला: "
         },
         mr: { 
             title: "दर्शन वेळापत्रक", program: "दैनंदिन कार्यक्रम", badge: "MR", 
             closed: "मंदिर बंद आहे", open: "मंदिर उघडे आहे", 
-            subOpen: "दर्शन चालू आहे", subClosedEve: "आज सायं. 4:15 ला उघडेल", subClosedMorn: "उद्या पहाटे 4:30 ला उघडेल" 
+            subOpen: "दर्शन चालू आहे", subClosedEve: "आज सायं. 4:15 ला उघडेल", subClosedMorn: "उद्या पहाटे 4:30 ला उघडेल",
+            nextEvent: "पुढील: "
         }
     };
 
-    // Correct Data matching ISKCON Standards
-    const EVENTS = [
+    const EVENTS =[
         { t: "04:30 AM", h: 4.5, 
           en: { n: "Mangal Aarti", d: "First Darshan" }, 
           hi: { n: "मंगल आरती", d: "पहला दर्शन" }, 
@@ -354,22 +548,22 @@
     /* ========================================================
        3. INIT & LOGIC
        ======================================================== */
-    function bootLoader() {
-        // Run Detector
-        appLang = detectGlobalLanguage(); 
-
-        // Set body class for Font Logic (Hindi/Marathi fonts need loading)
+    function applyLanguageFont() {
+        document.body.className = ''; 
         if(appLang === 'hi') document.body.classList.add('font-hindi');
         else if(appLang === 'mr') document.body.classList.add('font-marathi');
+    }
 
+    function bootLoader() {
+        appLang = detectGlobalLanguage(); 
+        applyLanguageFont();
+        initTheme();
         renderUI();
-        // Start Clock
         updateTime();
         setInterval(updateTime, 1000);
     }
 
     function goHome() {
-        // Safe Back
         if(window.history.length > 1) {
             window.history.back();
         } else {
@@ -377,67 +571,94 @@
         }
     }
 
-    // Toggle Button (In case Auto fails, user can fix it)
     function manualLangSwitch() {
-        if(appLang === 'en') appLang = 'mr'; // Priorities Marathi as second
+        if(appLang === 'en') appLang = 'mr'; 
         else if(appLang === 'mr') appLang = 'hi';
         else appLang = 'en';
 
-        // Force Save for consistency
-        localStorage.setItem('language', appLang); 
         localStorage.setItem('lang', appLang);
+        localStorage.setItem('language', appLang); 
         
-        // Reload Fonts check
-        document.body.className = ''; 
-        if(appLang === 'hi') document.body.classList.add('font-hindi');
-        else if(appLang === 'mr') document.body.classList.add('font-marathi');
-        
+        applyLanguageFont();
         renderUI();
         updateTime();
+        
+        let msg = appLang === 'hi' ? 'भाषा बदली गई' : appLang === 'mr' ? 'भाषा बदलली' : 'Language Changed';
+        showToast(msg);
     }
 
     function renderUI() {
         const text = UI_TEXT[appLang];
         
-        // 1. Static Labels
         document.getElementById('lbl_page_title').innerText = text.title;
         document.getElementById('lbl_section_title').innerText = text.program;
         document.getElementById('btn_lang_toggle').innerText = text.badge;
 
-        // 2. Build Timeline Cards
         const container = document.getElementById('container_schedule');
-        // Clear previous entries but KEEP the vertical line line
         const lineHTML = '<div class="timeline-line"></div>';
         let eventsHTML = '';
 
         EVENTS.forEach((item, index) => {
-            // Pick Language Strings
             const langData = item[appLang]; 
-            
+            // NEW: Passing Time (item.t) and Decimal Hour (item.h) to Native App
             eventsHTML += `
             <div class="event-card" id="card_${index}">
                 <div class="timeline-point" id="dot_${index}"></div>
-                <div class="t-time">${item.t}</div>
-                <div class="t-name">${langData.n}</div>
-                <div class="t-desc">${langData.d}</div>
+                <div class="event-card-content">
+                    <div class="t-time">${item.t}</div>
+                    <div class="t-name">${langData.n}</div>
+                    <div class="t-desc">${langData.d}</div>
+                </div>
+                <button class="btn-reminder" onclick="setReminder('${langData.n}', '${item.t}', ${item.h})" aria-label="Set Reminder">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
             </div>`;
         });
 
         container.innerHTML = lineHTML + eventsHTML;
     }
 
+    let toastTimeout;
+    function showToast(message) {
+        const toast = document.getElementById('sys_toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // ==========================================================
+    // NEW POWERFUL FEATURE: REAL ANDROID BRIDGE CONNECTION
+    // ==========================================================
+    function setReminder(eventName, eventTimeStr, eventDecimalHour) {
+        // 1. Show HTML Toast for instant visual feedback
+        let msg = '';
+        if(appLang === 'en') msg = `Reminder set for ${eventName} at ${eventTimeStr}`;
+        if(appLang === 'hi') msg = `${eventName} (${eventTimeStr}) के लिए रिमाइंडर सेट किया गया`;
+        if(appLang === 'mr') msg = `${eventName} (${eventTimeStr}) साठी रिमाइंडर सेट केले`;
+        showToast(msg);
+
+        // 2. SEND DATA TO SKETCHWARE PRO (Native Android App)
+        // Check if Android Bridge exists (meaning it's running inside the app, not a browser)
+        if (typeof Android !== "undefined" && Android.setScheduleAlarm) {
+            // Send Name, String Time ("04:30 AM"), and Decimal Time (4.5) to Sketchware
+            Android.setScheduleAlarm(eventName, eventTimeStr, eventDecimalHour);
+        } else {
+            console.log("Not running inside Sketchware App, or Bridge not connected.");
+        }
+    }
+
     function updateTime() {
         const d = new Date();
-        const curH = d.getHours() + (d.getMinutes() / 60); // Current Decimal Time
+        const curH = d.getHours() + (d.getMinutes() / 60) + (d.getSeconds() / 3600);
 
         const text = UI_TEXT[appLang];
         const statusEl = document.getElementById('lbl_status');
         const statusSubEl = document.getElementById('lbl_status_sub');
+        const countdownEl = document.getElementById('lbl_countdown');
 
-        /* OPEN/CLOSE LOGIC 
-           Open: 4.5 -> 13.0
-           Open: 16.25 -> 21.0 
-        */
         let isOpen = false;
         let isMorning = (curH >= 4.5 && curH < 13);
         let isEvening = (curH >= 16.25 && curH < 21);
@@ -449,33 +670,63 @@
             statusSubEl.innerText = text.subOpen;
         } else {
             statusEl.innerHTML = `<span class="status-dot dot-red"></span> ${text.closed}`;
-            
-            // Deciding the subtitle based on "Next Open Slot"
             if(curH >= 13 && curH < 16.25) {
-                // Afternoon Break
                 statusSubEl.innerText = text.subClosedEve; 
             } else {
-                // Night/Early Morning
                 statusSubEl.innerText = text.subClosedMorn;
             }
         }
 
-        /* HIGHLIGHT ACTIVE EVENT */
         let activeIndex = -1;
+        let nextEventIndex = 0;
         
-        // Determine which slot is current
-        // Simple Logic: If Current Time >= Event Time, make it candidate.
-        // We pick the last candidate.
-        EVENTS.forEach((item, index) => {
-            if(curH >= item.h) activeIndex = index;
-        });
+        for (let i = 0; i < EVENTS.length; i++) {
+            if (curH >= EVENTS[i].h) {
+                activeIndex = i;
+            } else {
+                nextEventIndex = i;
+                break; 
+            }
+        }
 
-        // Reset All
+        if (curH >= EVENTS[EVENTS.length - 1].h) {
+            nextEventIndex = 0;
+        }
+
+        let nextH = EVENTS[nextEventIndex].h;
+        let timeDiff = nextH - curH;
+        
+        if (nextEventIndex === 0 && curH > 1) {
+            timeDiff = (24 - curH) + nextH;
+        }
+
+        let remHrs = Math.floor(timeDiff);
+        let remMins = Math.floor((timeDiff - remHrs) * 60);
+        let remSecs = Math.floor((((timeDiff - remHrs) * 60) - remMins) * 60);
+
+        let sHrs = remHrs.toString().padStart(2, '0');
+        let sMins = remMins.toString().padStart(2, '0');
+        let sSecs = remSecs.toString().padStart(2, '0');
+
+        let nextEventName = EVENTS[nextEventIndex][appLang].n;
+        countdownEl.style.display = 'inline-block';
+        countdownEl.innerText = `${text.nextEvent} ${nextEventName} (${sHrs}h ${sMins}m ${sSecs}s)`;
+
         document.querySelectorAll('.event-card').forEach(el => el.classList.remove('active'));
 
         if(activeIndex > -1) {
             const activeCard = document.getElementById('card_' + activeIndex);
-            if(activeCard) activeCard.classList.add('active');
+            if(activeCard) {
+                activeCard.classList.add('active');
+                if(isInitialLoad) {
+                    setTimeout(() => {
+                        activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 500);
+                    isInitialLoad = false;
+                }
+            }
+        } else if (activeIndex === -1 && isInitialLoad) {
+            isInitialLoad = false;
         }
     }
 
