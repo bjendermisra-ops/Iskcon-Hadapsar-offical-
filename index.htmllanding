@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- 
+====================================================================================
+🔥 FIREBASE SECURITY RULES (ALREADY DEPLOYED BY YOU) 🔥
+====================================================================================
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISKCON Hadapsar | Official Spiritual App</title>
+    <meta name="description" content="Experience Krishna Consciousness anywhere. Live Darshan, Ekadashi Alerts, Japa Tracker, and Hall Bookings.">
+    
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+
+    <!-- Preconnect & Preload for extremely fast and flicker-free CSS/Fonts rendering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #f97316;
+            --primary-dark: #c2410c;
+            --primary-glow: rgba(249, 115, 22, 0.4);
+            --secondary: #701a75;
+            --secondary-glow: rgba(112, 26, 117, 0.3);
+            --bg-base: #fcfcfd;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-light: rgba(0, 0, 0, 0.05);
+            
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            --shadow-colored: 0 20px 40px -10px var(--primary-glow);
+            
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            
+            --transition-smooth: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-base);
+            width: 100%;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4, .serif-font {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-main);
+        }
+
+        .container-fluid-custom {
+            width: 100%;
+            padding-right: 6vw;
+            padding-left: 6vw;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        @media (max-width: 768px) {
+            .container-fluid-custom { padding-right: 5vw; padding-left: 5vw; }
+        }
+
+        .bg-glow-1, .bg-glow-2 {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(150px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: pulseGlow 10s infinite alternate;
+        }
+        .bg-glow-1 {
+            top: -10%; left: -10vw; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--primary-glow), transparent 70%);
+        }
+        .bg-glow-2 {
+            top: 20%; right: -10vw; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, var(--secondary-glow), transparent 70%);
+            animation-delay: -5s;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+            100% { transform: scale(1.2) translate(5vw, 5vw); opacity: 0.6; }
+        }
+
+        .img-wrapper-stable {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+        .skeleton-absolute {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
+            transition: opacity 0.5s ease;
+        }
+        .real-absolute {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            transition: opacity 0.5s ease;
+        }
+        .opacity-0-init { opacity: 0 !important; }
+        .hide-on-load { opacity: 1; transition: opacity 0.5s ease; }
+        .show-on-load { transition: opacity 0.5s ease; }
+
+        .skeleton-wrapper {
+            position: relative;
+            overflow: hidden;
+            background-color: #e2e8f0;
+            border-radius: inherit;
+        }
+        .skeleton-wrapper::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.6) 20%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0) 100%);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .skeleton-text { height: 20px; margin-bottom: 10px; border-radius: 4px; }
+        .skeleton-title { height: 40px; margin-bottom: 15px; border-radius: 6px; width: 80%; }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.4);
+            padding: 15px 0;
+            transition: padding 0.5s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            width: 100%;
+            min-height: 81px;
+        }
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-sm);
+        }
+        .app-logo { height: 50px; width: auto; border-radius: 8px; }
+        
+        .nav-link {
+            font-weight: 600;
+            color: var(--text-muted) !important;
+            margin: 0 20px;
+            font-size: 1.1rem;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--primary); transition: width 0.3s ease;
+        }
+        .nav-link:hover { color: var(--primary) !important; }
+        .nav-link:hover::after { width: 100%; }
+        
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white !important;
+            padding: 12px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: var(--shadow-colored);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .btn-premium::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            z-index: -1; transition: opacity 0.5s ease; opacity: 0;
+        }
+        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 25px 45px -10px rgba(249, 115, 22, 0.6); }
+        .btn-premium:hover::before { opacity: 1; }
+
+        .hero-section {
+            padding: 220px 0 140px;
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+        .hero-badge {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--primary-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .hero-title {
+            font-size: clamp(3.5rem, 5vw, 6rem);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+            color: var(--text-muted);
+            margin-bottom: 45px;
+            line-height: 1.6;
+            max-width: 90%;
+            font-weight: 400;
+        }
+        .app-mockup-wrapper {
+            position: relative;
+            perspective: 1200px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .app-mockup {
+            border-radius: 40px;
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.4);
+            transform: rotateY(-15deg) rotateX(5deg) scale(0.95);
+            transition: var(--transition-smooth);
+            border: 12px solid #111;
+            background: #111;
+        }
+        .app-mockup-wrapper:hover .app-mockup {
+            transform: rotateY(0deg) rotateX(0deg) scale(1);
+        }
+
+        .screenshot-section {
+            padding: 120px 0;
+            background: #ffffff;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            width: 100%;
+            overflow: hidden;
+        }
+        .scroll-gallery {
+            display: flex;
+            gap: 40px;
+            padding: 40px 6vw;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .scroll-gallery::-webkit-scrollbar { display: none; }
+        .gallery-item {
+            flex: 0 0 auto;
+            width: clamp(260px, 20vw, 320px);
+            height: 650px;
+            scroll-snap-align: center;
+            border-radius: 35px;
+            box-shadow: var(--shadow-md);
+            border: 5px solid #fff;
+            transition: var(--transition-smooth);
+            background: #fff;
+        }
+        .gallery-item:hover {
+            transform: translateY(-15px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .about-section { padding: 140px 0; position: relative; width: 100%; }
+        .prabhupada-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255,255,255,1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        .prabhupada-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 100%;
+            background: var(--primary);
+        }
+
+        .bento-section { padding: 140px 0; width: 100%; }
+        .section-header { text-align: center; margin-bottom: 90px; }
+        .section-header h2 { font-size: clamp(3rem, 4vw, 4.5rem); letter-spacing: -1.5px; margin-bottom: 20px;}
+        
+        .bento-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-xl);
+            padding: 50px;
+            height: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .bento-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+        .bento-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 35px;
+            transition: var(--transition-smooth);
+        }
+        .bento-card:hover .bento-icon { transform: scale(1.1) rotate(5deg); }
+        
+        .bg-orange-light { background: rgba(249, 115, 22, 0.1); color: var(--primary); }
+        .bg-purple-light { background: rgba(112, 26, 117, 0.1); color: var(--secondary); }
+        .bg-green-light { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        
+        .bento-title { font-weight: 800; font-size: 2rem; margin-bottom: 20px; letter-spacing: -0.5px;}
+        
+        .bento-card.highlight {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow-colored);
+            border: none;
+        }
+        .bento-card.highlight .text-muted { color: rgba(255,255,255,0.85) !important; }
+        .bento-card.highlight .bento-title { color: white; }
+
+        .services-section { padding: 140px 0; background: #ffffff; width: 100%; }
+        .service-list-item {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            background: var(--bg-base);
+            border: 1px solid var(--border-light);
+            transition: var(--transition-smooth);
+        }
+        .service-list-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(10px);
+            border-color: var(--primary);
+        }
+        .sunday-feast-box {
+            background: linear-gradient(to right, rgba(249, 115, 22, 0.05), rgba(249, 115, 22, 0.1));
+            border-radius: var(--radius-lg);
+            border: 2px dashed rgba(249, 115, 22, 0.3);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sunday-feast-box::after {
+            content: '★'; position: absolute; right: -20px; bottom: -50px; font-size: 200px; color: rgba(249, 115, 22, 0.05);
+        }
+
+        .contact-section {
+            padding: 140px 0;
+            background: var(--secondary);
+            color: white;
+            position: relative;
+            overflow-x: clip; 
+            width: 100%;
+        }
+        .contact-section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+') repeat;
+        }
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            transition: var(--transition-smooth);
+            width: 100%;
+        }
+        .contact-card:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .contact-info h4 { color: white; margin: 0 0 8px 0; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.6rem;}
+        .contact-info p { color: rgba(255,255,255,0.7); margin: 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;}
+        
+        .action-btns .btn-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 1.4rem;
+            transition: var(--transition-smooth);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .action-btns .btn-icon:hover { transform: scale(1.15) rotate(-5deg); }
+        .btn-call { background: #3b82f6; }
+        .btn-whatsapp { background: #10b981; }
+
+        footer {
+            background: #0f172a;
+            color: rgba(255,255,255,0.7);
+            padding: 120px 0 40px;
+            border-top: 5px solid var(--primary);
+            width: 100%;
+        }
+        .footer-logo { font-family: 'Playfair Display', serif; font-size: 3rem; color: white; text-decoration: none; font-weight: 700;}
+        .footer-logo span { color: var(--primary); }
+        
+        .address-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: var(--radius-md);
+            margin-top: 30px;
+        }
+        
+        .map-container {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+        .map-container iframe { pointer-events: none; }
+        
+        .reveal { opacity: 0; transform: translateY(60px); transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* 🔥 FIXED PROFESSIONAL MOBILE/HAMBURGER MENU STYLING 🔥 */
+        /* Changed from 991px to 1199px (xl) to prevent overlapping on laptops */
+        @media (max-width: 1199px) {
+            .navbar-collapse {
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 20px;
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-xl);
+                position: absolute;
+                top: 100%;
+                left: 5vw;
+                right: 5vw;
+                border: 1px solid var(--border-light);
+                margin-top: 10px;
+                text-align: center;
+                z-index: 1050;
+                
+                /* FIX: Added max-height and scrolling so options don't hide off-screen */
+                max-height: 75vh;
+                overflow-y: auto;
+            }
+            .nav-link { margin: 12px 0; font-size: 1.2rem; display: inline-block;}
+            .navbar-toggler { outline: none; box-shadow: none !important; border: 1px solid rgba(0,0,0,0.1) !important;}
+
+            .hero-title { font-size: 3.5rem; }
+            .hero-section { text-align: center; padding: 160px 0 80px; }
+            .hero-subtitle { margin: 0 auto 40px; }
+            .app-mockup { transform: none; margin-top: 60px; max-width: 320px; }
+            .contact-card { flex-direction: column; align-items: flex-start; gap: 24px; }
+            .action-btns { width: 100%; display: flex; justify-content: flex-end;}
+            .section-header h2 { font-size: 3rem; }
+            .prabhupada-card { flex-direction: column; text-align: center; }
+            .prabhupada-card img { position: static !important; }
+            .prabhupada-card div.opacity-0-init { margin-left: 0 !important; }
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin: 10px auto;
+            max-width: 800px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            position: relative;
+        }
+        .testimonial-card i.fa-quote-left { font-size: 3rem; color: rgba(249, 115, 22, 0.1); position: absolute; top: 20px; left: 20px; }
+        .star-rating .fa-star { transition: color 0.2s ease; cursor: pointer; color: #cbd5e1; }
+        .star-rating .fa-star.active { color: #f59e0b; }
+        
+        .carousel-control-prev-icon, .carousel-control-next-icon { width: 3rem; height: 3rem; }
+        .rating-badge {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+        
+        .modal-content-premium {
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        .modal-header-premium {
+            background: rgba(249, 115, 22, 0.1);
+            border-bottom: 1px solid rgba(249, 115, 22, 0.2);
+        }
+        .btn-google {
+            background: white; border: 1px solid #e2e8f0; border-radius: 50px; 
+            font-weight: 600; font-size: 1.1rem; box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+        }
+        .btn-google:hover { background: #f8fafc; box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .form-control-premium {
+            border-radius: 12px; border: 1px solid var(--border-light); 
+            background: var(--bg-base); padding: 15px; font-size: 1.1rem;
+        }
+        .form-control-premium:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- 🔥 FIX: Changed navbar-expand-lg to navbar-expand-xl to prevent overlapping on laptops 🔥 -->
+    <nav class="navbar navbar-expand-xl fixed-top" id="mainNav">
+        <div class="container-fluid-custom d-flex justify-content-between align-items-center">
+            
+            <a class="navbar-brand p-0 m-0 d-flex align-items-center" href="#">
+                <img src="assets/images/nav-logo.png" alt="App Logo" class="app-logo">
+                <span class="ms-3 serif-font fw-bold fs-3" style="color: var(--primary-dark);">ISKCON Hadapsar</span>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none px-2 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars text-dark" style="font-size: 1.8rem;"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About Temple</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gallery">App UI</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testimonials">Devotees</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+                <div class="d-flex mt-3 mt-xl-0">
+                    <a href="https://play.google.com/store/apps/details?id=iskcon.hadapsar" target="_blank" class="btn btn-premium w-100 play-store-link">
+                        <i class="fa-brands fa-google-play me-2"></i> Get Official App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container-fluid-custom">
+            <div class="row align-items-center">
+                <div class="col-lg-6 reveal active">
+                    <div class="skeleton-wrapper hide-on-load mb-3"><div class="skeleton-text" style="width:180px; height:35px; border-radius:30px;"></div></div>
+                    <div class="hero-badge show-on-load opacity-0-init"><i class="fa-solid fa-certificate text-warning"></i> OFFICIAL TEMPLE APP</div>
+                    
+                    <div class="skeleton-wrapper hide-on-load mb-4"><div class="skeleton-title" style="height: 150px; width: 100%;"></div></div>
+                    <h1 class="hero-title show-on-load opacity-0-init">Your Devotion, <br><span>Fully Digitized.</span></h1>
+                    
+                    <div class="skeleton-wrapper hide-on-load mb-4"><div class="skeleton-text" style="height: 90px; width: 95%;"></div></div>
+                    <p class="hero-subtitle show-on-load opacity-0-init">Carry the divine presence in your pocket. Track your Japa, never miss an Ekadashi with smart alerts, and experience Live Darshan from anywhere in the world.</p>
+                    
+                    <div class="d-flex gap-3 flex-wrap justify-content-center justify-content-lg-start show-on-load opacity-0-init">
+                        <a href="https://play.google.com/store/apps/details?id=iskcon.hadapsar" target="_blank" class="play-store-link">
+                            <img src="assets/playstore-badge.png" alt="Get it on Google Play" style="height: 65px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        </a>
+                    </div>
+                    <div class="mt-4 text-muted fs-6 fw-bold show-on-load opacity-0-init">
+                        <i class="fa-solid fa-star text-warning"></i> 4.9/5 Rating • Available in EN, HI, MR
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 text-center reveal active app-mockup-wrapper mt-5 mt-lg-0">
+                    <div class="img-wrapper-stable mx-auto" style="width: 420px; max-width: 90%; height: 850px; overflow: visible;">
+                        <div class="skeleton-wrapper hide-on-load skeleton-absolute app-mockup" style="border: none;"></div>
+                        <img src="assets/hero-app-mockup.png" alt="ISKCON App Interface" class="app-mockup show-on-load opacity-0-init real-absolute w-100 h-100">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="screenshot-section">
+        <div class="container-fluid-custom px-0">
+            <div class="text-center reveal mb-5">
+                <h3 class="fw-bold fs-1">A Beautiful Spiritual Interface</h3>
+                <p class="text-muted fs-5">Swipe to explore app features</p>
+            </div>
+        </div>
+        <div class="scroll-gallery reveal">
+            <div class="gallery-item img-wrapper-stable">
+                <div class="skeleton-wrapper hide-on-load skeleton-absolute" style="border-radius: 30px;"></div>
+                <img src="assets/gallery-home.png" alt="Home Screen" class="real-absolute show-on-load opacity-0-init" style="border-radius: 30px; object-fit: cover;">
+            </div>
+            
+            <div class="gallery-item img-wrapper-stable">
+                <div class="skeleton-wrapper hide-on-load skeleton-absolute" style="border-radius: 30px;"></div>
+                <img src="assets/gallery-ekadashi.png" alt="Ekadashi Calendar" class="real-absolute show-on-load opacity-0-init" style="border-radius: 30px; object-fit: cover;">
+            </div>
+            
+            <div class="gallery-item img-wrapper-stable">
+                <div class="skeleton-wrapper hide-on-load skeleton-absolute" style="border-radius: 30px;"></div>
+                <img src="assets/gallery-japa.png" alt="Japa Tracker" class="real-absolute show-on-load opacity-0-init" style="border-radius: 30px; object-fit: cover;">
+            </div>
+            
+            <div class="gallery-item img-wrapper-stable">
+                <div class="skeleton-wrapper hide-on-load skeleton-absolute" style="border-radius: 30px;"></div>
+                <img src="assets/gallery-kirtan.png" alt="Kirtan Player" class="real-absolute show-on-load opacity-0-init" style="border-radius: 30px; object-fit: cover;">
+            </div>
+            
+            <div class="gallery-item img-wrapper-stable">
+                <div class="skeleton-wrapper hide-on-load skeleton-absolute" style="border-radius: 30px;"></div>
+                <img src="assets/gallery-darshan.png" alt="Live Darshan" class="real-absolute show-on-load opacity-0-init" style="border-radius: 30px; object-fit: cover;">
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="container-fluid-custom">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 reveal">
+                    <h2 class="serif-font" style="font-size: 4rem; margin-bottom: 30px;">Our Mission</h2>
+                    <p class="text-muted" style="line-height: 2; font-size: 1.3rem;">
+                        ISKCON (International Society for Krishna Consciousness) is dedicated to spreading spiritual peace, Harinam Sankirtan, and Vedic education in society. Our Hadapsar center invites everyone to experience the pure bliss of devotion, beautiful Darshan, and Karma-free Prasadam.
+                    </p>
+                </div>
+                <div class="col-lg-6 reveal">
+                    <div class="prabhupada-card">
+                        <div class="img-wrapper-stable flex-shrink-0" style="width: 130px; height: 130px; border-radius: 50%; box-shadow: var(--shadow-sm); border: 4px solid #fff;">
+                            <div class="skeleton-wrapper hide-on-load skeleton-absolute"></div>
+                            <img src="assets/srila-prabhupada.png" alt="Srila Prabhupada" class="real-absolute show-on-load opacity-0-init" style="object-fit: cover;">
+                        </div>
+                        
+                        <div class="show-on-load opacity-0-init w-100">
+                            <h4 class="serif-font mb-2 fs-2">His Divine Grace</h4>
+                            <p class="text-main mb-1 fs-4 fw-bold">A.C. Bhaktivedanta Swami Prabhupada</p>
+                            <p class="text-muted mb-0 text-uppercase letter-spacing-1 fw-semibold">Founder-Acharya of ISKCON</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="bento-section">
+        <div class="container-fluid-custom">
+            <div class="section-header reveal">
+                <h2 class="serif-font">Designed for the Modern Devotee</h2>
+                <p class="text-muted fs-3">A seamless, ad-free spiritual experience crafted with love.</p>
+            </div>
+
+            <div class="row g-5">
+                <div class="col-lg-8 reveal">
+                    <div class="bento-card highlight">
+                        <div class="row align-items-center h-100">
+                            <div class="col-md-7 position-relative z-1">
+                                <div class="bento-icon bg-white text-primary"><i class="fa-solid fa-bell"></i></div>
+                                <h3 class="bento-title">Smart Ekadashi Calendar & Alerts</h3>
+                                <p class="text-muted fs-4 mb-0" style="line-height: 1.8;">Never miss a fasting day. The app automatically calculates Ekadashi based on your location and sends you a <strong class="text-white">reminder exactly 1 day before</strong>.</p>
+                            </div>
+                            <div class="col-md-5 text-center mt-4 mt-md-0 position-absolute end-0 bottom-0 opacity-25" style="transform: scale(1.6) translate(20px, 20px);">
+                                <i class="fa-regular fa-calendar-check" style="font-size: 18rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 reveal">
+                    <div class="bento-card">
+                        <div class="bento-icon bg-orange-light"><i class="fa-solid fa-om"></i></div>
+                        <h3 class="bento-title fs-2">Digital Japa Tracker</h3>
+                        <p class="text-muted fs-5">Log your daily rounds securely. Maintain your chanting streak and visualize your spiritual progress over time.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 reveal">
+                    <div class="bento-card">
+                        <div class="bento-icon bg-purple-light"><i class="fa-solid fa-video"></i></div>
+                        <h3 class="bento-title fs-2">Live Darshan</h3>
+                        <p class="text-muted fs-5">Stream daily deity Darshan in high quality directly to your phone. Experience the temple vibe anywhere.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 reveal">
+                    <div class="bento-card">
+                        <div class="bento-icon bg-green-light"><i class="fa-solid fa-music"></i></div>
+                        <h3 class="bento-title">Sacred Library & Kirtans</h3>
+                        <p class="text-muted fs-4">Access a massive library of high-quality Aartis, Bhajans, and Vaishnava songs. Read daily Bhagavad Gita slokas and accurate mantra lyrics while you listen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="services-section">
+        <div class="container-fluid-custom">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6 reveal position-relative">
+                    <div class="img-wrapper-stable shadow-xl" style="height: 750px; border-radius: var(--radius-xl);">
+                        <div class="skeleton-wrapper hide-on-load skeleton-absolute"></div>
+                        <img src="assets/images/temple-hall-bg.jpg" alt="Temple Events" class="real-absolute show-on-load opacity-0-init" style="object-fit: cover;">
+                    </div>
+                </div>
+                <div class="col-lg-6 reveal position-relative" style="z-index: 2; padding-left: 4%;">
+                    <h2 class="serif-font mb-4" style="font-size: 4rem;">Govinda's Banquet & Hall</h2>
+                    <p class="text-muted fs-4 mb-5" style="line-height: 1.8;">We offer a premium, highly ventilated hall for all your auspicious events. Complete with spiritual ambience and pure vegetarian catering.</p>
+                    
+                    <div class="service-list-item">
+                        <i class="fa-solid fa-ring fs-1 text-primary mt-2"></i>
+                        <div>
+                            <h4 class="mb-2 fw-bold fs-3">Weddings & Birthdays</h4>
+                            <p class="mb-0 text-muted fs-5">Perfect setting for Vivah and corporate gatherings with a divine touch.</p>
+                        </div>
+                    </div>
+                    <div class="service-list-item">
+                        <i class="fa-solid fa-utensils fs-1 text-primary mt-2"></i>
+                        <div>
+                            <h4 class="mb-2 fw-bold fs-3">Pure Veg Prasadam Catering</h4>
+                            <p class="mb-0 text-muted fs-5">100% pure, Karma-free delicious catering available for all bookings.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sunday-feast-box mt-5">
+                        <h4 class="fw-bold text-warning mb-3 fs-2"><i class="fa-solid fa-star me-3"></i>Sunday Love Feast</h4>
+                        <p class="mb-0 text-muted fs-4 position-relative z-1">Join us every Sunday for ecstatic Kirtan, enlightening Bhagavad Gita classes, and unlimited delicious Prasadam.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= RATING & TESTIMONIALS ================= -->
+    <section id="testimonials" class="bento-section bg-base" style="width: 100%; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+        <div class="container-fluid-custom">
+            <div class="section-header reveal mb-5 text-center">
+                <h2 class="serif-font" style="font-size: 4rem;">Devotee Experiences</h2>
+                <div class="d-inline-flex align-items-center gap-3 p-3 rounded-pill mt-3 shadow-sm rating-badge">
+                    <div class="text-warning fs-3" id="global-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="fs-4 fw-bold" style="color: var(--primary-dark);">
+                        <span id="average-rating">0.0</span>/5.0 
+                        <span class="text-muted fs-5 ms-2 fw-normal">(Based on <span id="total-devotees">0</span> Devotees)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="testimonialCarousel" class="carousel slide reveal mb-5" data-bs-ride="carousel">
+                <div class="carousel-inner" id="testimonial-container" style="min-height: 250px;">
+                    <div class="text-center text-muted py-5 mt-4 fs-4"><i class="fa-solid fa-spinner fa-spin me-2"></i> Loading divine experiences...</div>
+                </div>
+                <button id="carousel-btn-prev" class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev" style="display: none;">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+                </button>
+                <button id="carousel-btn-next" class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next" style="display: none;">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="text-center reveal">
+                <button class="btn btn-premium btn-lg fs-5 px-5 py-3" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                    <i class="fa-solid fa-pen-nib me-2"></i> Share Your Experience
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="container-fluid-custom position-relative z-1">
+            <div class="section-header reveal mb-5">
+                <h2 class="serif-font text-white" style="font-size: 4.5rem;">Contact & Bookings</h2>
+                <p class="text-white opacity-75 fs-3">Reach out to our official representatives for instant support.</p>
+            </div>
+
+            <div class="row g-5 mb-5">
+                <div class="col-lg-6 reveal">
+                    <div class="contact-card">
+                        <div class="contact-info">
+                            <p>Contact Manager / Hall Booking</p>
+                            <h4>Digvijay Arjundas</h4>
+                        </div>
+                        <div class="action-btns">
+                            <a href="tel:+910000000000" class="btn-icon btn-call"><i class="fa-solid fa-phone"></i></a>
+                            <a href="https://wa.me/910000000000" class="btn-icon btn-whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 reveal">
+                    <div class="contact-card">
+                        <div class="contact-info">
+                            <p>Seva & Donations</p>
+                            <h4>Ashray Giriraj Prabhu</h4>
+                        </div>
+                        <div class="action-btns">
+                            <a href="tel:+910000000000" class="btn-icon btn-call"><i class="fa-solid fa-phone"></i></a>
+                            <a href="https://wa.me/910000000000" class="btn-icon btn-whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 mx-auto reveal">
+                    <div class="contact-card">
+                        <div class="contact-info">
+                            <p>Official Enquiries</p>
+                            <h4>Temple Office</h4>
+                        </div>
+                        <div class="action-btns">
+                            <a href="tel:+910000000000" class="btn-icon btn-call"><i class="fa-solid fa-phone"></i></a>
+                            <a href="https://wa.me/910000000000" class="btn-icon btn-whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5 reveal p-5 mx-auto w-100" style="max-width: 1200px; background: rgba(0,0,0,0.3); border-radius: var(--radius-xl); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                <h3 class="serif-font text-white mb-4 fs-1">Want 80G Tax Receipts Instantly?</h3>
+                <p class="opacity-75 mb-5 fs-4">Make secure donations and download receipts directly from our mobile app.</p>
+                <a href="https://play.google.com/store/apps/details?id=iskcon.hadapsar" target="_blank" class="btn btn-premium btn-lg fs-4 px-5 py-3 play-store-link">Download App Now</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container-fluid-custom">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <a href="#" class="footer-logo mb-4 d-block">ISKCON <span style="color: var(--primary);">Hadapsar</span></a>
+                    <p class="mb-4 fs-4" style="color: rgba(255,255,255,0.9);">
+                        Dedicated to His Divine Grace<br>
+                        <strong>A.C. Bhaktivedanta Swami Prabhupada.</strong>
+                    </p>
+                    
+                    <div class="address-box">
+                        <h5 class="text-white mb-4 fw-bold fs-3"><i class="fa-solid fa-location-dot text-primary me-2"></i> Visit Us</h5>
+                        <p class="mb-4 fs-5" style="line-height: 1.8; color: #cbd5e1;">
+                            GW2M+X5J, Pune - Solapur Rd,<br>
+                            Near Kanyadan Mangal Karyalaya,<br>
+                            Aru Nagar, Bhosale Nagar, Hadapsar,<br>
+                            Pune, Maharashtra 411028
+                        </p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=GW2M%2BX5J%2C%20Pune%20-%20Solapur%20Rd%2C%20near%20Kanyadan%20Mangal%20Karyalaya%2C%20Aru%20Nagar%2C%20Bhosale%20Nagar%2C%20Hadapsar%2C%20Pune%2C%20Maharashtra%20411028" target="_blank" class="btn btn-outline-light rounded-pill px-5 py-3 fw-bold fs-5">
+                            <i class="fa-solid fa-map-location-dot me-2"></i> Get Directions
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8 position-relative">
+                    <div class="img-wrapper-stable map-container" style="height: 600px;">
+                        <div class="skeleton-wrapper hide-on-load skeleton-absolute"></div>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.5654392233!2d73.9312!3d18.5033!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c18d00000000%3A0x0!2sISKCON%20Hadapsar!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" class="real-absolute show-on-load opacity-0-init" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="border-top border-secondary mt-5 pt-5 text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <p class="mb-0 fw-bold fs-5" style="color: #94a3b8;">&copy; 2024 ISKCON Hadapsar. All Rights Reserved.</p>
+                <div class="mt-3 mt-md-0 fw-bold fs-5" style="color: #94a3b8;">
+                    Designed & Developed with <i class="fa-solid fa-heart text-danger mx-1 animation-pulse"></i> by Santosh
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content modal-content-premium">
+                <div class="modal-header modal-header-premium p-4">
+                    <h5 class="modal-title serif-font fw-bold fs-2 text-primary">Share Your Devotion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-5 text-center">
+                    <div id="auth-view">
+                        <i class="fa-solid fa-shield-halved text-success fs-1 mb-3"></i>
+                        <h4 class="fw-bold mb-3">Secure Verification</h4>
+                        <p class="text-muted mb-5 fs-5">To prevent spam and maintain pure authenticity, please verify yourself using Google. You will only be able to submit one review.</p>
+                        <button id="btn-google-login" class="btn btn-google w-100 py-3 mb-3 d-flex justify-content-center align-items-center gap-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style="width: 24px;"> Verify & Continue with Google
+                        </button>
+                        <p id="auth-error" class="text-danger fw-bold mt-3"></p>
+                    </div>
+
+                    <div id="review-form-view" style="display: none;">
+                        <p class="text-muted mb-2 fs-5">Hare Krishna, <span id="user-name-display" class="fw-bold text-dark"></span></p>
+                        
+                        <div style="position: absolute; left: -9999px;">
+                            <label for="devotee-website">Leave empty</label>
+                            <input type="text" id="devotee-website" name="devotee-website" tabindex="-1" autocomplete="off">
+                        </div>
+                        
+                        <div class="star-rating mb-4 mt-4" id="star-selector" style="font-size: 3rem;">
+                            <i class="fa-solid fa-star" data-value="1"></i>
+                            <i class="fa-solid fa-star" data-value="2"></i>
+                            <i class="fa-solid fa-star" data-value="3"></i>
+                            <i class="fa-solid fa-star" data-value="4"></i>
+                            <i class="fa-solid fa-star" data-value="5"></i>
+                        </div>
+                        <input type="hidden" id="user-rating" value="0">
+                        
+                        <input type="text" id="user-city" class="form-control form-control-premium mb-4 py-3" placeholder="Your City (e.g. Pune, Mumbai)" maxlength="50">
+                        <textarea id="user-message" class="form-control form-control-premium mb-4" rows="4" placeholder="Describe your divine experience..." maxlength="500"></textarea>
+                        
+                        <button id="btn-submit-review" class="btn btn-premium w-100 py-3 fs-5">Submit for Blessing</button>
+                        <p id="form-feedback" class="mt-4 mb-0 fs-5"></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- UI Animations & Slider Logic -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const skeletons = document.querySelectorAll('.hide-on-load');
+                const realElements = document.querySelectorAll('.show-on-load');
+                
+                realElements.forEach(el => { 
+                    el.classList.remove('opacity-0-init'); 
+                    el.style.opacity = '1'; 
+                });
+
+                skeletons.forEach(el => { 
+                    el.style.opacity = '0'; 
+                    setTimeout(() => el.style.display = 'none', 500); 
+                });
+
+                setTimeout(reveal, 100);
+
+                const gallery = document.querySelector('.scroll-gallery');
+                if (gallery) {
+                    let autoScrollInterval;
+                    
+                    const startAutoScroll = () => {
+                        clearInterval(autoScrollInterval); 
+                        autoScrollInterval = setInterval(() => {
+                            const maxScrollLeft = gallery.scrollWidth - gallery.clientWidth;
+                            const items = gallery.querySelectorAll('.gallery-item');
+                            let scrollAmount = 300; 
+                            
+                            if(items.length > 0) {
+                                scrollAmount = items[0].clientWidth + 40; 
+                            }
+
+                            if (Math.ceil(gallery.scrollLeft) >= maxScrollLeft - 20) {
+                                gallery.scrollTo({ left: 0, behavior: 'smooth' });
+                            } else {
+                                gallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                            }
+                        }, 2500); 
+                    };
+
+                    const stopAutoScroll = () => {
+                        clearInterval(autoScrollInterval);
+                    };
+
+                    startAutoScroll();
+
+                    gallery.addEventListener('mouseenter', stopAutoScroll);
+                    gallery.addEventListener('mouseleave', startAutoScroll);
+                    gallery.addEventListener('touchstart', stopAutoScroll, {passive: true});
+                    gallery.addEventListener('touchend', startAutoScroll, {passive: true});
+                }
+            }, 2000); 
+
+            document.addEventListener('click', function(event) {
+                const navbarNav = document.getElementById('navbarNav');
+                const toggler = document.querySelector('.navbar-toggler');
+                if (navbarNav.classList.contains('show') && !navbarNav.contains(event.target) && !toggler.contains(event.target)) {
+                    const bsCollapse = bootstrap.Collapse.getInstance(navbarNav);
+                    if(bsCollapse) bsCollapse.hide();
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    const navbarNav = document.getElementById('navbarNav');
+                    if (navbarNav.classList.contains('show')) {
+                        const bsCollapse = bootstrap.Collapse.getInstance(navbarNav);
+                        if(bsCollapse) bsCollapse.hide();
+                    }
+                });
+            });
+
+            const playStoreLinks = document.querySelectorAll('.play-store-link');
+            playStoreLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); 
+                    
+                    const packageId = 'iskcon.hadapsar';
+                    const webUrl = 'https://play.google.com/store/apps/details?id=' + packageId;
+                    
+                    const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
+                    
+                    if (isAndroid) {
+                        window.location.href = 'market://details?id=' + packageId;
+                        setTimeout(() => {
+                            window.location.href = webUrl;
+                        }, 1500);
+                    } else {
+                        window.open(webUrl, '_blank');
+                    }
+                });
+            });
+        });
+
+        const navbar = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 60) { navbar.classList.add('scrolled'); } else { navbar.classList.remove('scrolled'); }
+        });
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 50;  
+                if (elementTop < windowHeight - elementVisible) { reveals[i].classList.add("active"); }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if(target) {
+                    const headerOffset = 100;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                }
+            });
+        });
+    </script>
+
+    <!-- FIREBASE LOGIC -->
+    <script type="module">
+        const AppConfig = Object.freeze({
+            FIREBASE: {
+                apiKey: "AIzaSyCzIGR7u-26-BvtUdm93eFdLxZspxUsyeE",
+                authDomain: "iskcon-landing.firebaseapp.com",
+                projectId: "iskcon-landing",
+                storageBucket: "iskcon-landing.firebasestorage.app",
+                messagingSenderId: "1069190369143",
+                appId: "1:1069190369143:web:ccef834b66e48c3ff85b72"
+            },
+            COOLDOWN_HOURS: 24
+        });
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        function militaryGradeSanitizer(str) {
+            if(!str) return "";
+            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                      .replace(/'/g, "&#39;").replace(/"/g, "&quot;")
+                      .replace(/javascript:/gi, "blocked:")
+                      .replace(/onload=/gi, "blocked=")
+                      .replace(/onerror=/gi, "blocked=");
+        }
+
+        try {
+            const app = initializeApp(AppConfig.FIREBASE);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const googleProvider = new GoogleAuthProvider();
+
+            const viewAuth = document.getElementById('auth-view');
+            const viewForm = document.getElementById('review-form-view');
+            const btnGoogle = document.getElementById('btn-google-login');
+            const btnSubmit = document.getElementById('btn-submit-review');
+            const stars = document.querySelectorAll('#star-selector .fa-star');
+            const feedback = document.getElementById('form-feedback');
+            const container = document.getElementById('testimonial-container');
+            
+            const btnPrev = document.getElementById('carousel-btn-prev');
+            const btnNext = document.getElementById('carousel-btn-next');
+            
+            let currentUser = null;
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    viewAuth.style.display = 'none';
+                    viewForm.style.display = 'block';
+                    document.getElementById('user-name-display').textContent = militaryGradeSanitizer(user.displayName);
+                } else {
+                    currentUser = null;
+                    viewAuth.style.display = 'block';
+                    viewForm.style.display = 'none';
+                }
+            });
+
+            btnGoogle.addEventListener('click', async () => {
+                try {
+                    btnGoogle.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Verifying...';
+                    await signInWithPopup(auth, googleProvider);
+                } catch (error) {
+                    document.getElementById('auth-error').textContent = "Security verification failed: " + error.message;
+                    btnGoogle.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style="width: 24px;"> Verify & Continue with Google';
+                }
+            });
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    let val = parseInt(this.getAttribute('data-value'));
+                    document.getElementById('user-rating').value = val;
+                    stars.forEach(s => {
+                        if (parseInt(s.getAttribute('data-value')) <= val) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            btnSubmit.addEventListener('click', async () => {
+                const honeypot = document.getElementById('devotee-website').value;
+                if(honeypot !== "") {
+                    feedback.textContent = "Thank you for your submission.";
+                    feedback.className = "mt-4 mb-0 fw-bold text-success fs-5";
+                    return; 
+                }
+
+                const lastSub = localStorage.getItem('lastReviewSub');
+                if(lastSub) {
+                    const hoursPassed = (Date.now() - parseInt(lastSub)) / (1000 * 60 * 60);
+                    if(hoursPassed < AppConfig.COOLDOWN_HOURS) {
+                        feedback.textContent = `Please wait before submitting again. (Anti-Spam Lock)`;
+                        feedback.className = "mt-4 mb-0 fw-bold text-danger fs-5";
+                        return;
+                    }
+                }
+
+                const rawCity = document.getElementById('user-city').value.trim();
+                const rawMsg = document.getElementById('user-message').value.trim();
+                const rating = parseInt(document.getElementById('user-rating').value);
+
+                if (!rating || !rawCity || !rawMsg) {
+                    feedback.textContent = "Please provide rating, city, and message.";
+                    feedback.className = "mt-4 mb-0 fw-bold text-danger fs-5";
+                    return;
+                }
+
+                if (rawMsg.length < 10) {
+                    feedback.textContent = "Message is too short. Please describe properly.";
+                    feedback.className = "mt-4 mb-0 fw-bold text-danger fs-5";
+                    return;
+                }
+
+                const cleanCity = militaryGradeSanitizer(rawCity);
+                const cleanMsg = militaryGradeSanitizer(rawMsg);
+
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Encrypting & Submitting...';
+
+                try {
+                    await setDoc(doc(db, "reviews", currentUser.uid), {
+                        name: militaryGradeSanitizer(currentUser.displayName),
+                        uid: currentUser.uid,
+                        city: cleanCity,
+                        message: cleanMsg,
+                        rating: rating,
+                        status: "pending", 
+                        timestamp: serverTimestamp()
+                    });
+
+                    localStorage.setItem('lastReviewSub', Date.now().toString());
+
+                    feedback.textContent = "Hare Krishna! Review submitted securely for admin blessing.";
+                    feedback.className = "mt-4 mb-0 fw-bold text-success fs-5";
+                    
+                    setTimeout(() => {
+                        const modalElement = document.getElementById('reviewModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if(modalInstance) modalInstance.hide();
+                    }, 3000);
+
+                } catch (error) {
+                    feedback.textContent = "Security Blocked: " + error.message;
+                    feedback.className = "mt-4 mb-0 fw-bold text-danger fs-5";
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = 'Submit for Blessing';
+                }
+            });
+
+            const q = query(collection(db, "reviews"), where("status", "==", "approved"));
+            onSnapshot(q, (snapshot) => {
+                let html = '';
+                let totalRating = 0;
+                let count = 0;
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    totalRating += data.rating;
+                    
+                    const sName = militaryGradeSanitizer(data.name);
+                    const sCity = militaryGradeSanitizer(data.city);
+                    const sMsg = militaryGradeSanitizer(data.message);
+                    const safeRating = Math.min(Math.max(parseInt(data.rating), 1), 5); 
+
+                    let starsHtml = '';
+                    for(let i=1; i<=5; i++) {
+                        starsHtml += `<i class="fa-solid fa-star ${i <= safeRating ? 'text-warning' : 'text-secondary opacity-25'}"></i>`;
+                    }
+
+                    const activeClass = (count === 0) ? 'active' : '';
+                    
+                    html += `
+                        <div class="carousel-item ${activeClass}">
+                            <div class="testimonial-card">
+                                <i class="fa-solid fa-quote-left"></i>
+                                <div class="mb-3 fs-3">${starsHtml}</div>
+                                <p class="fs-3 text-muted fst-italic mb-4" style="line-height: 1.8;">"${sMsg}"</p>
+                                <h4 class="fw-bold mb-0" style="color: var(--primary-dark);">${sName}</h4>
+                                <p class="text-muted text-uppercase letter-spacing-1 mt-2 fs-5 fw-bold">${sCity}</p>
+                            </div>
+                        </div>
+                    `;
+                    count++;
+                });
+
+                if (count > 0) {
+                    container.innerHTML = html;
+                    document.getElementById('total-devotees').textContent = count;
+                    document.getElementById('average-rating').textContent = (totalRating / count).toFixed(1);
+                    
+                    if(count <= 1) {
+                        btnPrev.style.display = 'none';
+                        btnNext.style.display = 'none';
+                    } else {
+                        btnPrev.style.display = 'flex';
+                        btnNext.style.display = 'flex';
+                    }
+
+                } else {
+                    container.innerHTML = '<div class="text-center py-5 fs-3 text-muted fw-bold">Be the first to share your divine experience!</div>';
+                    btnPrev.style.display = 'none';
+                    btnNext.style.display = 'none';
+                }
+            }, (error) => {
+                console.error("Firestore read error:", error);
+            });
+
+        } catch(e) {
+            console.error("Initialization Failed.", e);
+        }
+    </script>
+</body>
+</html>
