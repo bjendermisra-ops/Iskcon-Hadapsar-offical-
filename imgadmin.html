@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISKCON Admin - Secure</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Poppins:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --primary: #FF9933; --bg-dark: #050505; --card-dark: rgba(18, 18, 18, 0.95); --danger: #ff4757; --info: #0984e3; }
+        body { background-color: var(--bg-dark); font-family: 'Poppins', sans-serif; color: white; margin: 0; padding-bottom: 40px; min-height: 100vh; }
+
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .login-box { background: var(--card-dark); border: 1px solid rgba(255,153,51,0.3); padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); width: 90%; max-width: 400px; text-align: center; }
+        .login-box h2 { font-family: 'Cinzel', serif; color: var(--primary); margin-bottom: 20px; }
+
+        #admin-dashboard { display: none; } 
+        .admin-header { background: rgba(10, 5, 2, 0.85); backdrop-filter: blur(15px); padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 30px rgba(0,0,0,0.6); }
+        .admin-header h1 { font-family: 'Cinzel', serif; color: white; margin: 0; font-size: 1.5rem; }
+        .btn-logout { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 5px 15px; border-radius: 8px; transition: 0.3s;}
+        .btn-logout:hover { background: var(--danger); color: white; }
+
+        .admin-container { max-width: 800px; margin: 30px auto; background: var(--card-dark); padding: 30px; border-radius: 20px; border: 1px solid rgba(255, 153, 51, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); }
+        .stats-row { display: flex; gap: 15px; margin-bottom: 25px; }
+        .stat-card { flex: 1; background: rgba(255,153,51,0.1); border: 1px solid rgba(255,153,51,0.2); padding: 15px; border-radius: 15px; text-align: center; }
+        .stat-card h3 { color: var(--primary); font-size: 2rem; margin: 0; }
+        .stat-card p { margin: 0; font-size: 0.85rem; color: #ccc; }
+
+        .form-label { font-weight: 500; color: #ccc; font-size: 0.9rem; margin-bottom: 5px; display: block;}
+        .form-control, .form-select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 10px; padding: 12px; width: 100%; }
+        .form-control:focus, .form-select:focus { background: rgba(255, 255, 255, 0.1); border-color: var(--primary); outline: none; }
+        .form-select option { background: var(--bg-dark); color: white; }
+        ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+        .btn-upload { background: linear-gradient(45deg, #FF9933, #e67300); border: none; color: white; width: 100%; padding: 14px; border-radius: 10px; font-size: 1.1rem; font-weight: 600; text-transform: uppercase; margin-top: 15px; transition: 0.3s;}
+        .btn-upload:hover { transform: translateY(-2px); }
+        .btn-upload:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .preview-box { width: 100%; height: 200px; border-radius: 10px; border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 10px; background: rgba(0,0,0,0.5); }
+        .preview-box img { width: 100%; height: 100%; object-fit: contain; display: none; }
+        .preview-box span { color: #888; font-size: 0.9rem; }
+        .status-text { text-align: center; font-size: 0.85rem; color: var(--primary); margin-top: 10px; font-weight: 600;}
+
+        .manage-gallery { margin-top: 40px; border-top: 1px solid rgba(255, 153, 51, 0.2); padding-top: 20px; }
+        .gallery-list { list-style: none; padding: 0; margin: 0; }
+        .gallery-item-admin { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .gallery-item-admin img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px; }
+        .item-info { flex-grow: 1; }
+        .item-title { font-size: 0.95rem; font-weight: 600; margin: 0; color: #fff;}
+        .item-cat { font-size: 0.75rem; color: var(--primary); margin-right: 10px;}
+        .item-date { font-size: 0.75rem; color: #aaa; }
+        
+        .action-btns { display: flex; gap: 8px; }
+        .btn-edit { background: var(--info); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s;}
+        .btn-delete { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s;}
+        .btn-edit:hover, .btn-delete:hover { filter: brightness(1.2); }
+        
+        .btn-load-more { background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 100%; padding: 10px; border-radius: 10px; margin-top: 15px; cursor: pointer; display: none; }
+        .btn-load-more:hover { background: var(--primary); color: #000; }
+
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2><i class="fas fa-lock"></i> Admin Vault</h2>
+            <p style="font-size: 0.85rem; color:#aaa; margin-bottom:20px;">Secure Login Required</p>
+            <input type="email" id="adminEmail" class="form-control mb-3" placeholder="Admin Email" required>
+            <input type="password" id="adminPassword" class="form-control mb-3" placeholder="Password" required>
+            <button id="btnLogin" class="btn-upload"><i class="fas fa-sign-in-alt"></i> Secure Login</button>
+            <p id="loginError" style="color:var(--danger); font-size:0.85rem; margin-top:10px; display:none;">Invalid Credentials!</p>
+        </div>
+    </div>
+
+    <div id="admin-dashboard">
+        <div class="admin-header">
+            <div>
+                <h1><i class="fas fa-crown text-warning"></i> Admin Panel</h1>
+                <p class="mb-0 text-white-50" style="font-size: 0.8rem;">Daily Darshan Manager</p>
+            </div>
+            <button class="btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+
+        <div class="container">
+            <div class="admin-container">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <h3 id="statTotal">0</h3><p>Total Uploads</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="statToday">0</h3><p>Today's Darshan</p>
+                    </div>
+                </div>
+
+                <form id="uploadForm">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label"><i class="fas fa-link"></i> Direct Image Link</label>
+                            <input type="url" id="imageUrlInput" class="form-control" required>
+                            <div class="preview-box">
+                                <span id="previewText">Image Preview will appear here</span>
+                                <img id="previewImg" src="" alt="Preview">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="far fa-calendar-alt"></i> Darshan Date</label>
+                            <input type="date" id="darshanDate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-tags"></i> Category</label>
+                            <select id="category" class="form-select" required>
+                                <option value="daily">Daily Darshan</option>
+                                <option value="festival">Festivals</option>
+                                <option value="event">Special Events</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3"><label class="form-label">Title (English)</label><input type="text" id="title_en" class="form-control" required></div>
+                        <div class="col-md-4 mb-3"><label class="form-label">शीर्षक (Hindi)</label><input type="text" id="title_hi" class="form-control" required></div>
+                        <div class="col-md-4 mb-4"><label class="form-label">शीर्षक (Marathi)</label><input type="text" id="title_mr" class="form-control" required></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3"><label class="form-label">Desc (English)</label><input type="text" id="desc_en" class="form-control" required></div>
+                        <div class="col-md-4 mb-3"><label class="form-label">विवरण (Hindi)</label><input type="text" id="desc_hi" class="form-control" required></div>
+                        <div class="col-md-4 mb-4"><label class="form-label">वर्णन (Marathi)</label><input type="text" id="desc_mr" class="form-control" required></div>
+                    </div>
+
+                    <button type="submit" class="btn-upload" id="submitBtn"><i class="fas fa-cloud-upload-alt"></i> Publish Darshan</button>
+                    <button type="button" class="btn-upload" id="cancelEditBtn" style="display:none; background:var(--danger); margin-top:10px;"><i class="fas fa-times"></i> Cancel Edit</button>
+                    <div class="status-text" id="statusText"></div>
+                </form>
+
+                <div class="manage-gallery">
+                    <h3 style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--primary); margin-bottom: 15px;"><i class="fas fa-tasks"></i> Manage Uploaded Darshan</h3>
+                    <ul class="gallery-list" id="adminGalleryList"><p style="color: #888; font-size: 0.9rem;">Loading images...</p></ul>
+                    <button class="btn-load-more" id="btnAdminLoadMore">Load More Images <i class="fas fa-chevron-down"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🟢 FIREBASE IMPORTS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, updateDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEbzUad0edV07OMF2slPJyJeWd10-Clc8",
+            authDomain: "image-hit-7ce47.firebaseapp.com",
+            databaseURL: "https://image-hit-7ce47-default-rtdb.firebaseio.com",
+            projectId: "image-hit-7ce47",
+            storageBucket: "image-hit-7ce47.firebasestorage.app",
+            messagingSenderId: "805770916025",
+            appId: "1:805770916025:web:2fa1cdf630e12162c3eb68"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loginScreen = document.getElementById('login-screen');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const form = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const statusText = document.getElementById('statusText');
+        const adminGalleryList = document.getElementById('adminGalleryList');
+        const btnAdminLoadMore = document.getElementById('btnAdminLoadMore');
+
+        let isEditing = false;
+        let editDocId = null;
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('darshanDate').value = today;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) { loginScreen.style.display = 'none'; adminDashboard.style.display = 'block'; loadAdminData(); } 
+            else { loginScreen.style.display = 'flex'; adminDashboard.style.display = 'none'; }
+        });
+
+        document.getElementById('btnLogin').addEventListener('click', async () => {
+            try { await signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPassword').value); } 
+            catch (e) { document.getElementById('loginError').style.display = 'block'; }
+        });
+        document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
+
+        const urlInput = document.getElementById('imageUrlInput'), previewImg = document.getElementById('previewImg'), previewText = document.getElementById('previewText');
+        urlInput.addEventListener('input', () => {
+            if(urlInput.value.startsWith('http')) { previewImg.src = urlInput.value; previewImg.style.display = 'block'; previewText.style.display = 'none'; } 
+            else { previewImg.style.display = 'none'; previewText.style.display = 'block'; }
+        });
+
+        async function saveToDatabase(finalImageUrl, imgWidth, imgHeight) {
+            statusText.innerText = "Saving to Database...";
+            const dataToSave = {
+                imageUrl: finalImageUrl, width: imgWidth, height: imgHeight,
+                darshan_date: document.getElementById('darshanDate').value,
+                category: document.getElementById('category').value,
+                title_en: document.getElementById('title_en').value, title_hi: document.getElementById('title_hi').value, title_mr: document.getElementById('title_mr').value,
+                desc_en: document.getElementById('desc_en').value, desc_hi: document.getElementById('desc_hi').value, desc_mr: document.getElementById('desc_mr').value,
+            };
+            try {
+                if(isEditing && editDocId) { await updateDoc(doc(db, "iskcon_images", editDocId), dataToSave); } 
+                else { dataToSave.timestamp = serverTimestamp(); await addDoc(collection(db, "iskcon_images"), dataToSave); }
+                
+                statusText.innerText = "✅ Successfully Saved!"; statusText.style.color = "#00e676";
+                form.reset(); document.getElementById('darshanDate').value = today; previewImg.style.display = 'none'; previewText.style.display = 'block';
+                if(isEditing) cancelEditingState();
+                setTimeout(() => { statusText.innerText = ""; submitBtn.disabled = false; }, 2000);
+            } catch (err) { statusText.innerText = "Error Saving!"; statusText.style.color = "red"; submitBtn.disabled = false; }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); submitBtn.disabled = true; statusText.innerText = "Processing Image Link...";
+            const img = new Image(); img.src = urlInput.value.trim();
+            img.onload = () => saveToDatabase(img.src, img.width, img.height);
+            img.onerror = () => saveToDatabase(img.src, 800, 1000); 
+        });
+
+        let adminAllData = []; let adminRenderCount = 0; const ADMIN_BATCH = 10;
+
+        function loadAdminData() {
+            const q = query(collection(db, "iskcon_images"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                adminAllData = []; let total = 0, tdy = 0;
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data(); adminAllData.push({ id: docSnap.id, ...data });
+                    total++; if(data.darshan_date === today) tdy++;
+                });
+                document.getElementById('statTotal').innerText = total; document.getElementById('statToday').innerText = tdy;
+                
+                adminRenderCount = 0; adminGalleryList.innerHTML = '';
+                if(adminAllData.length === 0) adminGalleryList.innerHTML = '<p style="color: #888;">No uploads yet.</p>';
+                else renderAdminBatch();
+            });
+        }
+
+        function renderAdminBatch() {
+            const batch = adminAllData.slice(adminRenderCount, adminRenderCount + ADMIN_BATCH);
+            batch.forEach(data => {
+                const li = document.createElement('li'); li.className = 'gallery-item-admin';
+                li.innerHTML = `
+                    <div style="display: flex; align-items: center; width: 70%;">
+                        <img src="${data.imageUrl}" onerror="this.src='https://via.placeholder.com/60'">
+                        <div class="item-info">
+                            <p class="item-title">${data.title_en}</p>
+                            <div><span class="item-cat"><i class="fas fa-tag"></i> ${data.category || 'daily'}</span><span class="item-date"><i class="far fa-calendar"></i> ${data.darshan_date || 'N/A'}</span></div>
+                        </div>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn-edit" data-id="${data.id}"><i class="fas fa-edit"></i></button>
+                        <button class="btn-delete" data-id="${data.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                adminGalleryList.appendChild(li);
+            });
+            adminRenderCount += batch.length;
+            btnAdminLoadMore.style.display = (adminRenderCount < adminAllData.length) ? 'block' : 'none';
+            attachActionListeners();
+        }
+
+        btnAdminLoadMore.addEventListener('click', renderAdminBatch);
+
+        function attachActionListeners() {
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const docId = e.currentTarget.getAttribute('data-id');
+                    const target = adminAllData.find(item => item.id === docId);
+                    if(target) {
+                        urlInput.value = target.imageUrl; previewImg.src = target.imageUrl; previewImg.style.display = 'block'; previewText.style.display = 'none';
+                        document.getElementById('darshanDate').value = target.darshan_date || today; document.getElementById('category').value = target.category || 'daily';
+                        document.getElementById('title_en').value = target.title_en || ''; document.getElementById('title_hi').value = target.title_hi || ''; document.getElementById('title_mr').value = target.title_mr || '';
+                        document.getElementById('desc_en').value = target.desc_en || ''; document.getElementById('desc_hi').value = target.desc_hi || ''; document.getElementById('desc_mr').value = target.desc_mr || '';
+                        isEditing = true; editDocId = docId; submitBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Update Darshan'; submitBtn.style.background = "linear-gradient(45deg, #0984e3, #00cec9)"; cancelEditBtn.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    if(confirm("DELETE this Darshan?")) {
+                        try { await deleteDoc(doc(db, "iskcon_images", e.currentTarget.getAttribute('data-id'))); if(isEditing && editDocId === e.currentTarget.getAttribute('data-id')) cancelEditingState(); } 
+                        catch(err) { alert("Error deleting document!"); }
+                    }
+                });
+            });
+        }
+
+        function cancelEditingState() {
+            isEditing = false; editDocId = null; form.reset(); document.getElementById('darshanDate').value = today;
+            previewImg.style.display = 'none'; previewText.style.display = 'block';
+            submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Publish Darshan'; submitBtn.style.background = "linear-gradient(45deg, #FF9933, #e67300)"; cancelEditBtn.style.display = 'none';
+        }
+        cancelEditBtn.addEventListener('click', cancelEditingState);
+    </script>
+</body>
+</html>
