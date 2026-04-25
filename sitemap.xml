@@ -1,85 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
     
-    <!-- HIGH PRIORITY (Main Pages) -->
+    <!-- ==========================================
+         🔥 HIGH PRIORITY (Main Core Pages)
+         ========================================== -->
     <url>
         <loc>https://www.iskconhadapsar.online/index.html</loc>
-        <lastmod>2026-02-01</lastmod>
-        <changefreq>daily</changefreq>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>hourly</changefreq>
         <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://www.iskconhadapsar.online/assets/images/temple-hall-bg.jpg</image:loc>
+            <image:title>ISKCON Hadapsar Temple Altar Darshan</image:title>
+            <image:caption>Sri Sri Radha Kunjabihari Temple Hadapsar Pune Main Altar</image:caption>
+        </image:image>
     </url>
     <url>
         <loc>https://www.iskconhadapsar.online/</loc>
-        <lastmod>2026-02-01</lastmod>
-        <changefreq>daily</changefreq>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>hourly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://www.iskconhadapsar.online/schedule.html</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.9</priority>
-    </url>
-    <url>
-        <loc>https://www.iskconhadapsar.online/darshan.html</loc>
+        <lastmod>2026-04-25</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
+        <loc>https://www.iskconhadapsar.online/darshan.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>always</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://www.iskconhadapsar.online/assets/gallery-darshan.png</image:loc>
+            <image:title>Daily Live Darshan ISKCON Hadapsar Pune</image:title>
+        </image:image>
+    </url>
+    <url>
         <loc>https://www.iskconhadapsar.online/dono.html</loc>
-        <changefreq>monthly</changefreq>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
 
-    <!-- INFO PAGES -->
-    <url><loc>https://www.iskconhadapsar.online/about.html</loc><priority>0.7</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/contact.html</loc><priority>0.7</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/privacy.html</loc><priority>0.5</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/terms.html</loc><priority>0.5</priority></url>
+    <!-- ==========================================
+         ℹ️ INFO & LEGAL PAGES
+         ========================================== -->
+    <url>
+        <loc>https://www.iskconhadapsar.online/about.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/contact.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/privacy.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/terms.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
 
-    <!-- FEATURES -->
-    <url><loc>https://www.iskconhadapsar.online/chanting.html</loc><priority>0.8</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/tour.html</loc><priority>0.7</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/pune.html</loc><priority>0.7</priority></url>
+    <!-- ==========================================
+         🚀 FEATURES & SERVICES
+         ========================================== -->
+    <url>
+        <loc>https://www.iskconhadapsar.online/chanting.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/tour.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/pune.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
 
-    <!-- MEDIA -->
-    <url><loc>https://www.iskconhadapsar.online/gallery.html</loc><priority>0.8</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/tmp_vids.html</loc><priority>0.8</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/aud_krt.html</loc><priority>0.7</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/lec.html</loc><priority>0.7</priority></url>
+    <!-- ==========================================
+         🎥 MEDIA, KIRTAN & GALLERY
+         ========================================== -->
+    <url>
+        <loc>https://www.iskconhadapsar.online/gallery.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/tmp_vids.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/aud_krt.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/lec.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
 
-    <!-- KIDS ZONE (High Engagement) -->
-    <url><loc>https://www.iskconhadapsar.online/kids.html</loc><priority>0.8</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/k_quiz.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/k_memory.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/k_abc.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/k_art.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/k_stories.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/k_japa.html</loc><priority>0.7</priority></url>
+    <!-- ==========================================
+         🧒 KIDS ZONE (High Engagement)
+         ========================================== -->
+    <url>
+        <loc>https://www.iskconhadapsar.online/kids.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/k_quiz.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/k_memory.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/k_abc.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/k_art.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/k_stories.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.iskconhadapsar.online/k_japa.html</loc>
+        <lastmod>2026-04-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
 
-    <!-- EKADASHI PAGES (Archive) -->
-    <url><loc>https://www.iskconhadapsar.online/e_mokshada.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_saphala.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_putrada.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_shattila.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_jaya.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_vijaya.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_amalaki.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_papmoch.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_kamada.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_varuthi.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_mohini.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_apara.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_nirjala.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_yogini.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_sayana.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_kamika.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_pavitra.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_annada.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_parivar.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_indira.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_papanku.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_rama.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_prabod.html</loc><priority>0.6</priority></url>
-    <url><loc>https://www.iskconhadapsar.online/e_utpanna.html</loc><priority>0.6</priority></url>
+    <!-- ==========================================
+         🌙 EKADASHI PAGES (Archive)
+         ========================================== -->
+    <url><loc>https://www.iskconhadapsar.online/e_mokshada.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_saphala.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_putrada.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_shattila.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_jaya.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_vijaya.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_amalaki.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_papmoch.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_kamada.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_varuthi.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_mohini.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_apara.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_nirjala.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_yogini.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_sayana.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_kamika.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_pavitra.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_annada.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_parivar.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_indira.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_papanku.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_rama.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_prabod.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://www.iskconhadapsar.online/e_utpanna.html</loc><lastmod>2026-04-25</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
 
 </urlset>
