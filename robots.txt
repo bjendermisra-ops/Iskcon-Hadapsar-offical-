@@ -1,13 +1,57 @@
+# =========================================================================
+# ISKCON HADAPSAR - GOD LEVEL ROBOTS.TXT
+# Optimized for maximum crawl efficiency, deep image indexing, 
+# and blocking keyword cannibalization & AI scrapers.
+# =========================================================================
+
+# 1. VIP ACCESS FOR GOOGLE SEARCH & IMAGES
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-Mobile
+Allow: /
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.mp3$
+Allow: /*.mp4$
+Allow: /*.pdf$
+Allow: /*.css$
+Allow: /*.js$
+
+# 2. GENERAL BOTS (Allow all legitimate search engines)
 User-agent: *
 Allow: /
+
+# 3. BLOCK PRIVATE, ADMIN & DUPLICATE CONTENT
 Disallow: /assets/private/
 Disallow: /admin/
+Disallow: /login/
+Disallow: /dashboard/
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*sessionid=
+Disallow: /*?*replytocom=
 
-# Media optimizations
-Allow: /*.jpg
-Allow: /*.png
-Allow: /*.mp3
-Allow: /*.mp4
+# 4. BLOCK SPAM, SCRAPERS & AI BOTS (Saves Server Resources & Speed)
+User-agent: GPTBot
+Disallow: /
+User-agent: ChatGPT-User
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: MJ12bot
+Disallow: /
+User-agent: Rogerbot
+Disallow: /
+User-agent: DotBot
+Disallow: /
 
-# Sitemap Location
+# 5. SITEMAP DECLARATION
 Sitemap: https://www.iskconhadapsar.online/sitemap.xml
