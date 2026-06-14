@@ -1,3 +1,29 @@
+import https from "https";
+
+const nodeFetch = (url, options = {}) => {
+    return new Promise((resolve, reject) => {
+        const reqOptions = {
+            method: options.method || 'GET',
+            headers: options.headers || {}
+        };
+        if (options.body) {
+            reqOptions.headers['Content-Type'] = 'application/json';
+            reqOptions.headers['Content-Length'] = Buffer.byteLength(options.body);
+        }
+        
+        const req = https.request(url, reqOptions, (res) => {
+            let body = '';
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+                resolve({ ok: res.statusCode >= 200 && res.statusCode < 300 });
+            });
+        });
+        req.on('error', reject);
+        if (options.body) req.write(options.body);
+        req.end();
+    });
+};
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -9,7 +35,7 @@ export default async function handler(req, res) {
         const chatId = process.env.TELEGRAM_ORDERS_CHAT_ID;
 
         if (!botToken || !chatId) {
-            return res.status(500).json({ error: 'Telegram Auth Config is missing on Vercel environment' });
+            return res.status(500).json({ error: 'Telegram Auth Config is missing' });
         }
 
         let msg = '';
@@ -37,9 +63,8 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Unknown event type' });
         }
 
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        await nodeFetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 chat_id: chatId,
                 text: msg,
