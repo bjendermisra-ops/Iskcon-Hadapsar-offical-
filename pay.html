@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Securing Connection...</title>
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f7f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            user-select: none; /* Text selection disable block */
+            -webkit-user-select: none;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 380px;
+            box-sizing: border-box;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #f28c28; /* Orange loader */
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h3 { margin: 0 0 10px 0; font-size: 18px; color: #222; }
+        p { margin: 0; font-size: 13px; color: #777; line-height: 1.4; }
+
+        /* Receipt styling */
+        .receipt-box { border: 2px dashed #f28c28; background: #fffcf8; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
+        .receipt-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 13px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; }
+        .receipt-row span:first-child { font-weight: bold; color: #666; }
+        .notice-badge { background: #e8f5e9; color: green; font-weight: bold; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 15px; border: 1px solid #c8e6c9; text-align: center; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Right Click Disable -->
+
+    <div class="container">
+        <!-- Connecting screen (Loader only) -->
+        <div id="connecting-portal">
+            <div class="loader"></div>
+            <h3>Securing Connection...</h3>
+            <p>Please wait while we connect you to Razorpay secure servers.</p>
+        </div>
+
+        <!-- Success Receipt Screen -->
+        <div id="receipt-portal" class="hidden">
+            <div style="color: green; font-size: 50px; margin-bottom: 10px;">✓</div>
+            <h3 style="color: green; margin-bottom: 5px;">Donation Successful</h3>
+            <p>Your transaction has been securely captured.</p>
+
+            <div class="receipt-box">
+                <div class="receipt-row"><span>Seva:</span> <span id="r-seva"></span></div>
+                <div class="receipt-row"><span>Donor Name:</span> <span id="r-name"></span></div>
+                <div class="receipt-row"><span>Amount Paid:</span> <span id="r-amt" style="font-weight: bold; color: green;"></span></div>
+                <div class="receipt-row"><span>Date & Time:</span> <span id="r-time"></span></div>
+                <div class="receipt-row"><span>Payment ID:</span> <span id="r-id" style="font-size: 11px;"></span></div>
+            </div>
+
+            <div class="notice-badge">
+                Success! Ab aap is tab ko close karke Devotional Seva app par wapas ja sakte hain.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obfuscation: Anti F12 Keys Blocking
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
+                return false;
+            }
+        };
+
+        window.onload = function() {
+            // Read session id from Chrome browser URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('session_id');
+
+            if (token) {
+                try {
+                    // Decrypt Base64 Payload
+                    const payload = JSON.parse(decodeURIComponent(escape(atob(token))));
+                    
+                    // Trigger Razorpay directly
+                    triggerRazorpayCheckout(payload.n, payload.a, payload.p, payload.e, payload.s);
+                } catch (err) {
+                    document.getElementById('connecting-portal').innerHTML = `
+                        <h3 style="color:red;">Session Expired</h3>
+                        <p>Invalid transaction security token. Please return to the app and try again.</p>
+                    `;
+                }
+            } else {
+                document.getElementById('connecting-portal').innerHTML = `
+                    <h3 style="color:red;">Access Denied</h3>
+                    <p>Security protocol failed. Please open the payment portal inside the Devotional Seva App.</p>
+                `;
+            }
+        };
+
+        function triggerRazorpayCheckout(name, amount, phone, email, seva) {
+            const options = {
+                "key": "rzp_test_TE8Bv03oiUHhU3", // APNA KEY
+                "amount": amount * 100, // Amount to Paise
+                "currency": "INR",
+                "name": "Devotional Seva",
+                "description": seva,
+                "handler": function (response) {
+                    const now = new Date();
+                    const dateTimeStr = now.toLocaleDateString() + ', ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    // Save locally inside Chrome browser's storage
+                    saveDonation(name, amount, dateTimeStr);
+
+                    // Populate Receipt UI
+                    document.getElementById('r-seva').innerText = seva;
+                    document.getElementById('r-name').innerText = name;
+                    document.getElementById('r-amt').innerText = '₹' + amount;
+                    document.getElementById('r-time').innerText = dateTimeStr;
+                    document.getElementById('r-id').innerText = response.razorpay_payment_id;
+
+                    // Switch screens
+                    document.getElementById('connecting-portal').classList.add('hidden');
+                    document.getElementById('receipt-portal').classList.remove('hidden');
+                },
+                "modal": {
+                    "ondismiss": function() {
+                        // User cancelled payment
+                        document.getElementById('connecting-portal').innerHTML = `
+                            <h3 style="color:#d35400;">Payment Cancelled</h3>
+                            <p>You closed the transaction window. Please return to the Devotional Seva app to retry.</p>
+                        `;
+                    }
+                },
+                "prefill": {
+                    "name": name,
+                    "contact": phone,
+                    "email": email
+                },
+                "theme": {
+                    "color": "#f28c28"
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+        function saveDonation(name, amount, time) {
+            let list = [];
+            try {
+                let existing = localStorage.getItem('live_donations');
+                if (existing) list = JSON.parse(existing);
+            } catch(e){}
+            list.unshift({ name: name, amount: amount, date: time });
+            localStorage.setItem('live_donations', JSON.stringify(list));
+        }
+    </script>
+</body>
+</html>
