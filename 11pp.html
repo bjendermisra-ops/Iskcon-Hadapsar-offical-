@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Payment & Receipt</title>
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; margin: 0; padding: 15px; box-sizing: border-box; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; box-sizing: border-box; }
+        h2 { margin-bottom: 20px; color: #333; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        button { width: 100%; padding: 12px; background-color: #3399cc; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background-color: #2b7fa9; }
+        .hidden { display: none !important; }
+        
+        /* Receipt Style */
+        .receipt { text-align: left; background: #f9fcff; padding: 15px; border-radius: 8px; border: 1.5px dashed #3399cc; margin-top: 15px; }
+        .receipt h3 { text-align: center; color: #2b7fa9; margin-top: 0; margin-bottom: 15px; }
+        .receipt-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 14px; border-bottom: 1px solid #f1f1f1; padding-bottom: 8px; }
+        .receipt-row span:first-child { font-weight: bold; color: #555; }
+        .receipt-row span:last-child { color: #111; word-break: break-all; text-align: right; }
+        .success-badge { color: green; font-weight: bold; background: #e8f5e9; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: Payment Form -->
+    <div id="payment-section" class="card">
+        <h2>Make a Payment</h2>
+        <input type="text" id="user-name" placeholder="Apna Naam Likhein" required>
+        <input type="number" id="payment-amount" placeholder="Amount (INR)" required>
+        <button id="pay-btn">Pay Now</button>
+    </div>
+
+    <!-- SECTION 2: Payment Receipt (Hidden initially) -->
+    <div id="receipt-section" class="card hidden">
+        <div class="receipt">
+            <h3>Payment Receipt</h3>
+            <div class="receipt-row">
+                <span>Status:</span> 
+                <span class="success-badge">Success ✓</span>
+            </div>
+            <div class="receipt-row">
+                <span>Name:</span> 
+                <span id="rec-name"></span>
+            </div>
+            <div class="receipt-row">
+                <span>Amount Paid:</span> 
+                <span id="rec-amount" style="font-weight: bold;"></span>
+            </div>
+            <div class="receipt-row">
+                <span>Date & Time:</span> 
+                <span id="rec-datetime"></span>
+            </div>
+            <div class="receipt-row">
+                <span>Payment ID:</span> 
+                <span id="rec-payid" style="font-size: 11px;"></span>
+            </div>
+        </div>
+        <button style="background-color: #666;" onclick="window.location.reload()">New Payment</button>
+    </div>
+
+    <script>
+        document.getElementById('pay-btn').onclick = function(e) {
+            const name = document.getElementById('user-name').value;
+            const amount = document.getElementById('payment-amount').value;
+
+            if(!name || !amount) {
+                alert('Kripya Name aur Amount fill karein!');
+                return;
+            }
+
+            const options = {
+                // IMPORTANT: Apni Razorpay Test Key ID yahan paste karein (Format: rzp_test_...)
+                "key": "rzp_test_TE8Bv03oiUHhU3", 
+                "amount": amount * 100, // Razorpay paise me value accept karta hai (1 INR = 100 paise)
+                "currency": "INR",
+                "name": "My Test App",
+                "description": "Test Transaction",
+                "handler": function (response) {
+                    // Jab payment successful hogi, tab ye code chalega:
+                    
+                    // Current Date & Time fetch karein
+                    const now = new Date();
+                    const formattedDateTime = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString();
+
+                    // Receipt Section mein data fill karein
+                    document.getElementById('rec-name').innerText = name;
+                    document.getElementById('rec-amount').innerText = '₹' + amount;
+                    document.getElementById('rec-datetime').innerText = formattedDateTime;
+                    document.getElementById('rec-payid').innerText = response.razorpay_payment_id;
+
+                    // Form ko chupa kar Receipt Section ko screen par dikhayein
+                    document.getElementById('payment-section').classList.add('hidden');
+                    document.getElementById('receipt-section').classList.remove('hidden');
+                },
+                "prefill": {
+                    "name": name,
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+            e.preventDefault();
+        }
+    </script>
+</body>
+</html>
