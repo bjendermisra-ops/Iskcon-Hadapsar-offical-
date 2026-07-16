@@ -1,6 +1,6 @@
-const Razorpay = require('razorpay');
+import Razorpay from 'razorpay';
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
     // CORS Headers setup
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,4 +57,4 @@ module.exports = async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: 'Backend payment generation failed', details: error.message });
     }
-};
+}
