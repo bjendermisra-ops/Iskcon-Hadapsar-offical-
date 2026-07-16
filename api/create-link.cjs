@@ -1,7 +1,6 @@
-import Razorpay from 'razorpay';
+const Razorpay = require('razorpay');
 
-export default async function handler(req, res) {
-    // CORS Headers setup
+module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -19,20 +18,17 @@ export default async function handler(req, res) {
     try {
         const { name, amount, phone, email, seva } = req.body;
 
-        // Backend Server Validation
         if (!name || !amount || !phone) {
             return res.status(400).json({ error: 'Required fields missing' });
         }
 
-        // Environment variables se securely keys fetch karna
         const instance = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET,
         });
 
-        // Razorpay Payment Link generate karna
         const paymentLink = await instance.paymentLink.create({
-            amount: amount * 100, // paise me convert kiya
+            amount: amount * 100,
             currency: "INR",
             accept_partial: false,
             first_payment_min_amount: amount * 100,
@@ -47,7 +43,6 @@ export default async function handler(req, res) {
                 email: false,
             },
             reminder_enable: false,
-            // Payment success ke baad success page par redirect karne ke liye
             callback_url: `https://${req.headers.host}/success.html?name=${encodeURIComponent(name)}&amount=${amount}&seva=${encodeURIComponent(seva)}`,
             callback_method: "get"
         });
@@ -57,4 +52,4 @@ export default async function handler(req, res) {
         console.error(error);
         return res.status(500).json({ error: 'Backend payment generation failed', details: error.message });
     }
-}
+};
